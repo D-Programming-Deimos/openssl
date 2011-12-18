@@ -8,19 +8,10 @@ package:
 // Very boiled down version because we cannot use std.traits without causing
 // DMD to create a ModuleInfo reference for _d_util, which would require users
 // to include the Deimos files in the build.
-
-template ReturnType(T){
+template ExternC(T) if (is(typeof(*(T.init)) P == function)) {
 	static if (is(typeof(*(T.init)) R == return)) {
-		alias R ReturnType;
+		static if (is(typeof(*(T.init)) P == function)) {
+			alias extern(C) R function(P) ExternC;
+		}
 	}
-}
-
-template ParameterTypeTuple(T) {
-	static if (is(typeof(*(T.init)) P == function)) {
-		alias P ParameterTypeTuple;
-	}
-}
-
-template ExternC(T) {
-	alias extern(C) ReturnType!T function(ParameterTypeTuple!T) ExternC;
 }
