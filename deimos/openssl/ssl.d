@@ -693,7 +693,7 @@ enum SSL_SESSION_CACHE_MAX_SIZE_DEFAULT = (1024*20);
  * supposed to be fixed at 16 bytes so the id will be padded after the callback
  * returns in this case. It is also an error for the callback to set the size to
  * zero. */
-alias ExternC!(int function(const(SSL)* ssl, ubyte* id,
+alias ExternC!(int function(/+ FIXME: @@BUG7127@@ const+/ SSL* ssl, ubyte* id,
 uint* id_len)) GEN_SESSION_CB;
 
 struct ssl_comp_st {
@@ -1133,7 +1133,7 @@ version(OPENSSL_NO_COMP) {
 				 * 1 fail if verify fails */
 	ExternC!(int function(int ok,X509_STORE_CTX* ctx)) verify_callback; /* fail if callback returns 0 */
 
-	ExternC!(void function(const(SSL)* ssl,int type,int val)) info_callback; /* optional informational callback */
+	ExternC!(void function(/+ FIXME: @@BUG7127@@ const+/ SSL* ssl,int type,int val)) info_callback; /* optional informational callback */
 
 	int error;		/* error bytes to be written */
 	int error_code;		/* actual code */
