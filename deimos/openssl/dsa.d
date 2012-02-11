@@ -127,7 +127,7 @@ struct dsa_method
 	ExternC!(int function(DSA* dsa, BIGNUM* r, BIGNUM* a, const(BIGNUM)* p,
 				const(BIGNUM)* m, BN_CTX* ctx,
 				BN_MONT_CTX* m_ctx)) bn_mod_exp; /* Can be null */
-	ExternC!(int function(DSA* dsa)) init;
+	ExternC!(int function(DSA* dsa)) init_;
 	ExternC!(int function(DSA* dsa)) finish;
 	int flags;
 	char* app_data;

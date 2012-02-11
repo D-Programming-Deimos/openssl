@@ -168,7 +168,7 @@ version (none) {
 	DSO_MERGER_FUNC dso_merger;
 
 	/* [De]Initialisation handlers. */
-	ExternC!(int function(DSO* dso)) init;
+	ExternC!(int function(DSO* dso)) init_;
 	ExternC!(int function(DSO* dso)) finish;
 
 	/* Return pathname of the module containing location */

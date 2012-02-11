@@ -165,7 +165,7 @@ struct env_md_st
 	int pkey_type;
 	int md_size;
 	c_ulong flags;
-	ExternC!(int function(EVP_MD_CTX* ctx)) init;
+	ExternC!(int function(EVP_MD_CTX* ctx)) init_;
 	ExternC!(int function(EVP_MD_CTX* ctx,const(void)* data,size_t count)) update;
 	ExternC!(int function(EVP_MD_CTX* ctx,ubyte* md)) final_;
 	ExternC!(int function(EVP_MD_CTX* to,const(EVP_MD_CTX)* from)) copy;
@@ -305,7 +305,7 @@ struct evp_cipher_st
 	int iv_len;
 	c_ulong flags;	/* Various flags */
 	ExternC!(int function(EVP_CIPHER_CTX* ctx, const(ubyte)* key,
-		    const(ubyte)* iv, int enc)) init;	/* init key */
+		    const(ubyte)* iv, int enc)) init_;	/* init key */
 	ExternC!(int function(EVP_CIPHER_CTX* ctx, ubyte* out_,
 			 const(ubyte)* in_, size_t inl)) do_cipher;/* encrypt/decrypt data */
 	ExternC!(int function(EVP_CIPHER_CTX*)) cleanup; /* cleanup ctx */

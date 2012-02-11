@@ -106,7 +106,7 @@ struct dh_method
 				const(BIGNUM)* p, const(BIGNUM)* m, BN_CTX* ctx,
 				BN_MONT_CTX* m_ctx)) bn_mod_exp; /* Can be null */
 
-	ExternC!(int function(DH* dh)) init;
+	ExternC!(int function(DH* dh)) init_;
 	ExternC!(int function(DH* dh)) finish;
 	int flags;
 	char* app_data;
