@@ -296,7 +296,7 @@ struct bio_st
 	ExternC!(c_long function(bio_st*,int,const(char)*,int, c_long,long)) callback;
 	char* cb_arg; /* first argument for the callback */
 
-	int init;
+	int init_;
 	int shutdown;
 	int flags;	/* extra storage */
 	int retry_reason;
