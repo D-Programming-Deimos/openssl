@@ -148,7 +148,7 @@ struct x509_lookup_method_st {
 	const(char)* name;
 	ExternC!(int function(X509_LOOKUP* ctx)) new_item;
 	ExternC!(void function(X509_LOOKUP* ctx)) free;
-	ExternC!(int function(X509_LOOKUP* ctx)) init;
+	ExternC!(int function(X509_LOOKUP* ctx)) init_;
 	ExternC!(int function(X509_LOOKUP* ctx)) shutdown;
 	ExternC!(int function(X509_LOOKUP* ctx,int cmd,const(char)* argc,c_long argl,
 			char** ret)) ctrl;
@@ -222,7 +222,7 @@ auto X509_STORE_set_verify_func()(X509_STORE_CTX* ctx, typeof(X509_STORE_CTX.ini
 /* This is the functions plus an instance of the local variables. */
 struct x509_lookup_st
 	{
-	int init;			/* have we been started */
+	int init_;			/* have we been started */
 	int skip;			/* don't use us. */
 	X509_LOOKUP_METHOD* method;	/* the functions */
 	char* method_data;		/* method data */

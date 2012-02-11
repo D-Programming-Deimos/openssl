@@ -103,7 +103,7 @@ struct rsa_meth_st
 	ExternC!(int function(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* p,
 			  const(BIGNUM)* m, BN_CTX* ctx,
 			  BN_MONT_CTX* m_ctx)) bn_mod_exp; /* Can be null */
-	ExternC!(int function(RSA* rsa)) init;		/* called at new */
+	ExternC!(int function(RSA* rsa)) init_;		/* called at new */
 	ExternC!(int function(RSA* rsa)) finish;	/* called at free */
 	int flags;			/* RSA_METHOD_FLAG_* things */
 	char* app_data;			/* may be needed! */

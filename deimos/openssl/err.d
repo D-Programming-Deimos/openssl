@@ -249,10 +249,10 @@ auto ERR_PACK()(c_ulong l, c_ulong f, c_ulong r) {
 					(((f)&0xfffL)*0x1000)|
 					(((r)&0xfffL)));
 }
-auto ERR_GET_LIB(c_ulong l) { return cast(int)(((l)>>24L)&0xffL); }
-auto ERR_GET_FUNC(c_ulong l) { return cast(int)(((l)>>12L)&0xfffL); }
-auto ERR_GET_REASON(c_ulong l) { return cast(int)((l)&0xfffL); }
-auto ERR_FATAL_ERROR(c_ulong l) { return cast(int)((l)&ERR_R_FATAL); }
+auto ERR_GET_LIB()(c_ulong l) { return cast(int)(((l)>>24L)&0xffL); }
+auto ERR_GET_FUNC()(c_ulong l) { return cast(int)(((l)>>12L)&0xfffL); }
+auto ERR_GET_REASON()(c_ulong l) { return cast(int)((l)&0xfffL); }
+auto ERR_FATAL_ERROR()(c_ulong l) { return cast(int)((l)&ERR_R_FATAL); }
 
 
 /* OS functions */

@@ -87,7 +87,7 @@ struct conf_method_st
 	{
 	const(char)* name;
 	ExternC!(CONF* function(CONF_METHOD* meth)) create;
-	ExternC!(int function(CONF* conf)) init;
+	ExternC!(int function(CONF* conf)) init_;
 	ExternC!(int function(CONF* conf)) destroy;
 	ExternC!(int function(CONF* conf)) destroy_data;
 	ExternC!(int function(CONF* conf, BIO* bp, c_long* eline)) load_bio;

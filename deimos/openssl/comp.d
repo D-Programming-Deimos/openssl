@@ -15,7 +15,7 @@ alias comp_ctx_st COMP_CTX;
 struct comp_method_st {
 	int type;		/* NID for compression library */
 	const(char)* name;	/* A text string to identify the library */
-	ExternC!(int function(COMP_CTX* ctx)) init;
+	ExternC!(int function(COMP_CTX* ctx)) init_;
 	ExternC!(void function(COMP_CTX* ctx)) finish;
 	ExternC!(int function(COMP_CTX* ctx,
 			ubyte* out_, uint olen,
