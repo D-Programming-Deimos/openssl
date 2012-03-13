@@ -78,7 +78,7 @@ module deimos.openssl.ec;
 import deimos.openssl._d_util;
 
 public import deimos.openssl.opensslconf;
-import deimos.openssl.evp; // Needed for EVP_PKEY_ALG_CTRL.
+import deimos.openssl.evp; // Needed for EVP_PKEY_ALG_CTRL and ec_key_st.
 
 version (OPENSSL_NO_EC) {
   static assert(false, "EC is disabled.");
@@ -690,7 +690,7 @@ int     ECPKParameters_print_fp(FILE* fp, const(EC_GROUP)* x, int off);
 /*                     EC_KEY functions                            */
 /********************************************************************/
 
-struct ec_key_st;
+/*struct ec_key_st;*/
 alias ec_key_st EC_KEY;
 
 /* some values for the encoding_flag */

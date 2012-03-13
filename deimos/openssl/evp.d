@@ -849,17 +849,17 @@ int 		EVP_PKEY_assign(EVP_PKEY* pkey,int type,void* key);
 void* 		EVP_PKEY_get0(EVP_PKEY* pkey);
 
 version(OPENSSL_NO_RSA) {} else {
-struct rsa_st;
+import deimos.openssl.rsa; /*struct rsa_st;*/
 int EVP_PKEY_set1_RSA(EVP_PKEY* pkey,rsa_st* key);
 rsa_st* EVP_PKEY_get1_RSA(EVP_PKEY* pkey);
 }
 version(OPENSSL_NO_DSA) {} else {
-struct dsa_st;
+import deimos.openssl.dsa; /*struct dsa_st;*/
 int EVP_PKEY_set1_DSA(EVP_PKEY* pkey,dsa_st* key);
 dsa_st* EVP_PKEY_get1_DSA(EVP_PKEY* pkey);
 }
 version(OPENSSL_NO_DH) {} else {
-struct dh_st;
+import deimos.openssl.dh; /*struct dh_st;*/
 int EVP_PKEY_set1_DH(EVP_PKEY* pkey,dh_st* key);
 dh_st* EVP_PKEY_get1_DH(EVP_PKEY* pkey);
 }

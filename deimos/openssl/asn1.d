@@ -291,7 +291,7 @@ enum ub_email_address = 128;
  */
 alias ASN1_TEMPLATE_st ASN1_TEMPLATE;
 alias ASN1_ITEM_st ASN1_ITEM;
-struct ASN1_TLC_st;
+import deimos.openssl.asn1t; /*struct ASN1_TLC_st;*/
 alias ASN1_TLC_st ASN1_TLC;
 /* This is just an opaque pointer */
 struct ASN1_VALUE_st;

@@ -360,8 +360,7 @@ alias X509_FILETYPE_PEM SSL_FILETYPE_PEM;
  * 'ssl_st* ' function parameters used to prototype callbacks
  * in SSL_CTX. */
 alias ssl_st* ssl_crock_st;
-// Just declared here because tls1.h has not been ported yet.
-struct tls_session_ticket_ext_st;
+import deimos.openssl.tls1;
 alias tls_session_ticket_ext_st TLS_SESSION_TICKET_EXT;
 
 /* used to hold info on the particular ciphers used */
