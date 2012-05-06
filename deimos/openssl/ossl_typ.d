@@ -139,22 +139,22 @@ alias evp_pkey_method_st EVP_PKEY_METHOD;
 struct evp_pkey_ctx_st;
 alias evp_pkey_ctx_st EVP_PKEY_CTX;
 
-// import deimos.openssl.dh;
-struct dh_st;
+import deimos.openssl.dh;
+/*struct dh_st;*/
 alias dh_st DH;
-struct dh_method;
+/*struct dh_method;*/
 alias dh_method DH_METHOD;
 
-// import deimos.openssl.dsa;
-struct dsa_st;
+import deimos.openssl.dsa;
+/*struct dsa_st;*/
 alias dsa_st DSA;
-struct dsa_method;
+/*struct dsa_method;*/
 alias dsa_method DSA_METHOD;
 
-// import deimos.openssl.rsa;
-struct rsa_st;
+import deimos.openssl.rsa;
+/*struct rsa_st;*/
 alias rsa_st RSA;
-struct rsa_meth_st;
+/*struct rsa_meth_st;*/
 alias rsa_meth_st RSA_METHOD;
 
 import deimos.openssl.rand;
@@ -176,10 +176,8 @@ alias x509_revoked_st X509_REVOKED;
 alias X509_name_st X509_NAME;
 alias X509_pubkey_st X509_PUBKEY;
 alias x509_store_st X509_STORE;
-struct x509_store_ctx_st;
+/*struct x509_store_ctx_st;*/
 alias x509_store_ctx_st X509_STORE_CTX;
-
-// import deimos.openssl.pkcs12;
 alias pkcs8_priv_key_info_st PKCS8_PRIV_KEY_INFO;
 
 import deimos.openssl.x509v3;
@@ -192,7 +190,6 @@ alias store_st STORE;
 struct store_method_st;
 alias store_method_st STORE_METHOD;
 
-// import deimos.openssl.ui;
 struct ui_st;
 alias ui_st UI;
 struct ui_method_st;
@@ -235,9 +232,10 @@ alias typeof(*(ExternC!(void function(void* parent, void* ptr, CRYPTO_EX_DATA* a
 alias typeof(*(ExternC!(int function(CRYPTO_EX_DATA* to, CRYPTO_EX_DATA* from, void* from_d,
 					int idx, c_long argl, void* argp))).init) CRYPTO_EX_dup;
 
+import deimos.openssl.ocsp;
 struct ocsp_req_ctx_st;
 alias ocsp_req_ctx_st OCSP_REQ_CTX;
-struct ocsp_response_st;
+/*struct ocsp_response_st;*/
 alias ocsp_response_st OCSP_RESPONSE;
-struct ocsp_responder_id_st;
+/*struct ocsp_responder_id_st;*/
 alias ocsp_responder_id_st OCSP_RESPID;
