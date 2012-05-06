@@ -284,7 +284,7 @@ enum V_CRYPTO_MDEBUG_ALL = (V_CRYPTO_MDEBUG_TIME | V_CRYPTO_MDEBUG_THREAD);
 
 
 /* predec of the BIO type */
-struct bio_st;
+import deimos.openssl.bio; /*struct bio_st;*/
 alias bio_st BIO_dummy;
 
 struct crypto_ex_data_st
