@@ -62,6 +62,7 @@ import deimos.openssl._d_util;
 
 public import deimos.openssl.bio;
 public import deimos.openssl.x509;
+public import deimos.openssl.pkcs7;
 
 extern (C):
 nothrow:

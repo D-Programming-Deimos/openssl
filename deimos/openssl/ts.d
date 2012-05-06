@@ -74,6 +74,7 @@ public import deimos.openssl.bio;
 public import deimos.openssl.stack;
 public import deimos.openssl.asn1;
 public import deimos.openssl.safestack;
+public import deimos.openssl.pkcs7;
 
 version(OPENSSL_NO_RSA) {} else {
 public import deimos.openssl.rsa;
