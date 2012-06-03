@@ -328,87 +328,88 @@ int PEM_write_bio_##name(BIO* bp, type* x, const(EVP_CIPHER)* enc, \
 /* These are the same except they are for the declarations */
 
 version (OPENSSL_NO_FP_API) {
-	mixin template DECLARE_PEM_read_fp(string name, type) {}
-	mixin template DECLARE_PEM_write_fp(string name, type) {}
-	mixin template DECLARE_PEM_write_fp_const(string name, type) {}
-	mixin template DECLARE_PEM_write_cb_fp(string name, type) {}
+	string DECLARE_PEM_read_fp(string name, string type)() { return ""; }
+	string DECLARE_PEM_read_fp(string name, string type)() { return ""; }
+	string DECLARE_PEM_write_fp(string name, string type)() { return ""; }
+	string DECLARE_PEM_write_fp_const(string name, string type)() { return ""; }
+	string DECLARE_PEM_write_cb_fp(string name, string type)() { return ""; }
 } else {
-	mixin template DECLARE_PEM_read_fp(string name, type) {
-		mixin("type* PEM_read_" ~ name ~ "(FILE* fp, type** x, pem_password_cb* cb, void* u);");
+	string DECLARE_PEM_read_fp(string name, string type)() {
+		return type ~ "* PEM_read_" ~ name ~ "(FILE* fp, " ~ type ~ "** x, pem_password_cb* cb, void* u);";
 	}
 
-	mixin template DECLARE_PEM_write_fp(string name, type) {
-		mixin("int PEM_write_" ~ name ~ "(FILE* fp, type* x);");
+	string DECLARE_PEM_write_fp(string name, string type)() {
+		return "int PEM_write_" ~ name ~ "(FILE* fp, " ~ type ~ "* x);";
 	}
 
-	mixin template DECLARE_PEM_write_fp_const(string name, type) {
-		mixin("int PEM_write_" ~ name ~ "(FILE* fp, const(type)* x);");
+	string DECLARE_PEM_write_fp_const(string name, string type)() {
+		return "int PEM_write_" ~ name ~ "(FILE* fp, const(" ~ type ~ ")* x);";
 	}
 
-	mixin template DECLARE_PEM_write_cb_fp(string name, type) {
-		mixin("int PEM_write_" ~ name ~ "(FILE* fp, type* x, const(EVP_CIPHER)* enc,
-		     ubyte* kstr, int klen, pem_password_cb* cb, void* u);");
+	string DECLARE_PEM_write_cb_fp(string name, string type)() {
+		return "int PEM_write_" ~ name ~ "(FILE* fp, " ~ type ~ "* x, const(EVP_CIPHER)* enc,
+		     ubyte* kstr, int klen, pem_password_cb* cb, void* u);";
 	}
 
 }
 
 version (OPENSSL_NO_BIO) {
-	mixin template DECLARE_PEM_read_bio(string name, type) {}
-	mixin template DECLARE_PEM_write_bio(string name, type) {}
-	mixin template DECLARE_PEM_write_bio_const(string name, type) {}
-	mixin template DECLARE_PEM_write_cb_bio(string name, type) {}
+	string DECLARE_PEM_read_bio(string name, string type)() { return ""; }
+	string DECLARE_PEM_write_bio(string name, string type)() { return ""; }
+	string DECLARE_PEM_write_bio_const(string name, string type)() { return ""; }
+	string DECLARE_PEM_write_cb_bio(string name, string type)() { return ""; }
 } else {
-	mixin template DECLARE_PEM_read_bio(string name, type) {
-		mixin("type* PEM_read_bio_" ~ name ~ "(BIO* bp, type** x, pem_password_cb* cb, void* u);");
+	string DECLARE_PEM_read_bio(string name, string type)() {
+		return type ~ "* PEM_read_bio_" ~ name ~ "(BIO* bp, " ~ type ~ "** x, pem_password_cb* cb, void* u);";
 	}
 
-	mixin template DECLARE_PEM_write_bio(string name, type) {
-		mixin("int PEM_write_bio_" ~ name ~ "(BIO* bp, type* x);");
+	string DECLARE_PEM_write_bio(string name, string type)() {
+		return "int PEM_write_bio_" ~ name ~ "(BIO* bp, " ~ type ~ "* x);";
 	}
 
-	mixin template DECLARE_PEM_write_bio_const(string name, type) {
-		mixin("int PEM_write_bio_" ~ name ~ "(BIO* bp, const(type)* x);");
+	string DECLARE_PEM_write_bio_const(string name, string type)() {
+		return "int PEM_write_bio_" ~ name ~ "(BIO* bp, const(" ~ type ~ ")* x);";
 	}
 
-	mixin template DECLARE_PEM_write_cb_bio(string name, type) {
-		mixin("int PEM_write_bio_" ~ name ~ "(BIO* bp, type* x, const(EVP_CIPHER)* enc,
-		     ubyte* kstr, int klen, pem_password_cb* cb, void* u);");
+	string DECLARE_PEM_write_cb_bio(string name, string type)() {
+		return "int PEM_write_bio_" ~ name ~ "(BIO* bp, " ~ type ~ "* x, const(EVP_CIPHER)* enc,
+		     ubyte* kstr, int klen, pem_password_cb* cb, void* u);";
 	}
 }
 
-mixin template DECLARE_PEM_write(string name, type) {
-	mixin DECLARE_PEM_write_bio!(name, type);
-	mixin DECLARE_PEM_write_fp!(name, type);
+string DECLARE_PEM_write(string name, string type)() {
+	return DECLARE_PEM_write_bio!(name, type) ~ "\n" ~
+	       DECLARE_PEM_write_fp!(name, type);
 }
 
-mixin template DECLARE_PEM_write_const(string name, type) {
-	mixin DECLARE_PEM_write_bio_const!(name, type);
-	mixin DECLARE_PEM_write_fp_const!(name, type);
+string DECLARE_PEM_write_const(string name, string type)() {
+	return DECLARE_PEM_write_bio_const!(name, type) ~ "\n" ~
+	       DECLARE_PEM_write_fp_const!(name, type);
 }
 
-mixin template DECLARE_PEM_write_cb(string name, type) {
-	mixin DECLARE_PEM_write_cb_bio!(name, type);
-	mixin DECLARE_PEM_write_cb_fp!(name, type);
+string DECLARE_PEM_write_cb(string name, string type)() {
+	return DECLARE_PEM_write_cb_bio!(name, type) ~ "\n" ~
+	       DECLARE_PEM_write_cb_fp!(name, type);
 }
 
-mixin template DECLARE_PEM_read(string name, type) {
-	mixin DECLARE_PEM_read_bio!(name, type);
-	mixin DECLARE_PEM_read_fp!(name, type);
+string DECLARE_PEM_read(string name, string type)() {
+	return DECLARE_PEM_read_bio!(name, type) ~ "\n" ~
+	       DECLARE_PEM_read_fp!(name, type);
 }
 
-mixin template DECLARE_PEM_rw(string name, type) {
-	mixin DECLARE_PEM_read!(name, type);
-	mixin DECLARE_PEM_write!(name, type);
+string DECLARE_PEM_rw(string name, string type)() {
+	return DECLARE_PEM_read!(name, type) ~ "\n" ~
+	       DECLARE_PEM_write!(name, type);
 }
 
-mixin template DECLARE_PEM_rw_const(string name, type) {
-	mixin DECLARE_PEM_read!(name, type);
-	mixin DECLARE_PEM_write_const!(name, type);
+string DECLARE_PEM_rw_const(string name, string type)() {
+	return DECLARE_PEM_read!(name, type) ~ "\n" ~
+	       DECLARE_PEM_write_const!(name, type);
 }
 
-mixin template DECLARE_PEM_rw_cb(string name, type) {
-	mixin DECLARE_PEM_read!(name, type);
-	mixin DECLARE_PEM_write_cb!(name, type);
+string DECLARE_PEM_rw_cb(string name, string type)() {
+	return DECLARE_PEM_read!(name, type) ~ "\n" ~
+	       DECLARE_PEM_write_cb!(name, type);
 }
 
 version (all) {
@@ -472,56 +473,56 @@ void	PEM_dek_info(char* buf, const(char)* type, int len, char* str);
 
 public import deimos.openssl.symhacks;
 
-mixin DECLARE_PEM_rw!("X509", X509);
+mixin(DECLARE_PEM_rw!("X509", "X509"));
 
-mixin DECLARE_PEM_rw!("X509_AUX", X509);
+mixin(DECLARE_PEM_rw!("X509_AUX", "X509"));
 
-mixin DECLARE_PEM_rw!("X509_CERT_PAIR", X509_CERT_PAIR);
+mixin(DECLARE_PEM_rw!("X509_CERT_PAIR", "X509_CERT_PAIR"));
 
-mixin DECLARE_PEM_rw!("X509_REQ", X509_REQ);
-mixin DECLARE_PEM_write!("X509_REQ_NEW", X509_REQ);
+mixin(DECLARE_PEM_rw!("X509_REQ", "X509_REQ"));
+mixin(DECLARE_PEM_write!("X509_REQ_NEW", "X509_REQ"));
 
-mixin DECLARE_PEM_rw!("X509_CRL", X509_CRL);
+mixin(DECLARE_PEM_rw!("X509_CRL", "X509_CRL"));
 
-mixin DECLARE_PEM_rw!("PKCS7", PKCS7);
+mixin(DECLARE_PEM_rw!("PKCS7", "PKCS7"));
 
-mixin DECLARE_PEM_rw!("NETSCAPE_CERT_SEQUENCE", NETSCAPE_CERT_SEQUENCE);
+mixin(DECLARE_PEM_rw!("NETSCAPE_CERT_SEQUENCE", "NETSCAPE_CERT_SEQUENCE"));
 
-mixin DECLARE_PEM_rw!("PKCS8", X509_SIG);
+mixin(DECLARE_PEM_rw!("PKCS8", "X509_SIG"));
 
-mixin DECLARE_PEM_rw!("PKCS8_PRIV_KEY_INFO", PKCS8_PRIV_KEY_INFO);
+mixin(DECLARE_PEM_rw!("PKCS8_PRIV_KEY_INFO", "PKCS8_PRIV_KEY_INFO"));
 
 version(OPENSSL_NO_RSA) {} else {
-mixin DECLARE_PEM_rw_cb!("RSAPrivateKey", RSA);
+mixin(DECLARE_PEM_rw_cb!("RSAPrivateKey", "RSA"));
 
-mixin DECLARE_PEM_rw_const!("RSAPublicKey", RSA);
-mixin DECLARE_PEM_rw!("RSA_PUBKEY", RSA);
+mixin(DECLARE_PEM_rw_const!("RSAPublicKey", "RSA"));
+mixin(DECLARE_PEM_rw!("RSA_PUBKEY", "RSA"));
 
 }
 
 version(OPENSSL_NO_DSA) {} else {
-mixin DECLARE_PEM_rw_cb!("DSAPrivateKey", DSA);
+mixin(DECLARE_PEM_rw_cb!("DSAPrivateKey", "DSA"));
 
-mixin DECLARE_PEM_rw!("DSA_PUBKEY", DSA);
+mixin(DECLARE_PEM_rw!("DSA_PUBKEY", "DSA"));
 
-mixin DECLARE_PEM_rw_const!("DSAparams", DSA);
+mixin(DECLARE_PEM_rw_const!("DSAparams", "DSA"));
 
 }
 
 version(OPENSSL_NO_EC) {} else {
-mixin DECLARE_PEM_rw_const!("ECPKParameters", EC_GROUP);
-mixin DECLARE_PEM_rw_cb!("ECPrivateKey", EC_KEY);
-mixin DECLARE_PEM_rw!("EC_PUBKEY", EC_KEY);
+mixin(DECLARE_PEM_rw_const!("ECPKParameters", "EC_GROUP"));
+mixin(DECLARE_PEM_rw_cb!("ECPrivateKey", "EC_KEY"));
+mixin(DECLARE_PEM_rw!("EC_PUBKEY", "EC_KEY"));
 }
 
 version(OPENSSL_NO_DH) {} else {
-mixin DECLARE_PEM_rw_const!("DHparams", DH);
+mixin(DECLARE_PEM_rw_const!("DHparams", "DH"));
 
 }
 
-mixin DECLARE_PEM_rw_cb!("PrivateKey", EVP_PKEY);
+mixin(DECLARE_PEM_rw_cb!("PrivateKey", "EVP_PKEY"));
 
-mixin DECLARE_PEM_rw!("PUBKEY", EVP_PKEY);
+mixin(DECLARE_PEM_rw!("PUBKEY", "EVP_PKEY"));
 
 int PEM_write_bio_PKCS8PrivateKey_nid(BIO* bp, EVP_PKEY* x, int nid,
 				  char* kstr, int klen,
