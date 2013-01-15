@@ -71,6 +71,8 @@ version (Posix) {
 	import core.sys.posix.netdb;
 } else version (Win32) {
 	import std.c.windows.winsock;
+} else version (Win64) {
+	import std.c.windows.winsock;
 }
 
 public import deimos.openssl.crypto;

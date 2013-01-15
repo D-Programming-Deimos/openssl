@@ -66,6 +66,8 @@ public import deimos.openssl.e_os2;
 
 version (Win32) {
 	import core.sys.windows.windows;
+} else version (Win64) {
+	import core.sys.windows.windows;
 }
 
 extern (C):
@@ -113,6 +115,9 @@ int RAND_egd_bytes(const(char)* path,int bytes);
 int RAND_poll();
 
 version (Win32) {
+void RAND_screen();
+int RAND_event(UINT, WPARAM, LPARAM);
+} else version (Win64) {
 void RAND_screen();
 int RAND_event(UINT, WPARAM, LPARAM);
 }
