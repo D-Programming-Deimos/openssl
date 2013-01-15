@@ -76,6 +76,8 @@ version (Win32) {
 import std.c.windows.winsock;
 // #elif defined(OPENSSL_SYS_NETWARE) && !defined(_WINSOCK2API_)
 // #include <sys/timeval.h>
+} else version (Win64) {
+import std.c.windows.winsock;
 } else {
 import core.sys.posix.sys.time;
 }
