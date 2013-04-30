@@ -1,0 +1,8 @@
+{
+	"name": "openssl",
+	"description": "Deimos bindings for the OpenSSL cryptographic library",
+	"homepage": "http://www.openssl.org/",
+	"importPaths": ["."],
+	"targetType": "sourceLibrary",
+	"libs-posix" : ["ssl", "crypto"]
+}
