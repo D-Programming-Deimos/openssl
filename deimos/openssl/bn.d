@@ -295,7 +295,7 @@ version(OPENSSL_NO_DEPRECATED) {} else {
 enum BN_FLG_FREE = 0x8000;	/* used for debuging */
 }
 void BN_set_flags()(BIGNUM* b, int n) { b.flags |= n; }
-int BN_get_flags()(BIGNUM* b, int n) { return b.flags & n; }
+int BN_get_flags()(const(BIGNUM)* b, int n) { return b.flags & n; }
 
 /* get a clone of a BIGNUM with changed flags, for* temporary* use only
  * (the two BIGNUMs cannot not be used in parallel!) */
@@ -410,15 +410,15 @@ auto BN_prime_checks_for_size(T)(T b) {
 	/* b >= 100 */ 27);
 }
 
-auto BN_num_bytes()(BIGNUM* a) { return (BN_num_bits(a)+7)/8; }
+auto BN_num_bytes()(const(BIGNUM)* a) { return (BN_num_bits(a)+7)/8; }
 
 /* Note that BN_abs_is_word didn't work reliably for w == 0 until 0.9.8 */
-auto BN_abs_is_word()(BIGNUM* a, BN_ULONG w) { return (((a.top == 1) && (a.d[0] == (w))) ||
+auto BN_abs_is_word()(const(BIGNUM)* a, BN_ULONG w) { return (((a.top == 1) && (a.d[0] == (w))) ||
 				(((w) == 0) && (a.top == 0))); }
-auto BN_is_zero()(BIGNUM* a) { return (a.top == 0); }
-auto BN_is_one()(BIGNUM* a) { return (BN_abs_is_word((a),1) && !a.neg); }
-auto BN_is_word()(BIGNUM* a, BN_ULONG w) { return (BN_abs_is_word((a),(w)) && (!(w) || !a.neg)); }
-auto BN_is_odd()(BIGNUM* a) { return ((a.top > 0) && (a.d[0] & 1)); }
+auto BN_is_zero()(const(BIGNUM)* a) { return (a.top == 0); }
+auto BN_is_one()(const(BIGNUM)* a) { return (BN_abs_is_word((a),1) && !a.neg); }
+auto BN_is_word()(const(BIGNUM)* a, BN_ULONG w) { return (BN_abs_is_word((a),(w)) && (!(w) || !a.neg)); }
+auto BN_is_odd()(const(BIGNUM)* a) { return ((a.top > 0) && (a.d[0] & 1)); }
 
 auto BN_one()(BIGNUM* a) { return BN_set_word((a),1); }
 auto BN_zero_ex()(BIGNUM* a) {
@@ -471,11 +471,11 @@ void	BN_set_negative(BIGNUM* b, int n);
  * \param  a  pointer to the BIGNUM object
  * \return 1 if a < 0 and 0 otherwise
  */
-auto BN_is_negative()(BIGNUM* a) { return a.neg != 0; }
+auto BN_is_negative()(const(BIGNUM)* a) { return a.neg != 0; }
 
 int	BN_div(BIGNUM* dv, BIGNUM* rem, const(BIGNUM)* m, const(BIGNUM)* d,
 	BN_CTX* ctx);
-auto BN_mod()(BIGNUM* rem,BIGNUM* m,BIGNUM* d,BN_CTX* ctx) { return BN_div(NULL,(rem),(m),(d),(ctx)); }
+auto BN_mod()(BIGNUM* rem,const(BIGNUM)* m,const(BIGNUM)* d,BN_CTX* ctx) { return BN_div(null,(rem),(m),(d),(ctx)); }
 int	BN_nnmod(BIGNUM* r, const(BIGNUM)* m, const(BIGNUM)* d, BN_CTX* ctx);
 int	BN_mod_add(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* b, const(BIGNUM)* m, BN_CTX* ctx);
 int	BN_mod_add_quick(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* b, const(BIGNUM)* m);
