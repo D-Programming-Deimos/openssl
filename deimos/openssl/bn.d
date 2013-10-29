@@ -475,7 +475,7 @@ auto BN_is_negative()(BIGNUM* a) { return a.neg != 0; }
 
 int	BN_div(BIGNUM* dv, BIGNUM* rem, const(BIGNUM)* m, const(BIGNUM)* d,
 	BN_CTX* ctx);
-auto BN_mod()(BIGNUM* rem,BIGNUM* m,BIGNUM* d,BN_CTX* ctx) { return BN_div(NULL,(rem),(m),(d),(ctx)); }
+auto BN_mod()(BIGNUM* rem,BIGNUM* m,BIGNUM* d,BN_CTX* ctx) { return BN_div(null,(rem),(m),(d),(ctx)); }
 int	BN_nnmod(BIGNUM* r, const(BIGNUM)* m, const(BIGNUM)* d, BN_CTX* ctx);
 int	BN_mod_add(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* b, const(BIGNUM)* m, BN_CTX* ctx);
 int	BN_mod_add_quick(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* b, const(BIGNUM)* m);
