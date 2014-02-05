@@ -132,7 +132,7 @@ int CMS_set_detached(CMS_ContentInfo* cms, int detached);
 
 // #ifdef HEADER_PEM_H
 import deimos.openssl.pem;
-mixin(DECLARE_PEM_rw_const!("CMS", "CMS_ContentInfo"));
+mixin(DECLARE_PEM_rw_const!("CMS", "CMS_ContentInfo")());
 // #endif
 
 int CMS_stream(ubyte*** boundary, CMS_ContentInfo* cms);
