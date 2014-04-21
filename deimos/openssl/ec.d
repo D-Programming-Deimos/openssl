@@ -90,14 +90,8 @@ version(OPENSSL_NO_DEPRECATED) {} else {
 public import deimos.openssl.bn;
 }
 
-// #ifdef  __cplusplus
-// extern "C" {
-// #elif defined(__SUNPRO_C)
-// # if __SUNPRO_C >= 0x520
-// # pragma error_messages (off,E_ARRAY_OF_INCOMPLETE_NONAME,E_ARRAY_OF_INCOMPLETE)
-// # endif
-// #endif
-
+extern (C):
+nothrow:
 
 static if (!is(typeof(OPENSSL_ECC_MAX_FIELD_BITS))) {
 	enum OPENSSL_ECC_MAX_FIELD_BITS = 661;
