@@ -1334,7 +1334,7 @@ auto i2d_SSL_SESSION_bio()(BIO* bp,SSL_SESSION** s_id) {
     return ASN1_i2d_bio_of!SSL_SESSION(&i2d_SSL_SESSION,bp,s_id);
 }
 
-mixin(DECLARE_PEM_rw!("SSL_SESSION", "SSL_SESSION"));
+mixin(DECLARE_PEM_rw!("SSL_SESSION", "SSL_SESSION")());
 
 enum SSL_AD_REASON_OFFSET = 1000; /* offset to get SSL_R_... value from SSL_AD_... */
 
