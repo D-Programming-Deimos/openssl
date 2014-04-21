@@ -242,7 +242,6 @@ struct asn1_string_st {
 	 * handled correctly */
 	c_long flags;
 	}
-alias asn1_string_st ASN1_STRING;
 
 /* ASN1_ENCODING structure: this is used to save the received
  * encoding of an ASN1 type. This is useful to get round
@@ -290,7 +289,6 @@ enum ub_email_address = 128;
  * see asn1t.h
  */
 alias ASN1_TEMPLATE_st ASN1_TEMPLATE;
-alias ASN1_ITEM_st ASN1_ITEM;
 import deimos.openssl.asn1t; /*struct ASN1_TLC_st;*/
 alias ASN1_TLC_st ASN1_TLC;
 /* This is just an opaque pointer */
@@ -1226,6 +1224,7 @@ enum ASN1_F_ASN1_ITEM_I2D_BIO = 192;
 enum ASN1_F_ASN1_ITEM_I2D_FP = 193;
 enum ASN1_F_ASN1_ITEM_PACK = 198;
 enum ASN1_F_ASN1_ITEM_SIGN = 195;
+enum ASN1_F_ASN1_ITEM_SIGN_CTX = 220;
 enum ASN1_F_ASN1_ITEM_UNPACK = 199;
 enum ASN1_F_ASN1_ITEM_VERIFY = 197;
 enum ASN1_F_ASN1_MBSTRING_NCOPY = 122;
@@ -1298,6 +1297,7 @@ enum ASN1_F_PARSE_TAGGING = 182;
 enum ASN1_F_PKCS5_PBE2_SET_IV = 167;
 enum ASN1_F_PKCS5_PBE_SET = 202;
 enum ASN1_F_PKCS5_PBE_SET0_ALGOR = 215;
+enum ASN1_F_PKCS5_PBKDF2_SET = 219;
 enum ASN1_F_SMIME_READ_ASN1 = 212;
 enum ASN1_F_SMIME_TEXT = 213;
 enum ASN1_F_X509_CINF_NEW = 168;
@@ -1323,6 +1323,7 @@ enum ASN1_R_BN_LIB = 105;
 enum ASN1_R_BOOLEAN_IS_WRONG_LENGTH = 106;
 enum ASN1_R_BUFFER_TOO_SMALL = 107;
 enum ASN1_R_CIPHER_HAS_NO_OBJECT_IDENTIFIER = 108;
+enum ASN1_R_CONTEXT_NOT_INITIALISED = 217;
 enum ASN1_R_DATA_IS_WRONG = 109;
 enum ASN1_R_DECODE_ERROR = 110;
 enum ASN1_R_DECODING_ERROR = 111;

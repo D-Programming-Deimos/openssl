@@ -114,6 +114,9 @@ struct SHAstate_st
 alias SHAstate_st  SHA_CTX;
 
 version(OPENSSL_NO_SHA0) {} else {
+version(OPENSSL_FIPS) {
+    int private_SHA_Init(SHA_CTX* c);
+}
 int SHA_Init(SHA_CTX* c);
 int SHA_Update(SHA_CTX* c, const(void)* data, size_t len);
 int SHA_Final(ubyte* md, SHA_CTX* c);
@@ -121,6 +124,9 @@ ubyte* SHA(const(ubyte)* d, size_t n, ubyte* md);
 void SHA_Transform(SHA_CTX* c, const(ubyte)* data);
 }
 version(OPENSSL_NO_SHA1) {} else {
+version(OPENSSL_FIPS) {
+    int private_SHA1_Init(SHA_CTX* c);
+}
 int SHA1_Init(SHA_CTX* c);
 int SHA1_Update(SHA_CTX* c, const(void)* data, size_t len);
 int SHA1_Final(ubyte* md, SHA_CTX* c);
@@ -143,6 +149,10 @@ struct SHA256state_st {
 alias SHA256state_st SHA256_CTX;
 
 version(OPENSSL_NO_SHA256) {} else {
+version(OPENSSL_FIPS) {
+    int private_SHA224_Init(SHA256_CTX *c);
+    int private_SHA256_Init(SHA256_CTX *c);
+}
 int SHA224_Init(SHA256_CTX* c);
 int SHA224_Update(SHA256_CTX* c, const(void)* data, size_t len);
 int SHA224_Final(ubyte* md, SHA256_CTX* c);
@@ -193,6 +203,10 @@ alias SHA512state_st SHA512_CTX;
 }
 
 version(OPENSSL_NO_SHA512) {} else {
+version(OPENSSL_FIPS) {
+    int private_SHA384_Init(SHA512_CTX* c);
+    int private_SHA512_Init(SHA512_CTX* c);
+}
 int SHA384_Init(SHA512_CTX* c);
 int SHA384_Update(SHA512_CTX* c, const(void)* data, size_t len);
 int SHA384_Final(ubyte* md, SHA512_CTX* c);

@@ -88,7 +88,7 @@ int	BUF_MEM_grow_clean(BUF_MEM* str, size_t len);
 char* 	BUF_strdup(const(char)* str);
 char* 	BUF_strndup(const(char)* str, size_t siz);
 void* 	BUF_memdup(const(void)* data, size_t siz);
-void	BUF_reverse(ubyte* out_, ubyte* in_, size_t siz);
+void	BUF_reverse(ubyte* out_, const(ubyte)* in_, size_t siz);
 
 /* safe string functions */
 size_t BUF_strlcpy(char* dst,const(char)* src,size_t siz);

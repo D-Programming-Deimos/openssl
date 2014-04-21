@@ -106,6 +106,9 @@ struct MD5state_st {
 	}
 alias MD5state_st MD5_CTX;
 
+version(OPENSSL_FIPS) {
+    int private_MD5_Init(MD5_CTX* c);
+}
 int MD5_Init(MD5_CTX* c);
 int MD5_Update(MD5_CTX* c, const(void)* data, size_t len);
 int MD5_Final(ubyte* md, MD5_CTX* c);

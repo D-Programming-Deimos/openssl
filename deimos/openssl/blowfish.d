@@ -105,7 +105,9 @@ struct bf_key_st {
 	}
 alias bf_key_st BF_KEY;
 
-
+version(OPENSSL_FIPS) {
+    void private_BF_set_key(BF_KEY *key, int len, const(ubyte)* data);
+}
 void BF_set_key(BF_KEY* key, int len, const(ubyte)* data);
 
 void BF_encrypt(BF_LONG* data,const(BF_KEY)* key);

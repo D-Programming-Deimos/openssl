@@ -120,6 +120,7 @@ enum CMS_NOCRL = 0x2000;
 enum CMS_PARTIAL = 0x4000;
 enum CMS_REUSE_DIGEST = 0x8000;
 enum CMS_USE_KEYID = 0x10000;
+enum CMS_DEBUG_DECRYPT = 0x20000;
 
 const(ASN1_OBJECT)* CMS_get0_type(CMS_ContentInfo* cms);
 
@@ -194,6 +195,8 @@ int CMS_decrypt_set1_pkey(CMS_ContentInfo* cms, EVP_PKEY* pk, X509* cert);
 int CMS_decrypt_set1_key(CMS_ContentInfo* cms,
 				ubyte* key, size_t keylen,
 				ubyte* id, size_t idlen);
+int CMS_decrypt_set1_password(CMS_ContentInfo *cms, 
+				ubyte *pass, ossl_ssize_t passlen);
 
 STACK_OF!(CMS_RecipientInfo) *CMS_get0_RecipientInfos(CMS_ContentInfo* cms);
 int CMS_RecipientInfo_type(CMS_RecipientInfo* ri);
@@ -228,6 +231,16 @@ int CMS_RecipientInfo_set0_key(CMS_RecipientInfo* ri,
 
 int CMS_RecipientInfo_kekri_id_cmp(CMS_RecipientInfo* ri,
 					const(ubyte)* id, size_t idlen);
+
+int CMS_RecipientInfo_set0_password(CMS_RecipientInfo *ri, 
+					ubyte* pass,
+					ossl_ssize_t passlen);
+
+CMS_RecipientInfo *CMS_add0_recipient_password(CMS_ContentInfo *cms,
+					int iter, int wrap_nid, int pbe_nid,
+					ubyte* pass,
+					ossl_ssize_t passlen,
+					const(EVP_CIPHER)* kekciph);
 
 int CMS_RecipientInfo_decrypt(CMS_ContentInfo* cms, CMS_RecipientInfo* ri);
 
@@ -340,6 +353,7 @@ void ERR_load_CMS_strings();
 enum CMS_F_CHECK_CONTENT = 99;
 enum CMS_F_CMS_ADD0_CERT = 164;
 enum CMS_F_CMS_ADD0_RECIPIENT_KEY = 100;
+enum CMS_F_CMS_ADD0_RECIPIENT_PASSWORD = 165;
 enum CMS_F_CMS_ADD1_RECEIPTREQUEST = 158;
 enum CMS_F_CMS_ADD1_RECIPIENT_CERT = 101;
 enum CMS_F_CMS_ADD1_SIGNER = 102;
@@ -354,6 +368,7 @@ enum CMS_F_CMS_DATAFINAL = 110;
 enum CMS_F_CMS_DATAINIT = 111;
 enum CMS_F_CMS_DECRYPT = 112;
 enum CMS_F_CMS_DECRYPT_SET1_KEY = 113;
+enum CMS_F_CMS_DECRYPT_SET1_PASSWORD = 166;
 enum CMS_F_CMS_DECRYPT_SET1_PKEY = 114;
 enum CMS_F_CMS_DIGESTALGORITHM_FIND_CTX = 115;
 enum CMS_F_CMS_DIGESTALGORITHM_INIT_BIO = 116;
@@ -388,7 +403,9 @@ enum CMS_F_CMS_RECIPIENTINFO_KTRI_DECRYPT = 140;
 enum CMS_F_CMS_RECIPIENTINFO_KTRI_ENCRYPT = 141;
 enum CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_ALGS = 142;
 enum CMS_F_CMS_RECIPIENTINFO_KTRI_GET0_SIGNER_ID = 143;
+enum CMS_F_CMS_RECIPIENTINFO_PWRI_CRYPT = 167;
 enum CMS_F_CMS_RECIPIENTINFO_SET0_KEY = 144;
+enum CMS_F_CMS_RECIPIENTINFO_SET0_PASSWORD = 168;
 enum CMS_F_CMS_RECIPIENTINFO_SET0_PKEY = 145;
 enum CMS_F_CMS_SET1_SIGNERIDENTIFIER = 146;
 enum CMS_F_CMS_SET_DETACHED = 147;
@@ -429,6 +446,7 @@ enum CMS_R_ERROR_READING_MESSAGEDIGEST_ATTRIBUTE = 114;
 enum CMS_R_ERROR_SETTING_KEY = 115;
 enum CMS_R_ERROR_SETTING_RECIPIENTINFO = 116;
 enum CMS_R_INVALID_ENCRYPTED_KEY_LENGTH = 117;
+enum CMS_R_INVALID_KEY_ENCRYPTION_PARAMETER = 176;
 enum CMS_R_INVALID_KEY_LENGTH = 118;
 enum CMS_R_MD_BIO_INIT_ERROR = 119;
 enum CMS_R_MESSAGEDIGEST_ATTRIBUTE_WRONG_LENGTH = 120;
@@ -441,6 +459,7 @@ enum CMS_R_NOT_A_SIGNED_RECEIPT = 165;
 enum CMS_R_NOT_ENCRYPTED_DATA = 122;
 enum CMS_R_NOT_KEK = 123;
 enum CMS_R_NOT_KEY_TRANSPORT = 124;
+enum CMS_R_NOT_PWRI = 177;
 enum CMS_R_NOT_SUPPORTED_FOR_THIS_KEY_TYPE = 125;
 enum CMS_R_NO_CIPHER = 126;
 enum CMS_R_NO_CONTENT = 127;
@@ -453,6 +472,7 @@ enum CMS_R_NO_MATCHING_DIGEST = 131;
 enum CMS_R_NO_MATCHING_RECIPIENT = 132;
 enum CMS_R_NO_MATCHING_SIGNATURE = 166;
 enum CMS_R_NO_MSGSIGDIGEST = 167;
+enum CMS_R_NO_PASSWORD = 178;
 enum CMS_R_NO_PRIVATE_KEY = 133;
 enum CMS_R_NO_PUBLIC_KEY = 134;
 enum CMS_R_NO_RECEIPT_REQUEST = 168;
@@ -476,9 +496,11 @@ enum CMS_R_UNKNOWN_ID = 150;
 enum CMS_R_UNSUPPORTED_COMPRESSION_ALGORITHM = 151;
 enum CMS_R_UNSUPPORTED_CONTENT_TYPE = 152;
 enum CMS_R_UNSUPPORTED_KEK_ALGORITHM = 153;
+enum CMS_R_UNSUPPORTED_KEY_ENCRYPTION_ALGORITHM = 179;
 enum CMS_R_UNSUPPORTED_RECIPIENT_TYPE = 154;
 enum CMS_R_UNSUPPORTED_RECPIENTINFO_TYPE = 155;
 enum CMS_R_UNSUPPORTED_TYPE = 156;
 enum CMS_R_UNWRAP_ERROR = 157;
+enum CMS_R_UNWRAP_FAILURE = 180;
 enum CMS_R_VERIFICATION_FAILURE = 158;
 enum CMS_R_WRAP_ERROR = 159;

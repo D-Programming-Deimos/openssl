@@ -100,6 +100,21 @@ enum DSA_FLAG_NO_EXP_CONSTTIME = 0x02; /* new with 0.9.7h; the built-in DSA
                                               * be used for all exponents.
                                               */
 
+/* If this flag is set the DSA method is FIPS compliant and can be used
+ * in FIPS mode. This is set in the validated module method. If an
+ * application sets this flag in its own methods it is its reposibility
+ * to ensure the result is compliant.
+ */
+
+enum DSA_FLAG_FIPS_METHOD = 0x0400;
+
+/* If this flag is set the operations normally disabled in FIPS mode are
+ * permitted it is then the applications responsibility to ensure that the
+ * usage is compliant.
+ */
+
+enum DSA_FLAG_NON_FIPS_ALLOW = 0x0400;
+
 extern (C):
 nothrow:
 
@@ -277,6 +292,8 @@ enum DSA_F_DSAPARAMS_PRINT = 100;
 enum DSA_F_DSAPARAMS_PRINT_FP = 101;
 enum DSA_F_DSA_DO_SIGN = 112;
 enum DSA_F_DSA_DO_VERIFY = 113;
+enum DSA_F_DSA_GENERATE_KEY = 124;
+enum DSA_F_DSA_GENERATE_PARAMETERS_EX = 123;
 enum DSA_F_DSA_NEW_METHOD = 103;
 enum DSA_F_DSA_PARAM_DECODE = 119;
 enum DSA_F_DSA_PRINT_FP = 105;
@@ -287,6 +304,7 @@ enum DSA_F_DSA_PUB_ENCODE = 118;
 enum DSA_F_DSA_SIGN = 106;
 enum DSA_F_DSA_SIGN_SETUP = 107;
 enum DSA_F_DSA_SIG_NEW = 109;
+enum DSA_F_DSA_SIG_PRINT = 125;
 enum DSA_F_DSA_VERIFY = 108;
 enum DSA_F_I2D_DSA_SIG = 111;
 enum DSA_F_OLD_DSA_PRIV_DECODE = 122;
@@ -303,5 +321,7 @@ enum DSA_R_DECODE_ERROR = 104;
 enum DSA_R_INVALID_DIGEST_TYPE = 106;
 enum DSA_R_MISSING_PARAMETERS = 101;
 enum DSA_R_MODULUS_TOO_LARGE = 103;
+enum DSA_R_NEED_NEW_SETUP_VALUES = 110;
+enum DSA_R_NON_FIPS_DSA_METHOD = 111;
 enum DSA_R_NO_PARAMETERS_SET = 107;
 enum DSA_R_PARAMETER_ENCODING_ERROR = 105;

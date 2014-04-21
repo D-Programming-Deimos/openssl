@@ -58,6 +58,7 @@ import deimos.openssl._d_util;
 
 // Needed for types stacks are defined for.
 import deimos.openssl.cms;
+import deimos.openssl.srp;
 import deimos.openssl.x509v3;
 
 public import deimos.openssl.stack;
@@ -1487,6 +1488,94 @@ alias SKM_sk_pop!POLICY_MAPPING sk_POLICY_MAPPING_pop;
 alias SKM_sk_sort!POLICY_MAPPING sk_POLICY_MAPPING_sort;
 alias SKM_sk_is_sorted!POLICY_MAPPING sk_POLICY_MAPPING_is_sorted;
 
+alias sk_SRP_gN_new = SKM_sk_new!SRP_gN;
+alias sk_SRP_gN_new_null = SKM_sk_new_null!SRP_gN;
+alias sk_SRP_gN_free = SKM_sk_free!SRP_gN;
+alias sk_SRP_gN_num = SKM_sk_num!SRP_gN;
+alias sk_SRP_gN_value = SKM_sk_value!SRP_gN;
+alias sk_SRP_gN_set = SKM_sk_set!SRP_gN;
+alias sk_SRP_gN_zero = SKM_sk_zero!SRP_gN;
+alias sk_SRP_gN_push = SKM_sk_push!SRP_gN;
+alias sk_SRP_gN_unshift = SKM_sk_unshift!SRP_gN;
+alias sk_SRP_gN_find = SKM_sk_find!SRP_gN;
+alias sk_SRP_gN_find_ex = SKM_sk_find_ex!SRP_gN;
+alias sk_SRP_gN_delete = SKM_sk_delete!SRP_gN;
+alias sk_SRP_gN_delete_ptr = SKM_sk_delete_ptr!SRP_gN;
+alias sk_SRP_gN_insert = SKM_sk_insert!SRP_gN;
+alias sk_SRP_gN_set_cmp_func = SKM_sk_set_cmp_func!SRP_gN;
+alias sk_SRP_gN_dup = SKM_sk_dup!SRP_gN;
+alias sk_SRP_gN_pop_free = SKM_sk_pop_free!SRP_gN;
+alias sk_SRP_gN_shift = SKM_sk_shift!SRP_gN;
+alias sk_SRP_gN_pop = SKM_sk_pop!SRP_gN;
+alias sk_SRP_gN_sort = SKM_sk_sort!SRP_gN;
+alias sk_SRP_gN_is_sorted = SKM_sk_is_sorted!SRP_gN;
+
+alias sk_SRP_gN_cache_new = SKM_sk_new!SRP_gN_cache;
+alias sk_SRP_gN_cache_new_null = SKM_sk_new_null!SRP_gN_cache;
+alias sk_SRP_gN_cache_free = SKM_sk_free!SRP_gN_cache;
+alias sk_SRP_gN_cache_num = SKM_sk_num!SRP_gN_cache;
+alias sk_SRP_gN_cache_value = SKM_sk_value!SRP_gN_cache;
+alias sk_SRP_gN_cache_set = SKM_sk_set!SRP_gN_cache;
+alias sk_SRP_gN_cache_zero = SKM_sk_zero!SRP_gN_cache;
+alias sk_SRP_gN_cache_push = SKM_sk_push!SRP_gN_cache;
+alias sk_SRP_gN_cache_unshift = SKM_sk_unshift!SRP_gN_cache;
+alias sk_SRP_gN_cache_find = SKM_sk_find!SRP_gN_cache;
+alias sk_SRP_gN_cache_find_ex = SKM_sk_find_ex!SRP_gN_cache;
+alias sk_SRP_gN_cache_delete = SKM_sk_delete!SRP_gN_cache;
+alias sk_SRP_gN_cache_delete_ptr = SKM_sk_delete_ptr!SRP_gN_cache;
+alias sk_SRP_gN_cache_insert = SKM_sk_insert!SRP_gN_cache;
+alias sk_SRP_gN_cache_set_cmp_func = SKM_sk_set_cmp_func!SRP_gN_cache;
+alias sk_SRP_gN_cache_dup = SKM_sk_dup!SRP_gN_cache;
+alias sk_SRP_gN_cache_pop_free = SKM_sk_pop_free!SRP_gN_cache;
+alias sk_SRP_gN_cache_shift = SKM_sk_shift!SRP_gN_cache;
+alias sk_SRP_gN_cache_pop = SKM_sk_pop!SRP_gN_cache;
+alias sk_SRP_gN_cache_sort = SKM_sk_sort!SRP_gN_cache;
+alias sk_SRP_gN_cache_is_sorted = SKM_sk_is_sorted!SRP_gN_cache;
+
+alias sk_SRP_user_pwd_new = SKM_sk_new!SRP_user_pwd;
+alias sk_SRP_user_pwd_new_null = SKM_sk_new_null!SRP_user_pwd;
+alias sk_SRP_user_pwd_free = SKM_sk_free!SRP_user_pwd;
+alias sk_SRP_user_pwd_num = SKM_sk_num!SRP_user_pwd;
+alias sk_SRP_user_pwd_value = SKM_sk_value!SRP_user_pwd;
+alias sk_SRP_user_pwd_set = SKM_sk_set!SRP_user_pwd;
+alias sk_SRP_user_pwd_zero = SKM_sk_zero!SRP_user_pwd;
+alias sk_SRP_user_pwd_push = SKM_sk_push!SRP_user_pwd;
+alias sk_SRP_user_pwd_unshift = SKM_sk_unshift!SRP_user_pwd;
+alias sk_SRP_user_pwd_find = SKM_sk_find!SRP_user_pwd;
+alias sk_SRP_user_pwd_find_ex = SKM_sk_find_ex!SRP_user_pwd;
+alias sk_SRP_user_pwd_delete = SKM_sk_delete!SRP_user_pwd;
+alias sk_SRP_user_pwd_delete_ptr = SKM_sk_delete_ptr!SRP_user_pwd;
+alias sk_SRP_user_pwd_insert = SKM_sk_insert!SRP_user_pwd;
+alias sk_SRP_user_pwd_set_cmp_func = SKM_sk_set_cmp_func!SRP_user_pwd;
+alias sk_SRP_user_pwd_dup = SKM_sk_dup!SRP_user_pwd;
+alias sk_SRP_user_pwd_pop_free = SKM_sk_pop_free!SRP_user_pwd;
+alias sk_SRP_user_pwd_shift = SKM_sk_shift!SRP_user_pwd;
+alias sk_SRP_user_pwd_pop = SKM_sk_pop!SRP_user_pwd;
+alias sk_SRP_user_pwd_sort = SKM_sk_sort!SRP_user_pwd;
+alias sk_SRP_user_pwd_is_sorted = SKM_sk_is_sorted!SRP_user_pwd;
+
+alias sk_SRTP_PROTECTION_PROFILE_new = SKM_sk_new!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_new_null = SKM_sk_new_null!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_free = SKM_sk_free!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_num = SKM_sk_num!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_value = SKM_sk_value!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_set = SKM_sk_set!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_zero = SKM_sk_zero!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_push = SKM_sk_push!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_unshift = SKM_sk_unshift!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_find = SKM_sk_find!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_find_ex = SKM_sk_find_ex!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_delete = SKM_sk_delete!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_delete_ptr = SKM_sk_delete_ptr!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_insert = SKM_sk_insert!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_set_cmp_func = SKM_sk_set_cmp_func!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_dup = SKM_sk_dup!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_pop_free = SKM_sk_pop_free!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_shift = SKM_sk_shift!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_pop = SKM_sk_pop!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_sort = SKM_sk_sort!SRTP_PROTECTION_PROFILE;
+alias sk_SRTP_PROTECTION_PROFILE_is_sorted = SKM_sk_is_sorted!SRTP_PROTECTION_PROFILE;
+
 import deimos.openssl.ssl;
 alias SKM_sk_new!SSL_CIPHER sk_SSL_CIPHER_new;
 alias SKM_sk_new_null!SSL_CIPHER sk_SSL_CIPHER_new_null;
@@ -2092,30 +2181,6 @@ alias SKM_sk_pop!OPENSSL_STRING sk_OPENSSL_STRING_pop;
 alias SKM_sk_sort!OPENSSL_STRING sk_OPENSSL_STRING_sort;
 alias SKM_sk_is_sorted!OPENSSL_STRING sk_OPENSSL_STRING_is_sorted;
 
-alias OPENSSL_STRING* OPENSSL_PSTRING;
-alias SKM_sk_new!OPENSSL_PSTRING sk_OPENSSL_PSTRING_new;
-alias SKM_sk_new_null!OPENSSL_PSTRING sk_OPENSSL_PSTRING_new_null;
-alias SKM_sk_push!OPENSSL_PSTRING sk_OPENSSL_PSTRING_push;
-alias SKM_sk_find!OPENSSL_PSTRING sk_OPENSSL_PSTRING_find;
-alias SKM_sk_value!OPENSSL_PSTRING sk_OPENSSL_PSTRING_value;
-alias SKM_sk_num!OPENSSL_PSTRING sk_OPENSSL_PSTRING_num;
-alias SKM_sk_pop_free!OPENSSL_PSTRING sk_OPENSSL_PSTRING_pop_free;
-alias SKM_sk_insert!OPENSSL_PSTRING sk_OPENSSL_PSTRING_insert;
-alias SKM_sk_free!OPENSSL_PSTRING sk_OPENSSL_PSTRING_free;
-alias SKM_sk_set!OPENSSL_PSTRING sk_OPENSSL_PSTRING_set;
-alias SKM_sk_zero!OPENSSL_PSTRING sk_OPENSSL_PSTRING_zero;
-alias SKM_sk_unshift!OPENSSL_PSTRING sk_OPENSSL_PSTRING_unshift;
-alias SKM_sk_find_ex!OPENSSL_PSTRING sk_OPENSSL_PSTRING_find_ex;
-alias SKM_sk_delete!OPENSSL_PSTRING sk_OPENSSL_PSTRING_delete;
-alias SKM_sk_delete_ptr!OPENSSL_PSTRING sk_OPENSSL_PSTRING_delete_ptr;
-alias SKM_sk_set_cmp_func!OPENSSL_PSTRING sk_OPENSSL_PSTRING_set_cmp_func;
-alias SKM_sk_dup!OPENSSL_PSTRING sk_OPENSSL_PSTRING_dup;
-alias SKM_sk_shift!OPENSSL_PSTRING sk_OPENSSL_PSTRING_shift;
-alias SKM_sk_pop!OPENSSL_PSTRING sk_OPENSSL_PSTRING_pop;
-alias SKM_sk_sort!OPENSSL_PSTRING sk_OPENSSL_PSTRING_sort;
-alias SKM_sk_is_sorted!OPENSSL_PSTRING sk_OPENSSL_PSTRING_is_sorted;
-
-
 alias SKM_sk_new!OPENSSL_BLOCK sk_OPENSSL_BLOCK_new;
 alias SKM_sk_new_null!OPENSSL_BLOCK sk_OPENSSL_BLOCK_new_null;
 alias SKM_sk_push!OPENSSL_BLOCK sk_OPENSSL_BLOCK_push;
@@ -2138,6 +2203,31 @@ alias SKM_sk_pop!OPENSSL_BLOCK sk_OPENSSL_BLOCK_pop;
 alias SKM_sk_sort!OPENSSL_BLOCK sk_OPENSSL_BLOCK_sort;
 alias SKM_sk_is_sorted!OPENSSL_BLOCK sk_OPENSSL_BLOCK_is_sorted;
 
+/+ TODO
+#define sk_OPENSSL_PSTRING_new(cmp) ((STACK_OF(OPENSSL_PSTRING) *)sk_new(CHECKED_SK_CMP_FUNC(OPENSSL_STRING, cmp)))
+#define sk_OPENSSL_PSTRING_new_null() ((STACK_OF(OPENSSL_PSTRING) *)sk_new_null())
+#define sk_OPENSSL_PSTRING_push(st, val) sk_push(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_PTR_OF(OPENSSL_STRING, val))
+#define sk_OPENSSL_PSTRING_find(st, val) sk_find(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_PTR_OF(OPENSSL_STRING, val))
+#define sk_OPENSSL_PSTRING_value(st, i) ((OPENSSL_PSTRING)sk_value(CHECKED_STACK_OF(OPENSSL_PSTRING, st), i))
+#define sk_OPENSSL_PSTRING_num(st) SKM_sk_num(OPENSSL_PSTRING, st)
+#define sk_OPENSSL_PSTRING_pop_free(st, free_func) sk_pop_free(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_SK_FREE_FUNC2(OPENSSL_PSTRING, free_func))
+#define sk_OPENSSL_PSTRING_insert(st, val, i) sk_insert(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_PTR_OF(OPENSSL_STRING, val), i)
+#define sk_OPENSSL_PSTRING_free(st) SKM_sk_free(OPENSSL_PSTRING, st)
+#define sk_OPENSSL_PSTRING_set(st, i, val) sk_set(CHECKED_STACK_OF(OPENSSL_PSTRING, st), i, CHECKED_PTR_OF(OPENSSL_STRING, val))
+#define sk_OPENSSL_PSTRING_zero(st) SKM_sk_zero(OPENSSL_PSTRING, (st))
+#define sk_OPENSSL_PSTRING_unshift(st, val) sk_unshift(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_PTR_OF(OPENSSL_STRING, val))
+#define sk_OPENSSL_PSTRING_find_ex(st, val) sk_find_ex((_STACK *)CHECKED_CONST_PTR_OF(STACK_OF(OPENSSL_PSTRING), st), CHECKED_CONST_PTR_OF(OPENSSL_STRING, val))
+#define sk_OPENSSL_PSTRING_delete(st, i) SKM_sk_delete(OPENSSL_PSTRING, (st), (i))
+#define sk_OPENSSL_PSTRING_delete_ptr(st, ptr) (OPENSSL_PSTRING *)sk_delete_ptr(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_PTR_OF(OPENSSL_STRING, ptr))
+#define sk_OPENSSL_PSTRING_set_cmp_func(st, cmp)  \
+	((int (*)(const OPENSSL_STRING * const *,const OPENSSL_STRING * const *)) \
+	sk_set_cmp_func(CHECKED_STACK_OF(OPENSSL_PSTRING, st), CHECKED_SK_CMP_FUNC(OPENSSL_STRING, cmp)))
+#define sk_OPENSSL_PSTRING_dup(st) SKM_sk_dup(OPENSSL_PSTRING, st)
+#define sk_OPENSSL_PSTRING_shift(st) SKM_sk_shift(OPENSSL_PSTRING, (st))
+#define sk_OPENSSL_PSTRING_pop(st) (OPENSSL_STRING *)sk_pop(CHECKED_STACK_OF(OPENSSL_PSTRING, st))
+#define sk_OPENSSL_PSTRING_sort(st) SKM_sk_sort(OPENSSL_PSTRING, (st))
+#define sk_OPENSSL_PSTRING_is_sorted(st) SKM_sk_is_sorted(OPENSSL_PSTRING, (st))
++/
 
 alias SKM_ASN1_SET_OF_d2i!ACCESS_DESCRIPTION d2i_ASN1_SET_OF_ACCESS_DESCRIPTION;
 alias SKM_ASN1_SET_OF_i2d!ACCESS_DESCRIPTION i2d_ASN1_SET_OF_ACCESS_DESCRIPTION;

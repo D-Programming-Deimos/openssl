@@ -60,3 +60,5 @@ import deimos.openssl._d_util;
 public import deimos.openssl.opensslconf;
 
 /+ For D, the predefined OS version identifiers are used. +/
+
+alias ossl_ssize_t = ptrdiff_t;

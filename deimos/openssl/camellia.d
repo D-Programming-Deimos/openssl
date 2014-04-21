@@ -89,6 +89,10 @@ struct camellia_key_st
 	};
 alias camellia_key_st CAMELLIA_KEY;
 
+version(OPENSSL_FIPS) {
+int private_Camellia_set_key(const(ubyte)* userKey, const int bits,
+	CAMELLIA_KEY *key);
+}
 int Camellia_set_key(const(ubyte)* userKey, const int bits,
 	CAMELLIA_KEY* key);
 

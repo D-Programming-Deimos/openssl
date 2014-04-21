@@ -109,10 +109,12 @@ void ERR_load_ECDH_strings();
 /* Error codes for the ECDH functions. */
 
 /* Function codes. */
+enum ECDH_F_ECDH_CHECK = 102;
 enum ECDH_F_ECDH_COMPUTE_KEY = 100;
 enum ECDH_F_ECDH_DATA_NEW_METHOD = 101;
 
 /* Reason codes. */
 enum ECDH_R_KDF_FAILED = 102;
+enum ECDH_R_NON_FIPS_METHOD = 103;
 enum ECDH_R_NO_PRIVATE_VALUE = 100;
 enum ECDH_R_POINT_ARITHMETIC_FAILURE = 101;

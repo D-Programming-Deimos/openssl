@@ -81,6 +81,9 @@ struct mdc2_ctx_st {
 alias mdc2_ctx_st MDC2_CTX;
 
 
+version(OPENSSL_FIPS) {
+    int private_MDC2_Init(MDC2_CTX* c);
+}
 int MDC2_Init(MDC2_CTX* c);
 int MDC2_Update(MDC2_CTX* c, const(ubyte)* data, size_t len);
 int MDC2_Final(ubyte* md, MDC2_CTX* c);

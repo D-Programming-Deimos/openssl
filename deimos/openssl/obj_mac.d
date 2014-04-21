@@ -581,6 +581,21 @@ enum LN_sha1WithRSAEncryption = "sha1WithRSAEncryption";
 enum NID_sha1WithRSAEncryption = 65;
 enum OBJ_sha1WithRSAEncryption = "OBJ_pkcs1,5L";
 
+enum SN_rsaesOaep = "RSAES-OAEP";
+enum LN_rsaesOaep = "rsaesOaep";
+enum NID_rsaesOaep = 919;
+enum OBJ_rsaesOaep = "OBJ_pkcs1,7L";
+
+enum SN_mgf1 = "MGF1";
+enum LN_mgf1 = "mgf1";
+enum NID_mgf1 = 911;
+enum OBJ_mgf1 = "OBJ_pkcs1,8L";
+
+enum SN_rsassaPss = "RSASSA-PSS";
+enum LN_rsassaPss = "rsassaPss";
+enum NID_rsassaPss = 912;
+enum OBJ_rsassaPss = "OBJ_pkcs1,10L";
+
 enum SN_sha256WithRSAEncryption = "RSA-SHA256";
 enum LN_sha256WithRSAEncryption = "sha256WithRSAEncryption";
 enum NID_sha256WithRSAEncryption = 668;
@@ -981,6 +996,10 @@ enum OBJ_id_smime_alg_CMS3DESwrap = "OBJ_id_smime_alg,6L";
 enum SN_id_smime_alg_CMSRC2wrap = "id-smime-alg-CMSRC2wrap";
 enum NID_id_smime_alg_CMSRC2wrap = 247;
 enum OBJ_id_smime_alg_CMSRC2wrap = "OBJ_id_smime_alg,7L";
+
+enum SN_id_alg_PWRI_KEK = "id-alg-PWRI-KEK";
+enum NID_id_alg_PWRI_KEK = 893;
+enum OBJ_id_alg_PWRI_KEK = "OBJ_id_smime_alg,9L";
 
 enum SN_id_smime_cd_ldap = "id-smime-cd-ldap";
 enum NID_id_smime_cd_ldap = 248;
@@ -2400,6 +2419,11 @@ enum LN_no_rev_avail = "X509v3 No Revocation Available";
 enum NID_no_rev_avail = 403;
 enum OBJ_no_rev_avail = "OBJ_id_ce,56L";
 
+enum SN_anyExtendedKeyUsage = "anyExtendedKeyUsage";
+enum LN_anyExtendedKeyUsage = "Any Extended Key Usage";
+enum NID_anyExtendedKeyUsage = 910;
+enum OBJ_anyExtendedKeyUsage = "OBJ_ext_key_usage,0L";
+
 enum SN_netscape = "Netscape";
 enum LN_netscape = "Netscape Communications Corp.";
 enum NID_netscape = 57;
@@ -2587,6 +2611,24 @@ enum LN_aes_128_cfb128 = "aes-128-cfb";
 enum NID_aes_128_cfb128 = 421;
 enum OBJ_aes_128_cfb128 = "OBJ_aes,4L";
 
+enum SN_id_aes128_wrap = "id-aes128-wrap";
+enum NID_id_aes128_wrap = 788;
+enum OBJ_id_aes128_wrap = "OBJ_aes,5L";
+
+enum SN_aes_128_gcm = "id-aes128-GCM";
+enum LN_aes_128_gcm = "aes-128-gcm";
+enum NID_aes_128_gcm = 895;
+enum OBJ_aes_128_gcm = "OBJ_aes,6L";
+
+enum SN_aes_128_ccm = "id-aes128-CCM";
+enum LN_aes_128_ccm = "aes-128-ccm";
+enum NID_aes_128_ccm = 896;
+enum OBJ_aes_128_ccm = "OBJ_aes,7L";
+
+enum SN_id_aes128_wrap_pad = "id-aes128-wrap-pad";
+enum NID_id_aes128_wrap_pad = 897;
+enum OBJ_id_aes128_wrap_pad = "OBJ_aes,8L";
+
 enum SN_aes_192_ecb = "AES-192-ECB";
 enum LN_aes_192_ecb = "aes-192-ecb";
 enum NID_aes_192_ecb = 422;
@@ -2607,6 +2649,24 @@ enum LN_aes_192_cfb128 = "aes-192-cfb";
 enum NID_aes_192_cfb128 = 425;
 enum OBJ_aes_192_cfb128 = "OBJ_aes,24L";
 
+enum SN_id_aes192_wrap = "id-aes192-wrap";
+enum NID_id_aes192_wrap = 789;
+enum OBJ_id_aes192_wrap = "OBJ_aes,25L";
+
+enum SN_aes_192_gcm = "id-aes192-GCM";
+enum LN_aes_192_gcm = "aes-192-gcm";
+enum NID_aes_192_gcm = 898;
+enum OBJ_aes_192_gcm = "OBJ_aes,26L";
+
+enum SN_aes_192_ccm = "id-aes192-CCM";
+enum LN_aes_192_ccm = "aes-192-ccm";
+enum NID_aes_192_ccm = 899;
+enum OBJ_aes_192_ccm = "OBJ_aes,27L";
+
+enum SN_id_aes192_wrap_pad = "id-aes192-wrap-pad";
+enum NID_id_aes192_wrap_pad = 900;
+enum OBJ_id_aes192_wrap_pad = "OBJ_aes,28L";
+
 enum SN_aes_256_ecb = "AES-256-ECB";
 enum LN_aes_256_ecb = "aes-256-ecb";
 enum NID_aes_256_ecb = 426;
@@ -2626,6 +2686,24 @@ enum SN_aes_256_cfb128 = "AES-256-CFB";
 enum LN_aes_256_cfb128 = "aes-256-cfb";
 enum NID_aes_256_cfb128 = 429;
 enum OBJ_aes_256_cfb128 = "OBJ_aes,44L";
+
+enum SN_id_aes256_wrap = "id-aes256-wrap";
+enum NID_id_aes256_wrap = 790;
+enum OBJ_id_aes256_wrap = "OBJ_aes,45L";
+
+enum SN_aes_256_gcm = "id-aes256-GCM";
+enum LN_aes_256_gcm = "aes-256-gcm";
+enum NID_aes_256_gcm = 901;
+enum OBJ_aes_256_gcm = "OBJ_aes,46L";
+
+enum SN_aes_256_ccm = "id-aes256-CCM";
+enum LN_aes_256_ccm = "aes-256-ccm";
+enum NID_aes_256_ccm = 902;
+enum OBJ_aes_256_ccm = "OBJ_aes,47L";
+
+enum SN_id_aes256_wrap_pad = "id-aes256-wrap-pad";
+enum NID_id_aes256_wrap_pad = 903;
+enum OBJ_id_aes256_wrap_pad = "OBJ_aes,48L";
 
 enum SN_aes_128_cfb1 = "AES-128-CFB1";
 enum LN_aes_128_cfb1 = "aes-128-cfb1";
@@ -2651,6 +2729,26 @@ enum SN_aes_256_cfb8 = "AES-256-CFB8";
 enum LN_aes_256_cfb8 = "aes-256-cfb8";
 enum NID_aes_256_cfb8 = 655;
 
+enum SN_aes_128_ctr = "AES-128-CTR";
+enum LN_aes_128_ctr = "aes-128-ctr";
+enum NID_aes_128_ctr = 904;
+
+enum SN_aes_192_ctr = "AES-192-CTR";
+enum LN_aes_192_ctr = "aes-192-ctr";
+enum NID_aes_192_ctr = 905;
+
+enum SN_aes_256_ctr = "AES-256-CTR";
+enum LN_aes_256_ctr = "aes-256-ctr";
+enum NID_aes_256_ctr = 906;
+
+enum SN_aes_128_xts = "AES-128-XTS";
+enum LN_aes_128_xts = "aes-128-xts";
+enum NID_aes_128_xts = 913;
+
+enum SN_aes_256_xts = "AES-256-XTS";
+enum LN_aes_256_xts = "aes-256-xts";
+enum NID_aes_256_xts = 914;
+
 enum SN_des_cfb1 = "DES-CFB1";
 enum LN_des_cfb1 = "des-cfb1";
 enum NID_des_cfb1 = 656;
@@ -2666,18 +2764,6 @@ enum NID_des_ede3_cfb1 = 658;
 enum SN_des_ede3_cfb8 = "DES-EDE3-CFB8";
 enum LN_des_ede3_cfb8 = "des-ede3-cfb8";
 enum NID_des_ede3_cfb8 = 659;
-
-enum SN_id_aes128_wrap = "id-aes128-wrap";
-enum NID_id_aes128_wrap = 788;
-enum OBJ_id_aes128_wrap = "OBJ_aes,5L";
-
-enum SN_id_aes192_wrap = "id-aes192-wrap";
-enum NID_id_aes192_wrap = 789;
-enum OBJ_id_aes192_wrap = "OBJ_aes,25L";
-
-enum SN_id_aes256_wrap = "id-aes256-wrap";
-enum NID_id_aes256_wrap = 790;
-enum OBJ_id_aes256_wrap = "OBJ_aes,45L";
 
 enum OBJ_nist_hashalgs = "OBJ_nistAlgorithms,2L";
 
@@ -3811,6 +3897,18 @@ enum LN_camellia_256_cbc = "camellia-256-cbc";
 enum NID_camellia_256_cbc = 753;
 enum OBJ_camellia_256_cbc = "1L,2L,392L,200011L,61L,1L,1L,1L,4L";
 
+enum SN_id_camellia128_wrap = "id-camellia128-wrap";
+enum NID_id_camellia128_wrap = 907;
+enum OBJ_id_camellia128_wrap = "1L,2L,392L,200011L,61L,1L,1L,3L,2L";
+
+enum SN_id_camellia192_wrap = "id-camellia192-wrap";
+enum NID_id_camellia192_wrap = 908;
+enum OBJ_id_camellia192_wrap = "1L,2L,392L,200011L,61L,1L,1L,3L,3L";
+
+enum SN_id_camellia256_wrap = "id-camellia256-wrap";
+enum NID_id_camellia256_wrap = 909;
+enum OBJ_id_camellia256_wrap = "1L,2L,392L,200011L,61L,1L,1L,3L,4L";
+
 enum OBJ_ntt_ds = "0L,3L,4401L,5L";
 
 enum OBJ_camellia = "OBJ_ntt_ds,3L,1L,9L";
@@ -3912,3 +4010,24 @@ enum OBJ_seed_ofb128 = "OBJ_kisa,1L,6L";
 enum SN_hmac = "HMAC";
 enum LN_hmac = "hmac";
 enum NID_hmac = 855;
+
+enum SN_cmac = "CMAC";
+enum LN_cmac = "cmac";
+enum NID_cmac = 894;
+
+enum SN_rc4_hmac_md5 = "RC4-HMAC-MD5";
+enum LN_rc4_hmac_md5 = "rc4-hmac-md5";
+enum NID_rc4_hmac_md5 = 915;
+
+enum SN_aes_128_cbc_hmac_sha1 = "AES-128-CBC-HMAC-SHA1";
+enum LN_aes_128_cbc_hmac_sha1 = "aes-128-cbc-hmac-sha1";
+enum NID_aes_128_cbc_hmac_sha1 = 916;
+
+enum SN_aes_192_cbc_hmac_sha1 = "AES-192-CBC-HMAC-SHA1";
+enum LN_aes_192_cbc_hmac_sha1 = "aes-192-cbc-hmac-sha1";
+enum NID_aes_192_cbc_hmac_sha1 = 917;
+
+enum SN_aes_256_cbc_hmac_sha1 = "AES-256-CBC-HMAC-SHA1";
+enum LN_aes_256_cbc_hmac_sha1 = "aes-256-cbc-hmac-sha1";
+enum NID_aes_256_cbc_hmac_sha1 = 918;
+

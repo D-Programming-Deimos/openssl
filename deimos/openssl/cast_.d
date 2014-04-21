@@ -83,7 +83,9 @@ struct cast_key_st {
 	}
 alias cast_key_st CAST_KEY;
 
-
+version(OPENSSL_FIPS) {
+void private_CAST_set_key(CAST_KEY *key, int len, const(ubyte)* data);
+}
 void CAST_set_key(CAST_KEY* key, int len, const(ubyte)* data);
 void CAST_ecb_encrypt(const(ubyte)* in_, ubyte* out_, const(CAST_KEY)* key,
 		      int enc);

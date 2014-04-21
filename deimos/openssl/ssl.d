@@ -263,6 +263,7 @@ enum SSL_TXT_kECDH = "kECDH";
 enum SSL_TXT_kEECDH = "kEECDH";
 enum SSL_TXT_kPSK = "kPSK";
 enum SSL_TXT_kGOST = "kGOST";
+enum SSL_TXT_kSRP = "kSRP";
 
 enum SSL_TXT_aRSA = "aRSA";
 enum SSL_TXT_aDSS = "aDSS";
@@ -286,6 +287,7 @@ enum SSL_TXT_AECDH = "AECDH";
 enum SSL_TXT_ECDSA = "ECDSA";
 enum SSL_TXT_KRB5 = "KRB5";
 enum SSL_TXT_PSK = "PSK";
+enum SSL_TXT_SRP = "SRP";
 
 enum SSL_TXT_DES = "DES";
 enum SSL_TXT_3DES = "3DES";
@@ -296,6 +298,7 @@ enum SSL_TXT_SEED = "SEED";
 enum SSL_TXT_AES128 = "AES128";
 enum SSL_TXT_AES256 = "AES256";
 enum SSL_TXT_AES = "AES";
+enum SSL_TXT_AES_GCM = "AESGCM";
 enum SSL_TXT_CAMELLIA128 = "CAMELLIA128";
 enum SSL_TXT_CAMELLIA256 = "CAMELLIA256";
 enum SSL_TXT_CAMELLIA = "CAMELLIA";
@@ -305,10 +308,14 @@ enum SSL_TXT_SHA1 = "SHA1";
 enum SSL_TXT_SHA = "SHA"; /* same as "SHA1" */
 enum SSL_TXT_GOST94 = "GOST94";
 enum SSL_TXT_GOST89MAC = "GOST89MAC";
+enum SSL_TXT_SHA256 = "SHA256";
+enum SSL_TXT_SHA384 = "SHA384";
 
 enum SSL_TXT_SSLV2 = "SSLv2";
 enum SSL_TXT_SSLV3 = "SSLv3";
 enum SSL_TXT_TLSV1 = "TLSv1";
+enum SSL_TXT_TLSV1_1 = "TLSv1.1";
+enum SSL_TXT_TLSV1_2 = "TLSv1.2";
 
 enum SSL_TXT_EXP = "EXP";
 enum SSL_TXT_EXPORT = "EXPORT";
@@ -362,6 +369,27 @@ alias X509_FILETYPE_PEM SSL_FILETYPE_PEM;
 alias ssl_st* ssl_crock_st;
 import deimos.openssl.tls1;
 alias tls_session_ticket_ext_st TLS_SESSION_TICKET_EXT;
+alias ssl_method_st SSL_METHOD;
+alias ssl_cipher_st SSL_CIPHER;
+alias ssl_session_st SSL_SESSION;
+
+/+mixin DECLARE_STACK_OF(SSL_CIPHER);+/
+
+/* SRTP protection profiles for use with the use_srtp extension (RFC 5764)*/
+struct srtp_protection_profile_st
+       {
+       const(char)* name;
+       c_ulong id;
+       }
+alias srtp_protection_profile_st SRTP_PROTECTION_PROFILE;
+
+/+mixin DECLARE_STACK_OF(SRTP_PROTECTION_PROFILE);+/
+
+alias ExternC!(int function(SSL* s, const(ubyte)* data, int len, void* arg)) tls_session_ticket_ext_cb_fn;
+alias ExternC!(int function(SSL* s, void* secret, int* secret_len, STACK_OF!(SSL_CIPHER) *peer_ciphers, SSL_CIPHER** cipher, void* arg)) tls_session_secret_cb_fn;
+
+
+version(OPENSSL_NO_SSL_INTERN) {} else {
 
 /* used to hold info on the particular ciphers used */
 struct ssl_cipher_st {
@@ -381,12 +409,7 @@ struct ssl_cipher_st {
 	int strength_bits;		/* Number of bits really used */
 	int alg_bits;			/* Number of bits for algorithm */
 	}
-alias ssl_cipher_st SSL_CIPHER;
 
-/+mixin DECLARE_STACK_OF!(SSL_CIPHER);+/
-
-alias ExternC!(int function(SSL* s, const(ubyte)* data, int len, void* arg)) tls_session_ticket_ext_cb_fn;
-alias ExternC!(int function(SSL* s, void* secret, int* secret_len, STACK_OF!(SSL_CIPHER) *peer_ciphers, SSL_CIPHER** cipher, void* arg)) tls_session_secret_cb_fn;
 
 /* Used to hold functions for SSLv2 or SSLv3/TLSv1 functions */
 struct ssl_method_st {
@@ -423,7 +446,6 @@ struct ssl_method_st {
 	ExternC!(c_long function(SSL* s, int cb_id, ExternC!(void function()) fp)) ssl_callback_ctrl;
 	ExternC!(c_long function(SSL_CTX* s, int cb_id, ExternC!(void function()) fp)) ssl_ctx_callback_ctrl;
 	}
-alias ssl_method_st SSL_METHOD;
 
 /* Lets make this into an ASN.1 type structure as follows
  * SSL_SESSION_ID ::= SEQUENCE {
@@ -439,10 +461,13 @@ alias ssl_method_st SSL_METHOD;
  *	Peer [ 3 ] EXPLICIT	X509,		-- optional Peer Certificate
  *	Session_ID_context [ 4 ] EXPLICIT OCTET STRING,   -- the Session ID context
  *	Verify_result [ 5 ] EXPLICIT INTEGER,   -- X509_V_... code for `Peer'
- *	HostName [ 6 ] EXPLICIT OCTET STRING,   -- optional HostName from servername TLS extension
- *	ECPointFormatList [ 7 ] OCTET STRING,     -- optional EC point format list from TLS extension
- *	PSK_identity_hint [ 8 ] EXPLICIT OCTET STRING, -- optional PSK identity hint
- *	PSK_identity [ 9 ] EXPLICIT OCTET STRING -- optional PSK identity
+ *	HostName [ 6 ] EXPLICIT OCTET STRING,   -- optional HostName from servername TLS extension 
+ *	PSK_identity_hint [ 7 ] EXPLICIT OCTET STRING, -- optional PSK identity hint
+ *	PSK_identity [ 8 ] EXPLICIT OCTET STRING,  -- optional PSK identity
+ *	Ticket_lifetime_hint [9] EXPLICIT INTEGER, -- server's lifetime hint for session ticket
+ *	Ticket [10]             EXPLICIT OCTET STRING, -- session ticket (clients only)
+ *	Compression_meth [11]   EXPLICIT OCTET STRING, -- optional compression method
+ *	SRP_username [ 12 ] EXPLICIT OCTET STRING -- optional SRP username
  *	}
  * Look in ssl/ssl_asn1.c for more details
  * I'm using EXPLICIT tags so I can read the damn things using asn1parse :-).
@@ -474,6 +499,9 @@ version(OPENSSL_NO_PSK) {} else {
 	char* psk_identity_hint;
 	char* psk_identity;
 }
+	/* Used to indicate that session resumption is not allowed.
+	 * Applications can also set this bit for a new session via
+	 * not_resumable_session_cb to disable session caching and tickets. */
 	int not_resumable;
 
 	/* The cert is the certificate used to establish this connection */
@@ -517,12 +545,15 @@ version(OPENSSL_NO_EC) {} else {
 } /* OPENSSL_NO_EC */
 	/* RFC4507 info */
 	ubyte* tlsext_tick;	/* Session ticket */
-	size_t	tlsext_ticklen;		/* Session ticket length */
+	size_t tlsext_ticklen;		/* Session ticket length */
 	c_long tlsext_tick_lifetime_hint;	/* Session lifetime hint in seconds */
 }
+version(OPENSSL_NO_SRP) {} else {
+	char *srp_username;
+}
 	}
-alias ssl_session_st SSL_SESSION;
 
+} // OPENSSL_NO_SSL_INTERN
 
 enum SSL_OP_MICROSOFT_SESS_ID_BUG = 0x00000001;
 enum SSL_OP_NETSCAPE_CHALLENGE_BUG = 0x00000002;
@@ -531,10 +562,13 @@ enum SSL_OP_LEGACY_SERVER_CONNECT = 0x00000004;
 enum SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG = 0x00000008;
 enum SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG = 0x00000010;
 enum SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER = 0x00000020;
-enum SSL_OP_MSIE_SSLV2_RSA_PADDING = 0x00000040; /* no effect since 0.9.7h and 0.9.8b */
+enum SSL_OP_SAFARI_ECDHE_ECDSA_BUG = 0x00000040;
 enum SSL_OP_SSLEAY_080_CLIENT_DH_BUG = 0x00000080;
 enum SSL_OP_TLS_D5_BUG = 0x00000100;
 enum SSL_OP_TLS_BLOCK_PADDING_BUG = 0x00000200;
+
+/* Hasn't done anything since OpenSSL 0.9.7h, retained for compatibility */
+enum SSL_OP_MSIE_SSLV2_RSA_PADDING = 0x0;
 
 /* Disable SSL 3.0/TLS 1.0 CBC vulnerability workaround that was added
  * in OpenSSL 0.9.6d.  Usually (depending on the application protocol)
@@ -545,7 +579,7 @@ enum SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS = 0x00000800; /* added in 0.9.6e */
 
 /* SSL_OP_ALL: various bug workarounds that should be rather harmless.
  *            This used to be 0x000FFFFFL before 0.9.7. */
-enum SSL_OP_ALL = 0x80000FFF;
+enum SSL_OP_ALL = 0x80000BFFL;
 
 /* DTLS options */
 enum SSL_OP_NO_QUERY_MTU = 0x00001000;
@@ -581,11 +615,17 @@ enum SSL_OP_TLS_ROLLBACK_BUG = 0x00800000;
 enum SSL_OP_NO_SSLv2 = 0x01000000;
 enum SSL_OP_NO_SSLv3 = 0x02000000;
 enum SSL_OP_NO_TLSv1 = 0x04000000;
+enum SSL_OP_NO_TLSv1_2 = 0x08000000L;
+enum SSL_OP_NO_TLSv1_1 = 0x10000000L;
 
+/* These next two were never actually used for anything since SSLeay
+ * zap so we have some more flags.
+ */
 /* The next flag deliberately changes the ciphertest, this is a check
  * for the PKCS#1 attack */
-enum SSL_OP_PKCS1_CHECK_1 = 0x08000000;
-enum SSL_OP_PKCS1_CHECK_2 = 0x10000000;
+enum SSL_OP_PKCS1_CHECK_1 = 0x0;
+enum SSL_OP_PKCS1_CHECK_2 = 0x0;
+
 enum SSL_OP_NETSCAPE_CA_DN_BUG = 0x20000000;
 enum SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG = 0x40000000;
 /* Make server add server-hello extension from early version of
@@ -611,6 +651,12 @@ enum SSL_MODE_NO_AUTO_CHAIN = 0x00000008;
  * TLS only.)  "Released" buffers are put onto a free-list in the context
  * or just freed (depending on the context's setting for freelist_max_len). */
 enum SSL_MODE_RELEASE_BUFFERS = 0x00000010;
+/* Send the current time in the Random fields of the ClientHello and
+ * ServerHello records for compatibility with hypothetical implementations
+ * that require it.
+ */
+enum SSL_MODE_SEND_CLIENTHELLO_TIME = 0x00000020L;
+enum SSL_MODE_SEND_SERVERHELLO_TIME = 0x00000040L;
 
 /* Note: SSL[_CTX]_set_{options,mode} use |= op on the previous value,
  * they cannot be used to clear bits. */
@@ -660,6 +706,12 @@ auto SSL_get_secure_renegotiation_support()(SSL* ssl) {
 	return SSL_ctrl(ssl,SSL_CTRL_GET_RI_SUPPORT,0,null);
 }
 
+version(OPENSSL_NO_HEARTBEATS) {} else {
+	auto SSL_get_secure_renegotiation_support()(SSL* ssl) {
+        return SSL_ctrl(ssl,SSL_CTRL_TLS_EXT_SEND_HEARTBEAT,0,null);
+	}
+}
+
 void SSL_CTX_set_msg_callback(SSL_CTX* ctx, ExternC!(void function(int write_p, int version_, int content_type, const(void)* buf, size_t len, SSL* ssl, void* arg)) cb);
 void SSL_set_msg_callback(SSL* ssl, ExternC!(void function(int write_p, int version_, int content_type, const(void)* buf, size_t len, SSL* ssl, void* arg)) cb);
 auto SSL_CTX_set_msg_callback_arg()(SSL_CTX* ctx, void* arg) {
@@ -669,7 +721,43 @@ auto SSL_CTX_set_msg_callback_arg()(SSL* ssl, void* arg) {
     return SSL_CTX_ctrl(ssl, SSL_CTRL_SET_MSG_CALLBACK_ARG, 0, arg);
 }
 
+version(OPENSSL_NO_SRP) {} else {
 
+version(OPENSSL_NO_SSL_INTERN) {} else {
+
+struct srp_ctx_st
+	{
+	/* param for all the callbacks */
+	void *SRP_cb_arg;
+	/* set client Hello login callback */
+	ExternC!(int function(SSL *, int *, void *)) TLS_ext_srp_username_callback;
+	/* set SRP N/g param callback for verification */
+	ExternC!(int function(SSL *, void *)) SRP_verify_param_callback;
+	/* set SRP client passwd callback */
+	ExternC!(char* function(SSL *, void *)) SRP_give_srp_client_pwd_callback;
+
+	char *login;
+	BIGNUM* N, g, s, B, A;
+	BIGNUM* a, b, v;
+	char* info;
+	int strength;
+
+	c_ulong srp_Mask;
+	}
+alias srp_ctx_st SRP_CTX;
+}
+
+/* see tls_srp.c */
+int SSL_SRP_CTX_init(SSL *s);
+int SSL_CTX_SRP_CTX_init(SSL_CTX *ctx);
+int SSL_SRP_CTX_free(SSL *ctx);
+int SSL_CTX_SRP_CTX_free(SSL_CTX *ctx);
+int SSL_srp_server_param_with_username(SSL *s, int *ad);
+int SRP_generate_server_master_secret(SSL *s,ubyte *master_key);
+int SRP_Calc_A_param(SSL *s);
+int SRP_generate_client_master_secret(SSL *s,ubyte *master_key);
+
+}
 
 version (Win32) {
 enum SSL_MAX_CERT_LIST_DEFAULT = 1024*30; /* 30k max cert list :-) */
@@ -695,7 +783,13 @@ enum SSL_SESSION_CACHE_MAX_SIZE_DEFAULT = (1024*20);
 alias ExternC!(int function(/+ FIXME: @@BUG7127@@ const+/ SSL* ssl, ubyte* id,
 uint* id_len)) GEN_SESSION_CB;
 
-struct ssl_comp_st {
+alias ssl_comp_st SSL_COMP;
+
+version(OPENSSL_NO_SSL_INTERN) {
+    struct ssl_comp_st;
+} else {
+    struct ssl_comp_st
+	{
 	int id;
 	const(char)* name;
 version(OPENSSL_NO_COMP) {
@@ -704,7 +798,6 @@ version(OPENSSL_NO_COMP) {
 	COMP_METHOD* method;
 }
 	}
-alias ssl_comp_st SSL_COMP;
 
 /+mixin DECLARE_STACK_OF!(SSL_COMP);+/
 mixin DECLARE_LHASH_OF!(SSL_SESSION);
@@ -850,7 +943,7 @@ version (none) {
 	 */
 	uint max_send_fragment;
 
-version (OPENSSL_ENGINE) {} else {
+version(OPENSSL_NO_ENGINE) {} else {
 	/* Engine to pass requests for client certs to
 	 */
 	ENGINE* client_cert_engine;
@@ -896,7 +989,36 @@ enum SSL_MAX_BUF_FREELIST_LEN_DEFAULT = 32;
 	ssl3_buf_freelist_st* wbuf_freelist;
 	ssl3_buf_freelist_st* rbuf_freelist;
 }
-	};
+version(OPENSSL_NO_SRP) {} else {
+	SRP_CTX srp_ctx; /* ctx for SRP authentication */
+}
+
+version(OPENSSL_NO_TLSEXT) {} else {
+
+version(OPENSSL_NO_NEXTPROTONEG) {} else {
+	/* Next protocol negotiation information */
+	/* (for experimental NPN extension). */
+
+	/* For a server, this contains a callback function by which the set of
+	 * advertised protocols can be provided. */
+	ExternC!(int function(SSL *s, const(ubyte)** buf,
+			                 uint *len, void *arg)) next_protos_advertised_cb;
+	void *next_protos_advertised_cb_arg;
+	/* For a client, this contains a callback function that selects the
+	 * next protocol from the list provided by the server. */
+	ExternC!(int function(SSL *s, ubyte** out_,
+				    ubyte* outlen,
+				    const(ubyte)* in_,
+				    uint inlen,
+				    void *arg)) next_proto_select_cb;
+	void *next_proto_select_cb_arg;
+}
+        /* SRTP profiles we are willing to do from RFC 5764 */
+        STACK_OF!(SRTP_PROTECTION_PROFILE) *srtp_profiles;  
+}
+	}
+
+}
 
 enum SSL_SESS_CACHE_OFF = 0x0000;
 enum SSL_SESS_CACHE_CLIENT = 0x0001;
@@ -961,6 +1083,32 @@ int SSL_CTX_set_client_cert_engine(SSL_CTX* ctx, ENGINE* e);
 }
 void SSL_CTX_set_cookie_generate_cb(SSL_CTX* ctx, ExternC!(int function(SSL* ssl, ubyte* cookie, uint* cookie_len)) app_gen_cookie_cb);
 void SSL_CTX_set_cookie_verify_cb(SSL_CTX* ctx, ExternC!(int function(SSL* ssl, ubyte* cookie, uint cookie_len)) app_verify_cookie_cb);
+version(OPENSSL_NO_NEXTPROTONEG) {} else {
+void SSL_CTX_set_next_protos_advertised_cb(SSL_CTX *s,
+					   ExternC!(int function(SSL *ssl,
+						      const(ubyte)** out_,
+						      uint* outlen,
+						      void* arg)),
+					   void* arg);
+void SSL_CTX_set_next_proto_select_cb(SSL_CTX *s,
+				      ExternC!(int function(SSL *ssl,
+						 ubyte** out_,
+						 ubyte* outlen,
+						 const(ubyte)* in_,
+						 uint inlen,
+						 void *arg)),
+				      void *arg);
+
+int SSL_select_next_proto(ubyte** out_, ubyte* outlen,
+			  const(ubyte)* in_, uint inlen,
+			  const(ubyte)* client, uint client_len);
+void SSL_get0_next_proto_negotiated(const SSL *s,
+				    const(ubyte)** data, uint *len);
+
+enum OPENSSL_NPN_UNSUPPORTED = 0;
+enum OPENSSL_NPN_NEGOTIATED = 1;
+enum OPENSSL_NPN_NO_OVERLAP = 2;
+}
 
 version(OPENSSL_NO_PSK) {} else {
 /* the maximum length of the buffer given to callbacks containing the
@@ -1000,6 +1148,8 @@ auto SSL_want_x509_lookup()(const(SSL)* s) { return (SSL_want(s) == SSL_X509_LOO
 
 enum SSL_MAC_FLAG_READ_MAC_STREAM = 1;
 enum SSL_MAC_FLAG_WRITE_MAC_STREAM = 2;
+
+version(OPENSSL_NO_SSL_INTERN) {} else {
 
 struct ssl_st
 	{
@@ -1045,9 +1195,7 @@ version(OPENSSL_NO_BIO) {
 
 	int server;	/* are we the server side? - mostly used by SSL_clear*/
 
-	int new_session;/* 1 if we are to use a new session.
-	                 * 2 if we are a server and are inside a handshake
-	                 *  (i.e. not just sending a HelloRequest)
+	int new_session;/* Generate a new session or reuse an old one.
 	                 * NB: For servers, the 'new' session may actually be a previously
 	                 * cached session or even the previous session unless
 	                 * SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION is set */
@@ -1220,15 +1368,50 @@ version(OPENSSL_NO_EC) {} else {
 	void* tls_session_secret_cb_arg;
 
 	SSL_CTX* initial_ctx; /* initial ctx, used to store sessions */
+
+version(OPENSSL_NO_NEXTPROTONEG) {} else {
+	/* Next protocol negotiation. For the client, this is the protocol that
+	 * we sent in NextProtocol and is set when handling ServerHello
+	 * extensions.
+	 *
+	 * For a server, this is the client's selected_protocol from
+	 * NextProtocol and is set when handling the NextProtocol message,
+	 * before the Finished message. */
+    ubyte* next_proto_negotiated;
+	ubyte next_proto_negotiated_len;
+}
+
 alias initial_ctx session_ctx;
+
+	STACK_OF!(SRTP_PROTECTION_PROFILE)* srtp_profiles;  /* What we'll do */
+	SRTP_PROTECTION_PROFILE* srtp_profile;            /* What's been chosen */
+
+	uint tlsext_heartbeat;  /* Is use of the Heartbeat extension negotiated?
+	                                   0: disabled
+	                                   1: enabled
+	                                   2: enabled, but not allowed to send Requests
+	                                 */
+	uint tlsext_hb_pending; /* Indicates if a HeartbeatRequest is in flight */
+	uint tlsext_hb_seq;     /* HeartbeatRequest sequence number */
+} /* OPENSSL_NO_TLSEXT */
+
+	int renegotiate;/* 1 if we are renegotiating.
+	                 * 2 if we are a server and are inside a handshake
+	                 * (i.e. not just sending a HelloRequest) */
+
+version(OPENSSL_NO_SRP) {} else {
+	SRP_CTX srp_ctx; /* ctx for SRP authentication */
 }
 	};
+
+}
 
 public import deimos.openssl.ssl2;
 public import deimos.openssl.ssl3;
 public import deimos.openssl.tls1; /* This is mostly sslv3 with a few tweaks */
 public import deimos.openssl.dtls1; /* Datagram TLS */
 public import deimos.openssl.ssl23;
+public import deimos.openssl.srtp; /* Support for the use_srtp extension */
 
 extern (C):
 nothrow:
@@ -1452,6 +1635,20 @@ enum SSL_CTRL_GET_TLSEXT_STATUS_REQ_OCSP_RESP = 70;
 enum SSL_CTRL_SET_TLSEXT_STATUS_REQ_OCSP_RESP = 71;
 
 enum SSL_CTRL_SET_TLSEXT_TICKET_KEY_CB = 72;
+
+enum SSL_CTRL_SET_TLS_EXT_SRP_USERNAME_CB = 75;
+enum SSL_CTRL_SET_SRP_VERIFY_PARAM_CB = 76;
+enum SSL_CTRL_SET_SRP_GIVE_CLIENT_PWD_CB = 77;
+
+enum SSL_CTRL_SET_SRP_ARG = 78;
+enum SSL_CTRL_SET_TLS_EXT_SRP_USERNAME = 79;
+enum SSL_CTRL_SET_TLS_EXT_SRP_STRENGTH = 80;
+enum SSL_CTRL_SET_TLS_EXT_SRP_PASSWORD = 81;
+version(OPENSSL_NO_HEARTBEATS) {} else {
+    enum SSL_CTRL_TLS_EXT_SEND_HEARTBEAT = 85;
+    enum SSL_CTRL_GET_TLS_EXT_HEARTBEAT_PENDING = 86;
+    enum SSL_CTRL_SET_TLS_EXT_HEARTBEAT_NO_REQUESTS = 87;
+}
 }
 
 enum DTLS_CTRL_GET_TIMEOUT = 73;
@@ -1461,6 +1658,9 @@ enum DTLS_CTRL_LISTEN = 75;
 enum SSL_CTRL_GET_RI_SUPPORT = 76;
 enum SSL_CTRL_CLEAR_OPTIONS = 77;
 enum SSL_CTRL_CLEAR_MODE = 78;
+
+enum SSL_CTRL_GET_EXTRA_CHAIN_CERTS = 82;
+enum SSL_CTRL_CLEAR_EXTRA_CHAIN_CERTS = 83;
 
 auto DTLSv1_get_timeout()(SSL* ssl, void* arg) {
     return SSL_ctrl(ssl,DTLS_CTRL_GET_TIMEOUT,0,arg);
@@ -1517,6 +1717,12 @@ auto SSL_set_tmp_ecdh()(SSL* ssl, void* ecdh) {
 auto SSL_CTX_add_extra_chain_cert()(SSL_CTX* ctx, void* x509) {
     return SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,x509);
 }
+auto SSL_CTX_get_extra_chain_certs()(SSL_CTX* ctx, void* x509) {
+    return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_EXTRA_CHAIN_CERTS,0,px509);
+}
+auto SSL_CTX_clear_extra_chain_certs()(SSL_CTX* ctx, void* x509) {
+    return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_EXTRA_CHAIN_CERTS,0,null);
+}
 
 version(OPENSSL_NO_BIO) {} else {
 BIO_METHOD* BIO_f_ssl();
@@ -1544,6 +1750,7 @@ const(SSL_CIPHER)* SSL_get_current_cipher(const(SSL)* s);
 int	SSL_CIPHER_get_bits(const(SSL_CIPHER)* c,int* alg_bits);
 char* 	SSL_CIPHER_get_version(const(SSL_CIPHER)* c);
 const(char)* 	SSL_CIPHER_get_name(const(SSL_CIPHER)* c);
+c_ulong 	SSL_CIPHER_get_id(const SSL_CIPHER *c);
 
 int	SSL_get_fd(const(SSL)* s);
 int	SSL_get_rfd(const(SSL)* s);
@@ -1608,10 +1815,14 @@ c_long	SSL_SESSION_set_time(SSL_SESSION* s, c_long t);
 c_long	SSL_SESSION_get_timeout(const(SSL_SESSION)* s);
 c_long	SSL_SESSION_set_timeout(SSL_SESSION* s, c_long t);
 void	SSL_copy_session_id(SSL* to,const(SSL)* from);
+X509 *SSL_SESSION_get0_peer(SSL_SESSION *s);
+int SSL_SESSION_set1_id_context(SSL_SESSION *s,const(ubyte)* sid_ctx,
+			       uint sid_ctx_len);
 
 SSL_SESSION* SSL_SESSION_new();
 const(ubyte)* SSL_SESSION_get_id(const(SSL_SESSION)* s,
 					uint* len);
+uint SSL_SESSION_get_compress_id(const SSL_SESSION *s);
 version(OPENSSL_NO_FP_API) {} else {
 int	SSL_SESSION_print_fp(FILE* fp,const(SSL_SESSION)* ses);
 }
@@ -1674,6 +1885,30 @@ int SSL_set_trust(SSL* s, int trust);
 int SSL_CTX_set1_param(SSL_CTX* ctx, X509_VERIFY_PARAM* vpm);
 int SSL_set1_param(SSL* ssl, X509_VERIFY_PARAM* vpm);
 
+version(OPENSSL_NO_SRP) {} else {
+int SSL_CTX_set_srp_username(SSL_CTX *ctx,char *name);
+int SSL_CTX_set_srp_password(SSL_CTX *ctx,char *password);
+int SSL_CTX_set_srp_strength(SSL_CTX *ctx, int strength);
+int SSL_CTX_set_srp_client_pwd_callback(SSL_CTX *ctx,
+					ExternC!(char function(SSL *,void *)) cb);
+int SSL_CTX_set_srp_verify_param_callback(SSL_CTX *ctx,
+					  ExternC!(char function(SSL *,void *)) cb);
+int SSL_CTX_set_srp_username_callback(SSL_CTX *ctx,
+				      ExternC!(char function(SSL *,int *,void *)) cb);
+int SSL_CTX_set_srp_cb_arg(SSL_CTX *ctx, void *arg);
+
+int SSL_set_srp_server_param(SSL *s, const BIGNUM *N, const BIGNUM *g,
+			     BIGNUM *sa, BIGNUM *v, char *info);
+int SSL_set_srp_server_param_pw(SSL *s, const char *user, const char *pass,
+				const char *grp);
+
+BIGNUM *SSL_get_srp_g(SSL *s);
+BIGNUM *SSL_get_srp_N(SSL *s);
+
+char *SSL_get_srp_username(SSL *s);
+char *SSL_get_srp_userinfo(SSL *s);
+}
+
 void	SSL_free(SSL* ssl);
 int 	SSL_accept(SSL* ssl);
 int 	SSL_connect(SSL* ssl);
@@ -1709,6 +1944,15 @@ const(SSL_METHOD)* TLSv1_method();		/* TLSv1.0 */
 const(SSL_METHOD)* TLSv1_server_method();	/* TLSv1.0 */
 const(SSL_METHOD)* TLSv1_client_method();	/* TLSv1.0 */
 
+const SSL_METHOD *TLSv1_1_method();		/* TLSv1.1 */
+const SSL_METHOD *TLSv1_1_server_method();	/* TLSv1.1 */
+const SSL_METHOD *TLSv1_1_client_method();	/* TLSv1.1 */
+
+const SSL_METHOD *TLSv1_2_method();		/* TLSv1.2 */
+const SSL_METHOD *TLSv1_2_server_method();	/* TLSv1.2 */
+const SSL_METHOD *TLSv1_2_client_method();	/* TLSv1.2 */
+
+
 const(SSL_METHOD)* DTLSv1_method();		/* DTLSv1.0 */
 const(SSL_METHOD)* DTLSv1_server_method();	/* DTLSv1.0 */
 const(SSL_METHOD)* DTLSv1_client_method();	/* DTLSv1.0 */
@@ -1717,6 +1961,7 @@ STACK_OF!(SSL_CIPHER) *SSL_get_ciphers(const(SSL)* s);
 
 int SSL_do_handshake(SSL* s);
 int SSL_renegotiate(SSL* s);
+int SSL_renegotiate_abbreviated(SSL *s);
 int SSL_renegotiate_pending(SSL* s);
 int SSL_shutdown(SSL* s);
 
@@ -1768,6 +2013,7 @@ void SSL_set_info_callback(SSL* ssl,
 			   ExternC!(void function(const(SSL)* ssl,int type,int val)) cb);
 ExternC!(void function(const(SSL)* ssl,int type,int val)) SSL_get_info_callback(const(SSL)* ssl);
 int SSL_state(const(SSL)* ssl);
+void SSL_set_state(SSL *ssl, int state);
 
 void SSL_set_verify_result(SSL* ssl,c_long v);
 c_long SSL_get_verify_result(const(SSL)* ssl);
@@ -1880,6 +2126,9 @@ int SSL_set_session_ticket_ext_cb(SSL* s, tls_session_ticket_ext_cb_fn cb,
 /* Pre-shared secret session resumption functions */
 int SSL_set_session_secret_cb(SSL* s, tls_session_secret_cb_fn tls_session_secret_cb, void* arg);
 
+void SSL_set_debug(SSL *s, int debug_);
+int SSL_cache_hit(SSL *s);
+
 /* BEGIN ERROR CODES */
 /* The following lines are auto generated by the script mkerr.pl. Any changes
  * made after this point may be overwritten when the script is next run.
@@ -1899,6 +2148,7 @@ enum SSL_F_DO_SSL3_WRITE = 104;
 enum SSL_F_DTLS1_ACCEPT = 246;
 enum SSL_F_DTLS1_ADD_CERT_TO_BUF = 295;
 enum SSL_F_DTLS1_BUFFER_RECORD = 247;
+enum SSL_F_DTLS1_CHECK_TIMEOUT_NUM = 316;
 enum SSL_F_DTLS1_CLIENT_HELLO = 248;
 enum SSL_F_DTLS1_CONNECT = 249;
 enum SSL_F_DTLS1_ENC = 250;
@@ -1907,6 +2157,7 @@ enum SSL_F_DTLS1_GET_MESSAGE = 252;
 enum SSL_F_DTLS1_GET_MESSAGE_FRAGMENT = 253;
 enum SSL_F_DTLS1_GET_RECORD = 254;
 enum SSL_F_DTLS1_HANDLE_TIMEOUT = 297;
+enum SSL_F_DTLS1_HEARTBEAT = 305;
 enum SSL_F_DTLS1_OUTPUT_CERT_CHAIN = 255;
 enum SSL_F_DTLS1_PREPROCESS_FRAGMENT = 288;
 enum SSL_F_DTLS1_PROCESS_OUT_OF_SEQ_MESSAGE = 256;
@@ -1956,6 +2207,7 @@ enum SSL_F_SSL3_ADD_CERT_TO_BUF = 296;
 enum SSL_F_SSL3_CALLBACK_CTRL = 233;
 enum SSL_F_SSL3_CHANGE_CIPHER_STATE = 129;
 enum SSL_F_SSL3_CHECK_CERT_AND_ALGORITHM = 130;
+enum SSL_F_SSL3_CHECK_CLIENT_HELLO = 304;
 enum SSL_F_SSL3_CLIENT_HELLO = 131;
 enum SSL_F_SSL3_CONNECT = 132;
 enum SSL_F_SSL3_CTRL = 213;
@@ -1974,6 +2226,7 @@ enum SSL_F_SSL3_GET_FINISHED = 140;
 enum SSL_F_SSL3_GET_KEY_EXCHANGE = 141;
 enum SSL_F_SSL3_GET_MESSAGE = 142;
 enum SSL_F_SSL3_GET_NEW_SESSION_TICKET = 283;
+enum SSL_F_SSL3_GET_NEXT_PROTO = 306;
 enum SSL_F_SSL3_GET_RECORD = 143;
 enum SSL_F_SSL3_GET_SERVER_CERTIFICATE = 144;
 enum SSL_F_SSL3_GET_SERVER_DONE = 145;
@@ -1998,10 +2251,12 @@ enum SSL_F_SSL3_WRITE_BYTES = 158;
 enum SSL_F_SSL3_WRITE_PENDING = 159;
 enum SSL_F_SSL_ADD_CLIENTHELLO_RENEGOTIATE_EXT = 298;
 enum SSL_F_SSL_ADD_CLIENTHELLO_TLSEXT = 277;
+enum SSL_F_SSL_ADD_CLIENTHELLO_USE_SRTP_EXT = 307;
 enum SSL_F_SSL_ADD_DIR_CERT_SUBJECTS_TO_STACK = 215;
 enum SSL_F_SSL_ADD_FILE_CERT_SUBJECTS_TO_STACK = 216;
 enum SSL_F_SSL_ADD_SERVERHELLO_RENEGOTIATE_EXT = 299;
 enum SSL_F_SSL_ADD_SERVERHELLO_TLSEXT = 278;
+enum SSL_F_SSL_ADD_SERVERHELLO_USE_SRTP_EXT = 308;
 enum SSL_F_SSL_BAD_METHOD = 160;
 enum SSL_F_SSL_BYTES_TO_CIPHER_LIST = 161;
 enum SSL_F_SSL_CERT_DUP = 221;
@@ -2018,6 +2273,7 @@ enum SSL_F_SSL_COMP_ADD_COMPRESSION_METHOD = 165;
 enum SSL_F_SSL_CREATE_CIPHER_LIST = 166;
 enum SSL_F_SSL_CTRL = 232;
 enum SSL_F_SSL_CTX_CHECK_PRIVATE_KEY = 168;
+enum SSL_F_SSL_CTX_MAKE_PROFILES = 309;
 enum SSL_F_SSL_CTX_NEW = 169;
 enum SSL_F_SSL_CTX_SET_CIPHER_LIST = 269;
 enum SSL_F_SSL_CTX_SET_CLIENT_CERT_ENGINE = 290;
@@ -2040,14 +2296,17 @@ enum SSL_F_SSL_DO_HANDSHAKE = 180;
 enum SSL_F_SSL_GET_NEW_SESSION = 181;
 enum SSL_F_SSL_GET_PREV_SESSION = 217;
 enum SSL_F_SSL_GET_SERVER_SEND_CERT = 182;
+enum SSL_F_SSL_GET_SERVER_SEND_PKEY = 317;
 enum SSL_F_SSL_GET_SIGN_PKEY = 183;
 enum SSL_F_SSL_INIT_WBIO_BUFFER = 184;
 enum SSL_F_SSL_LOAD_CLIENT_CA_FILE = 185;
 enum SSL_F_SSL_NEW = 186;
 enum SSL_F_SSL_PARSE_CLIENTHELLO_RENEGOTIATE_EXT = 300;
 enum SSL_F_SSL_PARSE_CLIENTHELLO_TLSEXT = 302;
+enum SSL_F_SSL_PARSE_CLIENTHELLO_USE_SRTP_EXT = 310;
 enum SSL_F_SSL_PARSE_SERVERHELLO_RENEGOTIATE_EXT = 301;
 enum SSL_F_SSL_PARSE_SERVERHELLO_TLSEXT = 303;
+enum SSL_F_SSL_PARSE_SERVERHELLO_USE_SRTP_EXT = 311;
 enum SSL_F_SSL_PEEK = 270;
 enum SSL_F_SSL_PREPARE_CLIENTHELLO_TLSEXT = 281;
 enum SSL_F_SSL_PREPARE_SERVERHELLO_TLSEXT = 282;
@@ -2056,6 +2315,7 @@ enum SSL_F_SSL_RSA_PRIVATE_DECRYPT = 187;
 enum SSL_F_SSL_RSA_PUBLIC_ENCRYPT = 188;
 enum SSL_F_SSL_SESSION_NEW = 189;
 enum SSL_F_SSL_SESSION_PRINT_FP = 190;
+enum SSL_F_SSL_SESSION_SET1_ID_CONTEXT = 312;
 enum SSL_F_SSL_SESS_CERT_NEW = 225;
 enum SSL_F_SSL_SET_CERT = 191;
 enum SSL_F_SSL_SET_CIPHER_LIST = 271;
@@ -2069,6 +2329,7 @@ enum SSL_F_SSL_SET_SESSION_TICKET_EXT = 294;
 enum SSL_F_SSL_SET_TRUST = 228;
 enum SSL_F_SSL_SET_WFD = 196;
 enum SSL_F_SSL_SHUTDOWN = 224;
+enum SSL_F_SSL_SRP_CTX_INIT = 313;
 enum SSL_F_SSL_UNDEFINED_CONST_FUNCTION = 243;
 enum SSL_F_SSL_UNDEFINED_FUNCTION = 197;
 enum SSL_F_SSL_UNDEFINED_VOID_FUNCTION = 244;
@@ -2088,6 +2349,8 @@ enum SSL_F_TLS1_CERT_VERIFY_MAC = 286;
 enum SSL_F_TLS1_CHANGE_CIPHER_STATE = 209;
 enum SSL_F_TLS1_CHECK_SERVERHELLO_TLSEXT = 274;
 enum SSL_F_TLS1_ENC = 210;
+enum SSL_F_TLS1_EXPORT_KEYING_MATERIAL = 314;
+enum SSL_F_TLS1_HEARTBEAT = 315;
 enum SSL_F_TLS1_PREPARE_CLIENTHELLO_TLSEXT = 275;
 enum SSL_F_TLS1_PREPARE_SERVERHELLO_TLSEXT = 276;
 enum SSL_F_TLS1_PRF = 284;
@@ -2127,6 +2390,13 @@ enum SSL_R_BAD_RSA_E_LENGTH = 120;
 enum SSL_R_BAD_RSA_MODULUS_LENGTH = 121;
 enum SSL_R_BAD_RSA_SIGNATURE = 122;
 enum SSL_R_BAD_SIGNATURE = 123;
+enum SSL_R_BAD_SRP_A_LENGTH = 347;
+enum SSL_R_BAD_SRP_B_LENGTH = 348;
+enum SSL_R_BAD_SRP_G_LENGTH = 349;
+enum SSL_R_BAD_SRP_N_LENGTH = 350;
+enum SSL_R_BAD_SRP_S_LENGTH = 351;
+enum SSL_R_BAD_SRTP_MKI_VALUE = 352;
+enum SSL_R_BAD_SRTP_PROTECTION_PROFILE_LIST = 353;
 enum SSL_R_BAD_SSL_FILETYPE = 124;
 enum SSL_R_BAD_SSL_SESSION_ID_LENGTH = 125;
 enum SSL_R_BAD_STATE = 126;
@@ -2165,12 +2435,15 @@ enum SSL_R_ECC_CERT_NOT_FOR_SIGNING = 318;
 enum SSL_R_ECC_CERT_SHOULD_HAVE_RSA_SIGNATURE = 322;
 enum SSL_R_ECC_CERT_SHOULD_HAVE_SHA1_SIGNATURE = 323;
 enum SSL_R_ECGROUP_TOO_LARGE_FOR_CIPHER = 310;
+enum SSL_R_EMPTY_SRTP_PROTECTION_PROFILE_LIST = 354;
 enum SSL_R_ENCRYPTED_LENGTH_TOO_LONG = 150;
 enum SSL_R_ERROR_GENERATING_TMP_RSA_KEY = 282;
 enum SSL_R_ERROR_IN_RECEIVED_CIPHER_LIST = 151;
 enum SSL_R_EXCESSIVE_MESSAGE_SIZE = 152;
 enum SSL_R_EXTRA_DATA_IN_MESSAGE = 153;
 enum SSL_R_GOT_A_FIN_BEFORE_A_CCS = 154;
+enum SSL_R_GOT_NEXT_PROTO_BEFORE_A_CCS = 355;
+enum SSL_R_GOT_NEXT_PROTO_WITHOUT_EXTENSION = 356;
 enum SSL_R_HTTPS_PROXY_REQUEST = 155;
 enum SSL_R_HTTP_REQUEST = 156;
 enum SSL_R_ILLEGAL_PADDING = 283;
@@ -2179,6 +2452,7 @@ enum SSL_R_INVALID_CHALLENGE_LENGTH = 158;
 enum SSL_R_INVALID_COMMAND = 280;
 enum SSL_R_INVALID_COMPRESSION_ALGORITHM = 341;
 enum SSL_R_INVALID_PURPOSE = 278;
+enum SSL_R_INVALID_SRP_USERNAME = 357;
 enum SSL_R_INVALID_STATUS_RESPONSE = 328;
 enum SSL_R_INVALID_TICKET_KEYS_LENGTH = 325;
 enum SSL_R_INVALID_TRUST = 279;
@@ -2208,11 +2482,13 @@ enum SSL_R_MISSING_EXPORT_TMP_RSA_KEY = 167;
 enum SSL_R_MISSING_RSA_CERTIFICATE = 168;
 enum SSL_R_MISSING_RSA_ENCRYPTING_CERT = 169;
 enum SSL_R_MISSING_RSA_SIGNING_CERT = 170;
+enum SSL_R_MISSING_SRP_PARAM = 358;
 enum SSL_R_MISSING_TMP_DH_KEY = 171;
 enum SSL_R_MISSING_TMP_ECDH_KEY = 311;
 enum SSL_R_MISSING_TMP_RSA_KEY = 172;
 enum SSL_R_MISSING_TMP_RSA_PKEY = 173;
 enum SSL_R_MISSING_VERIFY_MESSAGE = 174;
+enum SSL_R_MULTIPLE_SGC_RESTARTS = 346;
 enum SSL_R_NON_SSLV2_INITIAL_PACKET = 175;
 enum SSL_R_NO_CERTIFICATES_RETURNED = 176;
 enum SSL_R_NO_CERTIFICATE_ASSIGNED = 177;
@@ -2236,6 +2512,7 @@ enum SSL_R_NO_PUBLICKEY = 192;
 enum SSL_R_NO_RENEGOTIATION = 339;
 enum SSL_R_NO_REQUIRED_DIGEST = 324;
 enum SSL_R_NO_SHARED_CIPHER = 193;
+enum SSL_R_NO_SRTP_PROFILES = 359;
 enum SSL_R_NO_VERIFY_CALLBACK = 194;
 enum SSL_R_NULL_SSL_CTX = 195;
 enum SSL_R_NULL_SSL_METHOD_PASSED = 196;
@@ -2279,7 +2556,12 @@ enum SSL_R_SCSV_RECEIVED_WHEN_RENEGOTIATING = 345;
 enum SSL_R_SERVERHELLO_TLSEXT = 275;
 enum SSL_R_SESSION_ID_CONTEXT_UNINITIALIZED = 277;
 enum SSL_R_SHORT_READ = 219;
+enum SSL_R_SIGNATURE_ALGORITHMS_ERROR = 360;
 enum SSL_R_SIGNATURE_FOR_NON_SIGNING_CERTIFICATE = 220;
+enum SSL_R_SRP_A_CALC = 361;
+enum SSL_R_SRTP_COULD_NOT_ALLOCATE_PROFILES = 362;
+enum SSL_R_SRTP_PROTECTION_PROFILE_LIST_TOO_LONG = 363;
+enum SSL_R_SRTP_UNKNOWN_PROTECTION_PROFILE = 364;
 enum SSL_R_SSL23_DOING_SESSION_ID_REUSE = 221;
 enum SSL_R_SSL2_CONNECTION_ID_TOO_LONG = 299;
 enum SSL_R_SSL3_EXT_INVALID_ECPOINTFORMAT = 321;
@@ -2324,6 +2606,9 @@ enum SSL_R_TLSV1_CERTIFICATE_UNOBTAINABLE = 1111;
 enum SSL_R_TLSV1_UNRECOGNIZED_NAME = 1112;
 enum SSL_R_TLSV1_UNSUPPORTED_EXTENSION = 1110;
 enum SSL_R_TLS_CLIENT_CERT_REQ_WITH_ANON_CIPHER = 232;
+enum SSL_R_TLS_HEARTBEAT_PEER_DOESNT_ACCEPT = 365;
+enum SSL_R_TLS_HEARTBEAT_PENDING = 366;
+enum SSL_R_TLS_ILLEGAL_EXPORTER_LABEL = 367;
 enum SSL_R_TLS_INVALID_ECPOINTFORMAT_LIST = 157;
 enum SSL_R_TLS_PEER_DID_NOT_RESPOND_WITH_CERTIFICATE_LIST = 233;
 enum SSL_R_TLS_RSA_ENCRYPTED_VALUE_LENGTH_IS_WRONG = 234;
@@ -2345,6 +2630,7 @@ enum SSL_R_UNKNOWN_ALERT_TYPE = 246;
 enum SSL_R_UNKNOWN_CERTIFICATE_TYPE = 247;
 enum SSL_R_UNKNOWN_CIPHER_RETURNED = 248;
 enum SSL_R_UNKNOWN_CIPHER_TYPE = 249;
+enum SSL_R_UNKNOWN_DIGEST = 368;
 enum SSL_R_UNKNOWN_KEY_EXCHANGE_TYPE = 250;
 enum SSL_R_UNKNOWN_PKEY_TYPE = 251;
 enum SSL_R_UNKNOWN_PROTOCOL = 252;
@@ -2359,12 +2645,14 @@ enum SSL_R_UNSUPPORTED_ELLIPTIC_CURVE = 315;
 enum SSL_R_UNSUPPORTED_PROTOCOL = 258;
 enum SSL_R_UNSUPPORTED_SSL_VERSION = 259;
 enum SSL_R_UNSUPPORTED_STATUS_TYPE = 329;
+enum SSL_R_USE_SRTP_NOT_NEGOTIATED = 369;
 enum SSL_R_WRITE_BIO_NOT_SET = 260;
 enum SSL_R_WRONG_CIPHER_RETURNED = 261;
 enum SSL_R_WRONG_MESSAGE_TYPE = 262;
 enum SSL_R_WRONG_NUMBER_OF_KEY_BITS = 263;
 enum SSL_R_WRONG_SIGNATURE_LENGTH = 264;
 enum SSL_R_WRONG_SIGNATURE_SIZE = 265;
+enum SSL_R_WRONG_SIGNATURE_TYPE = 370;
 enum SSL_R_WRONG_SSL_VERSION = 266;
 enum SSL_R_WRONG_VERSION_NUMBER = 267;
 enum SSL_R_X509_LIB = 268;

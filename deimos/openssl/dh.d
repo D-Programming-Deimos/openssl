@@ -89,6 +89,21 @@ enum DH_FLAG_NO_EXP_CONSTTIME = 0x02; /* new with 0.9.7h; the built-in DH
                                        * be used for all exponents.
                                        */
 
+/* If this flag is set the DH method is FIPS compliant and can be used
+ * in FIPS mode. This is set in the validated module method. If an
+ * application sets this flag in its own methods it is its reposibility
+ * to ensure the result is compliant.
+ */
+
+enum DH_FLAG_FIPS_METHOD = 0x0400;
+
+/* If this flag is set the operations normally disabled in FIPS mode are
+ * permitted it is then the applications responsibility to ensure that the
+ * usage is compliant.
+ */
+
+enum DH_FLAG_NON_FIPS_ALLOW = 0x0400;
+
 extern (C):
 nothrow:
 
@@ -235,6 +250,9 @@ void ERR_load_DH_strings();
 enum DH_F_COMPUTE_KEY = 102;
 enum DH_F_DHPARAMS_PRINT_FP = 101;
 enum DH_F_DH_BUILTIN_GENPARAMS = 106;
+enum DH_F_DH_COMPUTE_KEY = 114;
+enum DH_F_DH_GENERATE_KEY = 115;
+enum DH_F_DH_GENERATE_PARAMETERS_EX = 116;
 enum DH_F_DH_NEW_METHOD = 105;
 enum DH_F_DH_PARAM_DECODE = 107;
 enum DH_F_DH_PRIV_DECODE = 110;
@@ -254,7 +272,9 @@ enum DH_R_BN_ERROR = 106;
 enum DH_R_DECODE_ERROR = 104;
 enum DH_R_INVALID_PUBKEY = 102;
 enum DH_R_KEYS_NOT_SET = 108;
+enum DH_R_KEY_SIZE_TOO_SMALL = 110;
 enum DH_R_MODULUS_TOO_LARGE = 103;
+enum DH_R_NON_FIPS_METHOD = 111;
 enum DH_R_NO_PARAMETERS_SET = 107;
 enum DH_R_NO_PRIVATE_VALUE = 100;
 enum DH_R_PARAMETER_ENCODING_ERROR = 105;

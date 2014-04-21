@@ -112,21 +112,23 @@ struct seed_key_st {
 // #ifdef SEED_LONG
 //     c_ulong data[32];
 // #else
-    uint data[32];
+    uint[32] data;
 // #endif
 }
 alias seed_key_st SEED_KEY_SCHEDULE;
 
+version(OPENSSL_FIPS) {
+    void private_SEED_set_key(const(ubyte[SEED_KEY_LENGTH])* rawkey, SEED_KEY_SCHEDULE* ks);
+}
+void SEED_set_key(const(ubyte[SEED_KEY_LENGTH])* rawkey, SEED_KEY_SCHEDULE* ks);
 
-void SEED_set_key(const ubyte rawkey[SEED_KEY_LENGTH], SEED_KEY_SCHEDULE* ks);
-
-void SEED_encrypt(const ubyte s[SEED_BLOCK_SIZE], ubyte d[SEED_BLOCK_SIZE], const(SEED_KEY_SCHEDULE)* ks);
-void SEED_decrypt(const ubyte s[SEED_BLOCK_SIZE], ubyte d[SEED_BLOCK_SIZE], const(SEED_KEY_SCHEDULE)* ks);
+void SEED_encrypt(const(ubyte[SEED_BLOCK_SIZE])* s, ubyte[SEED_BLOCK_SIZE]* d, const(SEED_KEY_SCHEDULE)* ks);
+void SEED_decrypt(const(ubyte[SEED_BLOCK_SIZE])* s, ubyte[SEED_BLOCK_SIZE]* d, const(SEED_KEY_SCHEDULE)* ks);
 
 void SEED_ecb_encrypt(const(ubyte)* in_, ubyte* out_, const(SEED_KEY_SCHEDULE)* ks, int enc);
 void SEED_cbc_encrypt(const(ubyte)* in_, ubyte* out_,
-        size_t len, const(SEED_KEY_SCHEDULE)* ks, ubyte ivec[SEED_BLOCK_SIZE], int enc);
+        size_t len, const(SEED_KEY_SCHEDULE)* ks, ubyte[SEED_BLOCK_SIZE]* ivec, int enc);
 void SEED_cfb128_encrypt(const(ubyte)* in_, ubyte* out_,
-        size_t len, const(SEED_KEY_SCHEDULE)* ks, ubyte ivec[SEED_BLOCK_SIZE], int* num, int enc);
+        size_t len, const(SEED_KEY_SCHEDULE)* ks, ubyte[SEED_BLOCK_SIZE]* ivec, int* num, int enc);
 void SEED_ofb128_encrypt(const(ubyte)* in_, ubyte* out_,
-        size_t len, const(SEED_KEY_SCHEDULE)* ks, ubyte ivec[SEED_BLOCK_SIZE], int* num);
+        size_t len, const(SEED_KEY_SCHEDULE)* ks, ubyte[SEED_BLOCK_SIZE]* ivec, int* num);

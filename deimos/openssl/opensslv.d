@@ -16,7 +16,7 @@ import deimos.openssl._d_util;
  * 0.9.4 	  0x0090400f
  * 1.2.3z	  0x102031af
  *
- * For continuity reasons (because 0.9.5 is already out_, and is coded
+ * For continuity reasons (because 0.9.5 is already out, and is coded
  * 0x00905100), between 0.9.5 and 0.9.6 the coding of the patch level
  * part is slightly different, by setting the highest bit.  This means
  * that 0.9.5a looks like this: 0x0090581f.  At 0.9.6, we can start
@@ -26,11 +26,11 @@ import deimos.openssl._d_util;
  * (Prior to 0.9.5a beta1, a different scheme was used: MMNNFFRBB for
  * major minor fix final patch/beta)
  */
-enum OPENSSL_VERSION_NUMBER = 0x1000005f;
+enum OPENSSL_VERSION_NUMBER = 0x1000107f;
 version (OPENSSL_FIPS) {
-enum OPENSSL_VERSION_TEXT = "OpenSSL 1.0.0e-fips 6 Sep 2011";
+enum OPENSSL_VERSION_TEXT = "OpenSSL 1.0.1g-fips 7 Apr 2014";
 } else {
-enum OPENSSL_VERSION_TEXT = "OpenSSL 1.0.0e 6 Sep 2011";
+enum OPENSSL_VERSION_TEXT = "OpenSSL 1.0.1g 7 Apr 2014";
 }
 enum OPENSSL_VERSION_PTEXT = " part of " ~ OPENSSL_VERSION_TEXT;
 
@@ -68,7 +68,7 @@ enum OPENSSL_VERSION_PTEXT = " part of " ~ OPENSSL_VERSION_TEXT;
  *	4.0
  *	4.0:4.1
  *
- * Notice how version 4 is completely incompatible with version_, and
+ * Notice how version 4 is completely incompatible with version, and
  * therefore give the breach you can see.
  *
  * There may be other schemes as well that I haven't yet discovered.
