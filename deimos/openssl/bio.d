@@ -511,7 +511,7 @@ auto BIO_dup_state()(BIO* b,void* ret)	{ return BIO_ctrl(b,BIO_CTRL_DUP,0,ret); 
 
 auto BIO_reset()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_RESET,0,null); }
 auto BIO_eof()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_EOF,0,null); }
-auto BIO_set_close()(BIO* b,c)	{ return cast(int) BIO_ctrl(b,BIO_CTRL_SET_CLOSE,(c),null); }
+auto BIO_set_close()(BIO* b,int c) { return cast(int) BIO_ctrl(b,BIO_CTRL_SET_CLOSE,c,null); }
 auto BIO_get_close()(BIO* b)	{ return cast(int) BIO_ctrl(b,BIO_CTRL_GET_CLOSE,0,null); }
 auto BIO_pending()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_PENDING,0,null); }
 auto BIO_wpending()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_WPENDING,0,null); }
