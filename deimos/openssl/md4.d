@@ -106,6 +106,9 @@ struct MD4state_st {
 	}
 alias MD4state_st MD4_CTX;
 
+version(OPENSSL_FIPS) {
+    int private_MD4_Init(MD4_CTX* c);
+}
 int MD4_Init(MD4_CTX* c);
 int MD4_Update(MD4_CTX* c, const(void)* data, size_t len);
 int MD4_Final(ubyte* md, MD4_CTX* c);

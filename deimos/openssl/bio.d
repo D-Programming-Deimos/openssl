@@ -67,6 +67,14 @@ version(OPENSSL_NO_FP_API) {} else {
 import core.stdc.stdio;
 }
 
+// TODO: review imports
+version(OPENSSL_NO_SCTP) {
+    version(OPENSSL_SYS_VMS)
+        import inttypes;
+    else
+	import core.stdc.stdint;
+}
+
 version (Posix) {
 	import core.sys.posix.netdb;
 } else version (Windows) {
@@ -103,6 +111,9 @@ enum BIO_TYPE_BER = (18|0x0200);		/* BER -> bin filter */
 enum BIO_TYPE_BIO = (19|0x0400);		/* (half a) BIO pair */
 enum BIO_TYPE_LINEBUFFER = (20|0x0200);		/* filter */
 enum BIO_TYPE_DGRAM = (21|0x0400|0x0100);
+version (OPENSSL_NO_SCTP) {} else {
+enum BIO_TYPE_DGRAM_SCTP = (24|0x0400|0x0100);
+}
 enum BIO_TYPE_ASN1 = (22|0x0200);		/* filter */
 enum BIO_TYPE_COMP = (23|0x0200);		/* filter */
 
@@ -154,6 +165,7 @@ enum BIO_CTRL_DGRAM_MTU_DISCOVER = 39; /* set DF bit on egress packets */
 /* #endif */
 
 enum BIO_CTRL_DGRAM_QUERY_MTU = 40; /* as kernel for current MTU */
+enum BIO_CTRL_DGRAM_GET_FALLBACK_MTU = 47;
 enum BIO_CTRL_DGRAM_GET_MTU = 41; /* get cached value for MTU */
 enum BIO_CTRL_DGRAM_SET_MTU = 42; /* set cached value for
 					      * MTU. want to use this
@@ -169,7 +181,22 @@ enum BIO_CTRL_DGRAM_GET_PEER = 46;
 enum BIO_CTRL_DGRAM_SET_PEER = 44; /* Destination for the data */
 
 enum BIO_CTRL_DGRAM_SET_NEXT_TIMEOUT = 45; /* Next DTLS handshake timeout to
-											  * adjust socket timeouts */
+                                              * adjust socket timeouts */
+
+version(OPENSSL_NO_SCTP) {} else {
+    /* SCTP stuff */
+    enum BIO_CTRL_DGRAM_SCTP_SET_IN_HANDSHAKE = 50;
+    enum BIO_CTRL_DGRAM_SCTP_ADD_AUTH_KEY = 51;
+    enum BIO_CTRL_DGRAM_SCTP_NEXT_AUTH_KEY = 52;
+    enum BIO_CTRL_DGRAM_SCTP_AUTH_CCS_RCVD = 53;
+    enum BIO_CTRL_DGRAM_SCTP_GET_SNDINFO = 60;
+    enum BIO_CTRL_DGRAM_SCTP_SET_SNDINFO = 61;
+    enum BIO_CTRL_DGRAM_SCTP_GET_RCVINFO = 62;
+    enum BIO_CTRL_DGRAM_SCTP_SET_RCVINFO = 63;
+    enum BIO_CTRL_DGRAM_SCTP_GET_PRINFO = 64;
+    enum BIO_CTRL_DGRAM_SCTP_SET_PRINFO = 65;
+    enum BIO_CTRL_DGRAM_SCTP_SAVE_SHUTDOWN = 70;
+}
 
 /* modifiers */
 enum BIO_FP_READ = 0x02;
@@ -316,6 +343,16 @@ struct bio_st
 /+mixin DECLARE_STACK_OF!(BIO);+/
 
 struct bio_f_buffer_ctx_struct {
+
+	/* Buffers are setup like this:
+	 *
+	 * <---------------------- size ----------------------->
+	 * +---------------------------------------------------+
+	 * | consumed | remaining          | free space        |
+	 * +---------------------------------------------------+
+	 * <-- off --><------- len ------->
+	 */
+
 	/* BIO* bio; */ /* this is now in the BIO struct */
 	int ibuf_size;	/* how big is the input buffer */
 	int obuf_size;	/* how big is the output buffer */
@@ -332,6 +369,34 @@ alias bio_f_buffer_ctx_struct BIO_F_BUFFER_CTX;
 
 /* Prefix and suffix callback in ASN1 BIO */
 alias typeof(*(ExternC!(int function(BIO* b, ubyte** pbuf, int* plen, void* parg))).init) asn1_ps_func;
+
+version(OPENSSL_NO_SCTP) {} else {
+/* SCTP parameter structs */
+struct bio_dgram_sctp_sndinfo
+	{
+	uint16_t snd_sid;
+	uint16_t snd_flags;
+	uint32_t snd_ppid;
+	uint32_t snd_context;
+	};
+
+struct bio_dgram_sctp_rcvinfo
+	{
+	uint16_t rcv_sid;
+	uint16_t rcv_ssn;
+	uint16_t rcv_flags;
+	uint32_t rcv_ppid;
+	uint32_t rcv_tsn;
+	uint32_t rcv_cumtsn;
+	uint32_t rcv_context;
+	};
+
+struct bio_dgram_sctp_prinfo
+	{
+	uint16_t pr_policy;
+	uint32_t pr_value;
+	};
+}
 
 /* connect BIO stuff */
 enum BIO_CONN_S_BEFORE = 1;
@@ -403,8 +468,8 @@ enum BIO_C_GET_SUFFIX = 152;
 enum BIO_C_SET_EX_ARG = 153;
 enum BIO_C_GET_EX_ARG = 154;
 
-auto BIO_set_app_data(BIO* s, void* arg) { return BIO_set_ex_data(s,0,arg); }
-auto BIO_get_app_data(BIO* s) { return BIO_get_ex_data(s,0); }
+auto BIO_set_app_data()(BIO* s, void* arg) { return BIO_set_ex_data(s,0,arg); }
+auto BIO_get_app_data()(BIO* s) { return BIO_get_ex_data(s,0); }
 
 /* BIO_s_connect() and BIO_s_socks4a_connect() */
 auto BIO_set_conn_hostname()(BIO* b, char* name) { return BIO_ctrl(b,BIO_C_SET_CONNECT,0,name); }
@@ -621,6 +686,9 @@ BIO_METHOD* BIO_f_buffer();
 BIO_METHOD* BIO_f_nbio_test();
 version (OPENSSL_NO_DGRAM) {} else {
 BIO_METHOD* BIO_s_datagram();
+version(OPENSSL_NO_SCTP) {} else {
+BIO_METHOD *BIO_s_datagram_sctp();
+}
 }
 
 /* BIO_METHOD* BIO_f_ber(); */
@@ -663,6 +731,15 @@ int BIO_set_tcp_ndelay(int sock,int turn_on);
 
 BIO* BIO_new_socket(int sock, int close_flag);
 BIO* BIO_new_dgram(int fd, int close_flag);
+version(OPENSSL_NO_SCTP) {} else {
+BIO *BIO_new_dgram_sctp(int fd, int close_flag);
+int BIO_dgram_is_sctp(BIO *bio);
+int BIO_dgram_sctp_notification_cb(BIO *b,
+                                   ExternC!(void function(BIO *bio, void *context, void *buf)) handle_notifications,
+                                   void *context);
+int BIO_dgram_sctp_wait_for_dry(BIO *b);
+int BIO_dgram_sctp_msg_waiting(BIO *b);
+}
 BIO* BIO_new_fd(int fd, int close_flag);
 BIO* BIO_new_connect(char* host_port);
 BIO* BIO_new_accept(char* host_port);
@@ -717,6 +794,7 @@ enum BIO_F_BIO_WRITE = 113;
 enum BIO_F_BUFFER_CTRL = 114;
 enum BIO_F_CONN_CTRL = 127;
 enum BIO_F_CONN_STATE = 115;
+enum BIO_F_DGRAM_SCTP_READ = 132;
 enum BIO_F_FILE_CTRL = 116;
 enum BIO_F_FILE_READ = 130;
 enum BIO_F_LINEBUFFER_CTRL = 129;

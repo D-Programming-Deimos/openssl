@@ -8,6 +8,9 @@ import deimos.openssl._d_util;
 // FIXME: How should these be handled?
 /+#ifndef OPENSSL_DOING_MAKEDEPEND
 
+#ifndef OPENSSL_NO_EC_NISTP_64_GCC_128
+# define OPENSSL_NO_EC_NISTP_64_GCC_128
+#endif
 #ifndef OPENSSL_NO_GMP
 # define OPENSSL_NO_GMP
 #endif
@@ -26,6 +29,9 @@ import deimos.openssl._d_util;
 #ifndef OPENSSL_NO_RFC3779
 # define OPENSSL_NO_RFC3779
 #endif
+#ifndef OPENSSL_NO_SCTP
+# define OPENSSL_NO_SCTP
+#endif
 #ifndef OPENSSL_NO_STORE
 # define OPENSSL_NO_STORE
 #endif
@@ -36,12 +42,14 @@ import deimos.openssl._d_util;
 # define OPENSSL_NO_DYNAMIC_ENGINE
 #endif
 
-
 /* The OPENSSL_NO_* macros are also defined as NO_* if the application
    asks for it.  This is a transient feature that is provided for those
    who haven't had the time to do the appropriate changes in their
    applications.  */
 #ifdef OPENSSL_ALGORITHM_DEFINES
+# if defined(OPENSSL_NO_EC_NISTP_64_GCC_128) && !defined(NO_EC_NISTP_64_GCC_128)
+#  define NO_EC_NISTP_64_GCC_128
+# endif
 # if defined(OPENSSL_NO_GMP) && !defined(NO_GMP)
 #  define NO_GMP
 # endif
@@ -60,12 +68,14 @@ import deimos.openssl._d_util;
 # if defined(OPENSSL_NO_RFC3779) && !defined(NO_RFC3779)
 #  define NO_RFC3779
 # endif
+# if defined(OPENSSL_NO_SCTP) && !defined(NO_SCTP)
+#  define NO_SCTP
+# endif
 # if defined(OPENSSL_NO_STORE) && !defined(NO_STORE)
 #  define NO_STORE
 # endif
 #endif
 +/
-
 /* crypto/opensslconf.h.in */
 
 /* Generate 80386 code? */
@@ -147,7 +157,7 @@ alias c_ulong DES_LONG;
 #if defined(HEADER_BF_LOCL_H) && !defined(CONFIG_HEADER_BF_LOCL_H)
 #define CONFIG_HEADER_BF_LOCL_H
 #undef BF_PTR
-
+#endif /* HEADER_BF_LOCL_H */
 
 #if defined(HEADER_DES_LOCL_H) && !defined(CONFIG_HEADER_DES_LOCL_H)
 #define CONFIG_HEADER_DES_LOCL_H
@@ -188,7 +198,7 @@ YOU SHOULD NOT HAVE BOTH DES_RISC1 AND DES_RISC2 DEFINED!!!!!
    even newer MIPS CPU's, but at the moment one size fits all for
    optimization options.  Older Sparc's work better with only UNROLL, but
    there's no way to tell at compile time what it is you're running on */
-
+ 
 #if defined( sun )		/* Newer Sparc's */
 #  define DES_PTR
 #  define DES_RISC1

@@ -83,6 +83,9 @@ alias idea_key_st IDEA_KEY_SCHEDULE;
 const(char)* idea_options();
 void idea_ecb_encrypt(const(ubyte)* in_, ubyte* out_,
 	IDEA_KEY_SCHEDULE* ks);
+version(OPENSSL_FIPS) {
+    void private_idea_set_encrypt_key(const(ubyte)* key, IDEA_KEY_SCHEDULE* ks);
+}
 void idea_set_encrypt_key(const(ubyte)* key, IDEA_KEY_SCHEDULE* ks);
 void idea_set_decrypt_key(IDEA_KEY_SCHEDULE* ek, IDEA_KEY_SCHEDULE* dk);
 void idea_cbc_encrypt(const(ubyte)* in_, ubyte* out_,

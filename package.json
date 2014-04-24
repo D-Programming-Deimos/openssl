@@ -4,6 +4,17 @@
 	"homepage": "http://www.openssl.org/",
 	"license": "OpenSSL or SSLeay",
 	"importPaths": ["."],
-	"targetType": "sourceLibrary",
-	"libs-posix" : ["ssl", "crypto"]
+	"libs-posix" : ["ssl", "crypto"],
+	"configurations" : [
+	    {
+		"name": "library",
+		"targetType": "sourceLibrary",
+	    },
+	    {
+		"name": "unittest",
+		"targetType": "executable",
+		"sourcePaths": ["deimos/openssl"],
+                "dflags": ["-main"],
+	    }
+	]
 }

@@ -149,7 +149,24 @@ const(EC_METHOD)* EC_GFp_mont_method();
  */
 const(EC_METHOD)* EC_GFp_nist_method();
 
+version(OPENSSL_NO_EC_NISTP_64_GCC_128) {} else {
+/** Returns 64-bit optimized methods for nistp224
+ *  \return  EC_METHOD object
+ */
+const(EC_METHOD)* EC_GFp_nistp224_method();
 
+/** Returns 64-bit optimized methods for nistp256
+ *  \return  EC_METHOD object
+ */
+const(EC_METHOD)* EC_GFp_nistp256_method();
+
+/** Returns 64-bit optimized methods for nistp521
+ *  \return  EC_METHOD object
+ */
+const(EC_METHOD)* EC_GFp_nistp521_method();
+}
+
+version(OPENSSL_NO_EC2M) {} else {
 /********************************************************************/
 /*          EC_METHOD for curves over GF(2^m)                      */
 /********************************************************************/
@@ -158,6 +175,8 @@ const(EC_METHOD)* EC_GFp_nist_method();
  * \return  EC_METHOD object
  */
 const(EC_METHOD)* EC_GF2m_simple_method();
+
+}
 
 
 /********************************************************************/
@@ -253,10 +272,10 @@ int EC_GROUP_get_curve_name(const(EC_GROUP)* group);
 void EC_GROUP_set_asn1_flag(EC_GROUP* group, int flag);
 int EC_GROUP_get_asn1_flag(const(EC_GROUP)* group);
 
-void EC_GROUP_set_point_conversion_form(EC_GROUP*, point_conversion_form_t);
+void EC_GROUP_set_point_conversion_form(EC_GROUP* group, point_conversion_form_t);
 point_conversion_form_t EC_GROUP_get_point_conversion_form(const(EC_GROUP)*);
 
-ubyte* EC_GROUP_get0_seed(const(EC_GROUP)*);
+ubyte* EC_GROUP_get0_seed(const(EC_GROUP)* x);
 size_t EC_GROUP_get_seed_len(const(EC_GROUP)*);
 size_t EC_GROUP_set_seed(EC_GROUP*, const(ubyte)*, size_t len);
 
@@ -280,6 +299,7 @@ int EC_GROUP_set_curve_GFp(EC_GROUP* group, const(BIGNUM)* p, const(BIGNUM)* a, 
  */
 int EC_GROUP_get_curve_GFp(const(EC_GROUP)* group, BIGNUM* p, BIGNUM* a, BIGNUM* b, BN_CTX* ctx);
 
+version(OPENSSL_NO_EC2M) {} else {
 /** Sets the parameter of a ec over GF2m defined by y^2 + x*y = x^3 + a*x^2 + b
  * \param  group  EC_GROUP object
  * \param  p      BIGNUM with the polynomial defining the underlying field
@@ -299,7 +319,7 @@ int EC_GROUP_set_curve_GF2m(EC_GROUP* group, const(BIGNUM)* p, const(BIGNUM)* a,
  * \return 1 on success and 0 if an error occured
  */
 int EC_GROUP_get_curve_GF2m(const(EC_GROUP)* group, BIGNUM* p, BIGNUM* a, BIGNUM* b, BN_CTX* ctx);
-
+}
 /** Returns the number of bits needed to represent a field element
  * \param  group  EC_GROUP object
  * \return number of bits needed to represent a field element
@@ -340,7 +360,7 @@ int EC_GROUP_cmp(const(EC_GROUP)* a, const(EC_GROUP)* b, BN_CTX* ctx);
  * \return newly created EC_GROUP object with the specified parameters
  */
 EC_GROUP* EC_GROUP_new_curve_GFp(const(BIGNUM)* p, const(BIGNUM)* a, const(BIGNUM)* b, BN_CTX* ctx);
-
+version(OPENSSL_NO_EC2M) {} else {
 /** Creates a new EC_GROUP object with the specified parameters defined
  * over GF2m (defined by the equation y^2 + x*y = x^3 + a*x^2 + b)
  * \param  p    BIGNUM with the polynomial defining the underlying field
@@ -350,7 +370,7 @@ EC_GROUP* EC_GROUP_new_curve_GFp(const(BIGNUM)* p, const(BIGNUM)* a, const(BIGNU
  * \return newly created EC_GROUP object with the specified parameters
  */
 EC_GROUP* EC_GROUP_new_curve_GF2m(const(BIGNUM)* p, const(BIGNUM)* a, const(BIGNUM)* b, BN_CTX* ctx);
-
+}
 /** Creates a EC_GROUP object with a curve specified by a NID
  * \param  nid  NID of the OID of the curve name
  * \return newly created EC_GROUP object with specified curve or NULL
@@ -479,7 +499,7 @@ int EC_POINT_get_affine_coordinates_GFp(const(EC_GROUP)* group,
  */
 int EC_POINT_set_compressed_coordinates_GFp(const(EC_GROUP)* group, EC_POINT* p,
 	const(BIGNUM)* x, int y_bit, BN_CTX* ctx);
-
+version(OPENSSL_NO_EC2M) {} else {
 /** Sets the affine coordinates of a EC_POINT over GF2m
  * \param  group  underlying EC_GROUP object
  * \param  p      EC_POINT object
@@ -512,7 +532,7 @@ int EC_POINT_get_affine_coordinates_GF2m(const(EC_GROUP)* group,
  */
 int EC_POINT_set_compressed_coordinates_GF2m(const(EC_GROUP)* group, EC_POINT* p,
 	const(BIGNUM)* x, int y_bit, BN_CTX* ctx);
-
+}
 /** Encodes a EC_POINT object to a octet string
  * \param  group  underlying EC_GROUP object
  * \param  p      EC_POINT object
@@ -604,8 +624,8 @@ int EC_POINT_is_on_curve(const(EC_GROUP)* group, const(EC_POINT)* point, BN_CTX*
  */
 int EC_POINT_cmp(const(EC_GROUP)* group, const(EC_POINT)* a, const(EC_POINT)* b, BN_CTX* ctx);
 
-int EC_POINT_make_affine(const(EC_GROUP)*, EC_POINT*, BN_CTX*);
-int EC_POINTs_make_affine(const(EC_GROUP)*, size_t num, EC_POINT* [], BN_CTX*);
+int EC_POINT_make_affine(const(EC_GROUP)* group, EC_POINT* point, BN_CTX* ctx);
+int EC_POINTs_make_affine(const(EC_GROUP)* group, size_t num, EC_POINT*[] points, BN_CTX* ctx);
 
 /** Computes r = generator* n sum_{i=0}^num p[i] * m[i]
  * \param  group  underlying EC_GROUP object
@@ -651,9 +671,11 @@ int EC_GROUP_have_precompute_mult(const(EC_GROUP)* group);
 /* EC_GROUP_get_basis_type() returns the NID of the basis type
  * used to represent the field elements */
 int EC_GROUP_get_basis_type(const(EC_GROUP)*);
+version(OPENSSL_NO_EC2M) {} else {
 int EC_GROUP_get_trinomial_basis(const(EC_GROUP)*, uint* k);
 int EC_GROUP_get_pentanomial_basis(const(EC_GROUP)*, uint* k1,
 	uint* k2, uint* k3);
+}
 
 enum OPENSSL_EC_NAMED_CURVE = 0x001;
 
@@ -691,10 +713,20 @@ alias ec_key_st EC_KEY;
 enum EC_PKEY_NO_PARAMETERS = 0x001;
 enum EC_PKEY_NO_PUBKEY = 0x002;
 
+/* some values for the flags field */
+enum EC_FLAG_NON_FIPS_ALLOW = 0x1;
+enum EC_FLAG_FIPS_CHECKED = 0x2;
+
 /** Creates a new EC_KEY object.
  * \return EC_KEY object or NULL if an error occurred.
  */
 EC_KEY* EC_KEY_new();
+
+int EC_KEY_get_flags(const(EC_KEY)* key);
+
+void EC_KEY_set_flags(EC_KEY* key, int flags);
+
+void EC_KEY_clear_flags(EC_KEY* key, int flags);
 
 /** Creates a new EC_KEY object using a named curve as underlying
  * EC_GROUP object.
@@ -770,16 +802,24 @@ const(EC_POINT)* EC_KEY_get0_public_key(const(EC_KEY)* key);
 int EC_KEY_set_public_key(EC_KEY* key, const(EC_POINT)* pub);
 
 uint EC_KEY_get_enc_flags(const(EC_KEY)* key);
-void EC_KEY_set_enc_flags(EC_KEY*, uint);
-point_conversion_form_t EC_KEY_get_conv_form(const(EC_KEY)*);
-void EC_KEY_set_conv_form(EC_KEY*, point_conversion_form_t);
+void EC_KEY_set_enc_flags(EC_KEY* eckey, uint);
+point_conversion_form_t EC_KEY_get_conv_form(const(EC_KEY)* key);
+void EC_KEY_set_conv_form(EC_KEY* eckey, point_conversion_form_t);
 /* functions to set/get method specific data  */
-void* EC_KEY_get_key_method_data(EC_KEY*,
+void* EC_KEY_get_key_method_data(EC_KEY* eckey,
 	ExternC!(void* function(void*)) dup_func, ExternC!(void function(void*)) free_func, ExternC!(void function(void*)) clear_free_func);
-void EC_KEY_insert_key_method_data(EC_KEY*, void* data,
+/** Sets the key method data of an EC_KEY object, if none has yet been set.
+ *  \param  key              EC_KEY object
+ *  \param  data             opaque data to install.
+ *  \param  dup_func         a function that duplicates |data|.
+ *  \param  free_func        a function that frees |data|.
+ *  \param  clear_free_func  a function that wipes and frees |data|.
+ *  \return the previously set data pointer, or NULL if |data| was inserted.
+ */
+void *EC_KEY_insert_key_method_data(EC_KEY* key, void* data,
 	ExternC!(void* function(void*)) dup_func, ExternC!(void function(void*)) free_func, ExternC!(void function(void*)) clear_free_func);
 /* wrapper functions for the underlying EC_GROUP object */
-void EC_KEY_set_asn1_flag(EC_KEY*, int);
+void EC_KEY_set_asn1_flag(EC_KEY* eckey, int);
 
 /** Creates a table of pre-computed multiples of the generator to
  * accelerate further EC_KEY operations.
@@ -928,6 +968,7 @@ void ERR_load_EC_strings();
 /* Error codes for the EC functions. */
 
 /* Function codes. */
+enum EC_F_BN_TO_FELEM = 224;
 enum EC_F_COMPUTE_WNAF = 143;
 enum EC_F_D2I_ECPARAMETERS = 144;
 enum EC_F_D2I_ECPKPARAMETERS = 145;
@@ -970,6 +1011,15 @@ enum EC_F_EC_GFP_MONT_FIELD_SET_TO_ONE = 209;
 enum EC_F_EC_GFP_MONT_FIELD_SQR = 132;
 enum EC_F_EC_GFP_MONT_GROUP_SET_CURVE = 189;
 enum EC_F_EC_GFP_MONT_GROUP_SET_CURVE_GFP = 135;
+enum EC_F_EC_GFP_NISTP224_GROUP_SET_CURVE = 225;
+enum EC_F_EC_GFP_NISTP224_POINTS_MUL = 228;
+enum EC_F_EC_GFP_NISTP224_POINT_GET_AFFINE_COORDINATES = 226;
+enum EC_F_EC_GFP_NISTP256_GROUP_SET_CURVE = 230;
+enum EC_F_EC_GFP_NISTP256_POINTS_MUL = 231;
+enum EC_F_EC_GFP_NISTP256_POINT_GET_AFFINE_COORDINATES = 232;
+enum EC_F_EC_GFP_NISTP521_GROUP_SET_CURVE = 233;
+enum EC_F_EC_GFP_NISTP521_POINTS_MUL = 234;
+enum EC_F_EC_GFP_NISTP521_POINT_GET_AFFINE_COORDINATES = 235;
 enum EC_F_EC_GFP_NIST_FIELD_MUL = 200;
 enum EC_F_EC_GFP_NIST_FIELD_SQR = 201;
 enum EC_F_EC_GFP_NIST_GROUP_SET_CURVE = 202;
@@ -1012,6 +1062,7 @@ enum EC_F_EC_KEY_GENERATE_KEY = 179;
 enum EC_F_EC_KEY_NEW = 182;
 enum EC_F_EC_KEY_PRINT = 180;
 enum EC_F_EC_KEY_PRINT_FP = 181;
+enum EC_F_EC_KEY_SET_PUBLIC_KEY_AFFINE_COORDINATES = 229;
 enum EC_F_EC_POINTS_MAKE_AFFINE = 136;
 enum EC_F_EC_POINT_ADD = 112;
 enum EC_F_EC_POINT_CMP = 113;
@@ -1042,6 +1093,9 @@ enum EC_F_I2D_ECPARAMETERS = 190;
 enum EC_F_I2D_ECPKPARAMETERS = 191;
 enum EC_F_I2D_ECPRIVATEKEY = 192;
 enum EC_F_I2O_ECPUBLICKEY = 151;
+enum EC_F_NISTP224_PRE_COMP_NEW = 227;
+enum EC_F_NISTP256_PRE_COMP_NEW = 236;
+enum EC_F_NISTP521_PRE_COMP_NEW = 237;
 enum EC_F_O2I_ECPUBLICKEY = 152;
 enum EC_F_OLD_EC_PRIV_DECODE = 222;
 enum EC_F_PKEY_EC_CTRL = 197;
@@ -1054,12 +1108,15 @@ enum EC_F_PKEY_EC_SIGN = 218;
 /* Reason codes. */
 enum EC_R_ASN1_ERROR = 115;
 enum EC_R_ASN1_UNKNOWN_FIELD = 116;
+enum EC_R_BIGNUM_OUT_OF_RANGE = 144;
 enum EC_R_BUFFER_TOO_SMALL = 100;
+enum EC_R_COORDINATES_OUT_OF_RANGE = 146;
 enum EC_R_D2I_ECPKPARAMETERS_FAILURE = 117;
 enum EC_R_DECODE_ERROR = 142;
 enum EC_R_DISCRIMINANT_IS_ZERO = 118;
 enum EC_R_EC_GROUP_NEW_BY_NAME_FAILURE = 119;
 enum EC_R_FIELD_TOO_LARGE = 143;
+enum EC_R_GF2M_NOT_SUPPORTED = 147;
 enum EC_R_GROUP2PKPARAMETERS_FAILURE = 120;
 enum EC_R_I2D_ECPKPARAMETERS_FAILURE = 121;
 enum EC_R_INCOMPATIBLE_OBJECTS = 101;
@@ -1094,4 +1151,5 @@ enum EC_R_UNDEFINED_ORDER = 128;
 enum EC_R_UNKNOWN_GROUP = 129;
 enum EC_R_UNKNOWN_ORDER = 114;
 enum EC_R_UNSUPPORTED_FIELD = 131;
+enum EC_R_WRONG_CURVE_PARAMETERS = 145;
 enum EC_R_WRONG_ORDER = 130;

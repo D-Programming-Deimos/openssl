@@ -25,6 +25,9 @@ struct WHIRLPOOL_CTX {
 	};
 
 version(OPENSSL_NO_WHIRLPOOL) {} else {
+version(OPENSSL_FIPS) {
+    int private_WHIRLPOOL_Init(WHIRLPOOL_CTX* c);
+}
 int WHIRLPOOL_Init	(WHIRLPOOL_CTX* c);
 int WHIRLPOOL_Update	(WHIRLPOOL_CTX* c,const(void)* inp,size_t bytes);
 void WHIRLPOOL_BitUpdate(WHIRLPOOL_CTX* c,const(void)* inp,size_t bits);

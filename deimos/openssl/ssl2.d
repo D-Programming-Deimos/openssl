@@ -157,6 +157,8 @@ enum SSL2_MAX_KEY_MATERIAL_LENGTH = 24;
 alias char  CERT;
 // #endif
 
+version(OPENSSL_NO_SSL_INTERN) {} else {
+
 struct ssl2_state_st
 	{
 	int three_byte_header;
@@ -222,6 +224,8 @@ struct ssl2_state_st
 	tmp_ tmp;
 	}
 alias ssl2_state_st SSL2_STATE;
+
+}
 
 /* SSLv2 */
 /* client */

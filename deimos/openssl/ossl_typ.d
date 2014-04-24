@@ -93,9 +93,13 @@ alias asn1_string_st ASN1_TIME;
 alias asn1_string_st ASN1_GENERALIZEDTIME;
 alias asn1_string_st ASN1_VISIBLESTRING;
 alias asn1_string_st ASN1_UTF8STRING;
+alias asn1_string_st ASN1_STRING;
 alias int ASN1_BOOLEAN;
 alias int ASN1_NULL;
 }
+
+import deimos.openssl.asn1t;
+alias ASN1_ITEM_st ASN1_ITEM;
 
 struct asn1_pctx_st;
 alias asn1_pctx_st ASN1_PCTX;

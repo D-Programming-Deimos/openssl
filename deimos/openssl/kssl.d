@@ -70,6 +70,15 @@ version (OPENSSL_NO_KRB5) {} else {
 import core.stdc.stdio;
 // #include <ctype.h>
 // #include <krb5.h>
+// #ifdef OPENSSL_SYS_WIN32
+// /* These can sometimes get redefined indirectly by krb5 header files
+//  * after they get undefed in ossl_typ.h
+// */
+// #undef X509_NAME
+// #undef X509_EXTENSIONS
+// #undef OCSP_REQUEST
+// #undef OCSP_RESPONSE
+// #endif
 
 extern (C):
 nothrow:
@@ -176,5 +185,10 @@ krb5_error_code  kssl_validate_times(krb5_timestamp atime,
 krb5_error_code  kssl_check_authent(KSSL_CTX* kssl_ctx, krb5_data* authentp,
 			            krb5_timestamp* atimep, KSSL_ERR* kssl_err);
 ubyte* kssl_skip_confound(krb5_enctype enctype, ubyte* authn);+/
+
+import deimos.openssl.ossl_typ : SSL;
+void SSL_set0_kssl_ctx(SSL* s, KSSL_CTX* kctx);
+KSSL_CTX* SSL_get0_kssl_ctx(SSL* s);
+char* kssl_ctx_get0_client_princ(KSSL_CTX* kctx);
 
 }

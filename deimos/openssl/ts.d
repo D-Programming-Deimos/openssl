@@ -88,9 +88,6 @@ version(OPENSSL_NO_DH) {} else {
 public import deimos.openssl.dh;
 }
 
-public import deimos.openssl.evp;
-
-
 extern (C):
 nothrow:
 

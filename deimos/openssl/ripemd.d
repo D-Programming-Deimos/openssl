@@ -92,6 +92,9 @@ struct RIPEMD160state_st {
 	}
 alias RIPEMD160state_st RIPEMD160_CTX;
 
+version(OPENSSL_FIPS) {
+    int private_RIPEMD160_Init(RIPEMD160_CTX* c);
+}
 int RIPEMD160_Init(RIPEMD160_CTX* c);
 int RIPEMD160_Update(RIPEMD160_CTX* c, const(void)* data, size_t len);
 int RIPEMD160_Final(ubyte* md, RIPEMD160_CTX* c);

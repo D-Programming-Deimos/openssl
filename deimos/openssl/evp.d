@@ -86,7 +86,7 @@ enum EVP_CAST5_KEY_SIZE = 16;
 enum EVP_RC5_32_12_16_KEY_SIZE = 16;
 */
 enum EVP_MAX_MD_SIZE = 64;	/* longest known is SHA512 */
-enum EVP_MAX_KEY_LENGTH = 32;
+enum EVP_MAX_KEY_LENGTH = 64;
 enum EVP_MAX_IV_LENGTH = 16;
 enum EVP_MAX_BLOCK_LENGTH = 32;
 
@@ -119,6 +119,7 @@ alias NID_dsaWithSHA1_2 EVP_PKEY_DSA4;
 alias NID_dhKeyAgreement EVP_PKEY_DH;
 alias NID_X9_62_id_ecPublicKey EVP_PKEY_EC;
 alias NID_hmac EVP_PKEY_HMAC;
+alias NID_cmac EVP_PKEY_CMAC;
 
 extern (C):
 nothrow:
@@ -218,6 +219,8 @@ enum EVP_MD_FLAG_DIGALGID_ABSENT = 0x0008;
 /* Custom handling via ctrl */
 
 enum EVP_MD_FLAG_DIGALGID_CUSTOM = 0x0018;
+
+enum EVP_MD_FLAG_FIPS = 0x0400; /* Note if suitable for use in FIPS mode */
 
 /* Digest ctrls */
 
@@ -325,6 +328,10 @@ enum EVP_CIPH_ECB_MODE = 0x1;
 enum EVP_CIPH_CBC_MODE = 0x2;
 enum EVP_CIPH_CFB_MODE = 0x3;
 enum EVP_CIPH_OFB_MODE = 0x4;
+enum EVP_CIPH_CTR_MODE = 0x5;
+enum EVP_CIPH_GCM_MODE = 0x6;
+enum EVP_CIPH_CCM_MODE = 0x7;
+enum EVP_CIPH_XTS_MODE = 0x10001;
 enum EVP_CIPH_MODE = 0xF0007;
 /* Set if variable length cipher */
 enum EVP_CIPH_VARIABLE_LENGTH = 0x8;
@@ -346,6 +353,15 @@ enum EVP_CIPH_CUSTOM_COPY = 0x400;
 enum EVP_CIPH_FLAG_DEFAULT_ASN1 = 0x1000;
 /* Buffer length in bits not bytes: CFB1 mode only */
 enum EVP_CIPH_FLAG_LENGTH_BITS = 0x2000;
+/* Note if suitable for use in FIPS mode */
+enum EVP_CIPH_FLAG_FIPS = 0x4000;
+/* Allow non FIPS cipher in FIPS mode */
+enum EVP_CIPH_FLAG_NON_FIPS_ALLOW = 0x8000;
+/* Cipher handles any and all padding logic as well
+ * as finalisation.
+ */
+enum EVP_CIPH_FLAG_CUSTOM_CIPHER = 0x100000;
+enum EVP_CIPH_FLAG_AEAD_CIPHER = 0x200000;
 
 /* ctrl() values */
 
@@ -358,6 +374,33 @@ enum EVP_CTRL_SET_RC5_ROUNDS = 0x5;
 enum EVP_CTRL_RAND_KEY = 0x6;
 enum EVP_CTRL_PBE_PRF_NID = 0x7;
 enum EVP_CTRL_COPY = 0x8;
+enum EVP_CTRL_GCM_SET_IVLEN = 0x9;
+enum EVP_CTRL_GCM_GET_TAG = 0x10;
+enum EVP_CTRL_GCM_SET_TAG = 0x11;
+enum EVP_CTRL_GCM_SET_IV_FIXED = 0x12;
+enum EVP_CTRL_GCM_IV_GEN = 0x13;
+alias EVP_CTRL_CCM_SET_IVLEN = EVP_CTRL_GCM_SET_IVLEN;
+alias EVP_CTRL_CCM_GET_TAG = EVP_CTRL_GCM_GET_TAG;
+alias EVP_CTRL_CCM_SET_TAG = EVP_CTRL_GCM_SET_TAG;
+enum EVP_CTRL_CCM_SET_L = 0x14;
+enum EVP_CTRL_CCM_SET_MSGLEN = 0x15;
+/* AEAD cipher deduces payload length and returns number of bytes
+ * required to store MAC and eventual padding. Subsequent call to
+ * EVP_Cipher even appends/verifies MAC.
+ */
+enum EVP_CTRL_AEAD_TLS1_AAD = 0x16;
+/* Used by composite AEAD ciphers, no-op in GCM, CCM... */
+enum EVP_CTRL_AEAD_SET_MAC_KEY = 0x17;
+/* Set the GCM invocation field, decrypt only */
+enum EVP_CTRL_GCM_SET_IV_INV = 0x18;
+
+/* GCM TLS constants */
+/* Length of fixed part of IV derived from PRF */
+enum EVP_GCM_TLS_FIXED_IV_LEN = 4;
+/* Length of explicit part of IV part of TLS records */
+enum EVP_GCM_TLS_EXPLICIT_IV_LEN = 8;
+/* Length of tag for TLS */
+enum EVP_GCM_TLS_TAG_LEN = 16;
 
 struct evp_cipher_info_st {
 	const(EVP_CIPHER)* cipher;
@@ -375,7 +418,7 @@ struct evp_cipher_ctx_st
 	ubyte  oiv[EVP_MAX_IV_LENGTH];	/* original iv */
 	ubyte  iv[EVP_MAX_IV_LENGTH];	/* working iv */
 	ubyte buf[EVP_MAX_BLOCK_LENGTH];/* saved partial block */
-	int num;				/* used by cfb/ofb mode */
+	int num;				/* used by cfb/ofb/ctr mode */
 
 	void* app_data;		/* application stuff */
 	int key_len;		/* May change for variable length cipher */
@@ -698,6 +741,9 @@ const(EVP_CIPHER)* EVP_desx_cbc();
 version(OPENSSL_NO_RC4) {} else {
 const(EVP_CIPHER)* EVP_rc4();
 const(EVP_CIPHER)* EVP_rc4_40();
+version(OPENSSL_NO_MD5) {} else {
+const EVP_CIPHER *EVP_rc4_hmac_md5();
+}
 }
 version(OPENSSL_NO_IDEA) {} else {
 const(EVP_CIPHER)* EVP_idea_ecb();
@@ -744,9 +790,10 @@ const(EVP_CIPHER)* EVP_aes_128_cfb8();
 const(EVP_CIPHER)* EVP_aes_128_cfb128();
 alias EVP_aes_128_cfb128 EVP_aes_128_cfb;
 const(EVP_CIPHER)* EVP_aes_128_ofb();
-version (none) {
 const(EVP_CIPHER)* EVP_aes_128_ctr();
-}
+const EVP_CIPHER *EVP_aes_128_ccm();
+const EVP_CIPHER *EVP_aes_128_gcm();
+const EVP_CIPHER *EVP_aes_128_xts();
 const(EVP_CIPHER)* EVP_aes_192_ecb();
 const(EVP_CIPHER)* EVP_aes_192_cbc();
 const(EVP_CIPHER)* EVP_aes_192_cfb1();
@@ -754,9 +801,9 @@ const(EVP_CIPHER)* EVP_aes_192_cfb8();
 const(EVP_CIPHER)* EVP_aes_192_cfb128();
 alias EVP_aes_192_cfb128 EVP_aes_192_cfb;
 const(EVP_CIPHER)* EVP_aes_192_ofb();
-version (none) {
 const(EVP_CIPHER)* EVP_aes_192_ctr();
-}
+const EVP_CIPHER *EVP_aes_192_ccm();
+const EVP_CIPHER *EVP_aes_192_gcm();
 const(EVP_CIPHER)* EVP_aes_256_ecb();
 const(EVP_CIPHER)* EVP_aes_256_cbc();
 const(EVP_CIPHER)* EVP_aes_256_cfb1();
@@ -764,8 +811,13 @@ const(EVP_CIPHER)* EVP_aes_256_cfb8();
 const(EVP_CIPHER)* EVP_aes_256_cfb128();
 alias EVP_aes_256_cfb128 EVP_aes_256_cfb;
 const(EVP_CIPHER)* EVP_aes_256_ofb();
-version (none) {
 const(EVP_CIPHER)* EVP_aes_256_ctr();
+const EVP_CIPHER *EVP_aes_256_ccm();
+const EVP_CIPHER *EVP_aes_256_gcm();
+const EVP_CIPHER *EVP_aes_256_xts();
+version(OPENSSL_NO_SHA) {} else version(OPENSSL_NO_SHA1) {} else {
+const EVP_CIPHER *EVP_aes_128_cbc_hmac_sha1();
+const EVP_CIPHER *EVP_aes_256_cbc_hmac_sha1();
 }
 }
 version(OPENSSL_NO_CAMELLIA) {} else {
@@ -1051,13 +1103,22 @@ enum EVP_PKEY_CTRL_CMS_ENCRYPT = 9;
 enum EVP_PKEY_CTRL_CMS_DECRYPT = 10;
 enum EVP_PKEY_CTRL_CMS_SIGN = 11;
 
+enum EVP_PKEY_CTRL_CIPHER = 12;
+
 enum EVP_PKEY_ALG_CTRL = 0x1000;
 
 
 enum EVP_PKEY_FLAG_AUTOARGLEN = 2;
+/* Method handles all operations: don't assume any digest related
+ * defaults.
+ */
+enum EVP_PKEY_FLAG_SIGCTX_CUSTOM = 4;
 
 const(EVP_PKEY_METHOD)* EVP_PKEY_meth_find(int type);
 EVP_PKEY_METHOD* EVP_PKEY_meth_new(int id, int flags);
+void EVP_PKEY_meth_get0_info(int* ppkey_id, int* pflags,
+				const(EVP_PKEY_METHOD)* meth);
+void EVP_PKEY_meth_copy(EVP_PKEY_METHOD* dst, const(EVP_PKEY_METHOD)* src);
 void EVP_PKEY_meth_free(EVP_PKEY_METHOD* pmeth);
 int EVP_PKEY_meth_add0(const(EVP_PKEY_METHOD)* pmeth);
 
@@ -1075,7 +1136,7 @@ int EVP_PKEY_CTX_get_operation(EVP_PKEY_CTX* ctx);
 void EVP_PKEY_CTX_set0_keygen_info(EVP_PKEY_CTX* ctx, int* dat, int datlen);
 
 EVP_PKEY* EVP_PKEY_new_mac_key(int type, ENGINE* e,
-				ubyte* key, int keylen);
+				const(ubyte)* key, int keylen);
 
 void EVP_PKEY_CTX_set_data(EVP_PKEY_CTX* ctx, void* data);
 void* EVP_PKEY_CTX_get_data(EVP_PKEY_CTX* ctx);
@@ -1185,6 +1246,8 @@ void EVP_PKEY_meth_set_ctrl(EVP_PKEY_METHOD* pmeth,
 	ExternC!(int function(EVP_PKEY_CTX* ctx,
 					const(char)* type, const(char)* value)) ctrl_str);
 
+void EVP_add_alg_module();
+
 /* BEGIN ERROR CODES */
 /* The following lines are auto generated by the script mkerr.pl. Any changes
  * made after this point may be overwritten when the script is next run.
@@ -1194,8 +1257,14 @@ void ERR_load_EVP_strings();
 /* Error codes for the EVP functions. */
 
 /* Function codes. */
+enum EVP_F_AESNI_INIT_KEY = 165;
+enum EVP_F_AESNI_XTS_CIPHER = 176;
 enum EVP_F_AES_INIT_KEY = 133;
+enum EVP_F_AES_XTS = 172;
+enum EVP_F_AES_XTS_CIPHER = 175;
+enum EVP_F_ALG_MODULE_INIT = 177;
 enum EVP_F_CAMELLIA_INIT_KEY = 159;
+enum EVP_F_CMAC_INIT = 173;
 enum EVP_F_D2I_PKEY = 100;
 enum EVP_F_DO_SIGVER_INIT = 161;
 enum EVP_F_DSAPKEY2PKCS8 = 134;
@@ -1250,15 +1319,24 @@ enum EVP_F_EVP_PKEY_VERIFY_RECOVER_INIT = 145;
 enum EVP_F_EVP_RIJNDAEL = 126;
 enum EVP_F_EVP_SIGNFINAL = 107;
 enum EVP_F_EVP_VERIFYFINAL = 108;
+enum EVP_F_FIPS_CIPHERINIT = 166;
+enum EVP_F_FIPS_CIPHER_CTX_COPY = 170;
+enum EVP_F_FIPS_CIPHER_CTX_CTRL = 167;
+enum EVP_F_FIPS_CIPHER_CTX_SET_KEY_LENGTH = 171;
+enum EVP_F_FIPS_DIGESTINIT = 168;
+enum EVP_F_FIPS_MD_CTX_COPY = 169;
+enum EVP_F_HMAC_INIT_EX = 174;
 enum EVP_F_INT_CTX_NEW = 157;
 enum EVP_F_PKCS5_PBE_KEYIVGEN = 117;
 enum EVP_F_PKCS5_V2_PBE_KEYIVGEN = 118;
+enum EVP_F_PKCS5_V2_PBKDF2_KEYIVGEN = 164;
 enum EVP_F_PKCS8_SET_BROKEN = 112;
 enum EVP_F_PKEY_SET_TYPE = 158;
 enum EVP_F_RC2_MAGIC_TO_METH = 109;
 enum EVP_F_RC5_CTRL = 125;
 
 /* Reason codes. */
+enum EVP_R_AES_IV_SETUP_FAILED = 162;
 enum EVP_R_AES_KEY_SETUP_FAILED = 143;
 enum EVP_R_ASN1_LIB = 140;
 enum EVP_R_BAD_BLOCK_LENGTH = 136;
@@ -1276,16 +1354,21 @@ enum EVP_R_DATA_NOT_MULTIPLE_OF_BLOCK_LENGTH = 138;
 enum EVP_R_DECODE_ERROR = 114;
 enum EVP_R_DIFFERENT_KEY_TYPES = 101;
 enum EVP_R_DIFFERENT_PARAMETERS = 153;
+enum EVP_R_DISABLED_FOR_FIPS = 163;
 enum EVP_R_ENCODE_ERROR = 115;
+enum EVP_R_ERROR_LOADING_SECTION = 165;
+enum EVP_R_ERROR_SETTING_FIPS_MODE = 166;
 enum EVP_R_EVP_PBE_CIPHERINIT_ERROR = 119;
 enum EVP_R_EXPECTING_AN_RSA_KEY = 127;
 enum EVP_R_EXPECTING_A_DH_KEY = 128;
 enum EVP_R_EXPECTING_A_DSA_KEY = 129;
 enum EVP_R_EXPECTING_A_ECDSA_KEY = 141;
 enum EVP_R_EXPECTING_A_EC_KEY = 142;
+enum EVP_R_FIPS_MODE_NOT_SUPPORTED = 167;
 enum EVP_R_INITIALIZATION_ERROR = 134;
 enum EVP_R_INPUT_NOT_INITIALIZED = 111;
 enum EVP_R_INVALID_DIGEST = 152;
+enum EVP_R_INVALID_FIPS_MODE = 168;
 enum EVP_R_INVALID_KEY_LENGTH = 130;
 enum EVP_R_INVALID_OPERATION = 148;
 enum EVP_R_IV_TOO_LARGE = 102;
@@ -1307,8 +1390,10 @@ enum EVP_R_PKCS8_UNKNOWN_BROKEN_TYPE = 117;
 enum EVP_R_PRIVATE_KEY_DECODE_ERROR = 145;
 enum EVP_R_PRIVATE_KEY_ENCODE_ERROR = 146;
 enum EVP_R_PUBLIC_KEY_NOT_RSA = 106;
+enum EVP_R_TOO_LARGE = 164;
 enum EVP_R_UNKNOWN_CIPHER = 160;
 enum EVP_R_UNKNOWN_DIGEST = 161;
+enum EVP_R_UNKNOWN_OPTION = 169;
 enum EVP_R_UNKNOWN_PBE_ALGORITHM = 121;
 enum EVP_R_UNSUPORTED_NUMBER_OF_ROUNDS = 135;
 enum EVP_R_UNSUPPORTED_ALGORITHM = 156;

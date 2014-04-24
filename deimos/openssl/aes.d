@@ -90,6 +90,11 @@ int AES_set_encrypt_key(const(ubyte)* userKey, const int bits,
 int AES_set_decrypt_key(const(ubyte)* userKey, const int bits,
 	AES_KEY* key);
 
+int private_AES_set_encrypt_key(const(ubyte)* userKey, const int bits,
+	AES_KEY *key);
+int private_AES_set_decrypt_key(const(ubyte)* userKey, const int bits,
+	AES_KEY *key);
+
 void AES_encrypt(const(ubyte)* in_, ubyte* out_,
 	const(AES_KEY)* key);
 void AES_decrypt(const(ubyte)* in_, ubyte* out_,
