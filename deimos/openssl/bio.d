@@ -68,7 +68,7 @@ import core.stdc.stdio;
 }
 
 // TODO: review imports
-version(OPENSSL_NO_SCTP) {
+version(OPENSSL_NO_SCTP) {} else {
     version(OPENSSL_SYS_VMS)
         import inttypes;
     else
