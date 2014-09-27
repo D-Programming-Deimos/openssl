@@ -76,7 +76,7 @@ extern (C):
 nothrow:
 
 struct idea_key_st {
-	IDEA_INT data[9][6];
+	IDEA_INT[9][6] data;
 	}
 alias idea_key_st IDEA_KEY_SCHEDULE;
 

@@ -75,9 +75,9 @@ nothrow:
 /* This should be a hidden type, but EVP requires that the size be known */
 struct aes_key_st {
 version (AES_LONG) {
-    c_ulong rd_key[4* (AES_MAXNR + 1)];
+    c_ulong[4* (AES_MAXNR + 1)] rd_key;
 } else {
-    uint rd_key[4* (AES_MAXNR + 1)];
+    uint[4* (AES_MAXNR + 1)] rd_key;
 }
     int rounds;
 };
@@ -119,8 +119,8 @@ void AES_ofb128_encrypt(const(ubyte)* in_, ubyte* out_,
 	ubyte* ivec, int* num);
 void AES_ctr128_encrypt(const(ubyte)* in_, ubyte* out_,
 	size_t length, const(AES_KEY)* key,
-	ubyte ivec[AES_BLOCK_SIZE],
-	ubyte ecount_buf[AES_BLOCK_SIZE],
+	ubyte[AES_BLOCK_SIZE] ivec,
+	ubyte[AES_BLOCK_SIZE] ecount_buf,
 	uint* num);
 /* NB: the IV is _two_ blocks long */
 void AES_ige_encrypt(const(ubyte)* in_, ubyte* out_,

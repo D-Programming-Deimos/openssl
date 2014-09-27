@@ -637,7 +637,7 @@ int EC_POINTs_make_affine(const(EC_GROUP)* group, size_t num, EC_POINT*[] points
  * \param  ctx    BN_CTX object (optional)
  * \return 1 on success and 0 if an error occured
  */
-int EC_POINTs_mul(const(EC_GROUP)* group, EC_POINT* r, const(BIGNUM)* n, size_t num, const(EC_POINT)* p[], const(BIGNUM)* m[], BN_CTX* ctx);
+int EC_POINTs_mul(const(EC_GROUP)* group, EC_POINT* r, const(BIGNUM)* n, size_t num, const(EC_POINT)*[] p, const(BIGNUM)*[] m, BN_CTX* ctx);
 
 /** Computes r = generator* n + q* m
  * \param  group  underlying EC_GROUP object

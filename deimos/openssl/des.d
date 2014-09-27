@@ -83,7 +83,7 @@ struct DES_ks
 	DES_cblock cblock;
 	/* make sure things are correct size on machines with
 	 * 8 byte longs */
-	DES_LONG deslong[2];
+	DES_LONG[2] deslong;
 	}
 	ks_[16] ks;
     }
@@ -205,7 +205,7 @@ void DES_ofb_encrypt(const(ubyte)* in_,ubyte* out_,int numbits,
 void DES_pcbc_encrypt(const(ubyte)* input,ubyte* output,
 		      c_long length,DES_key_schedule* schedule,DES_cblock* ivec,
 		      int enc);
-DES_LONG DES_quad_cksum(const(ubyte)* input,DES_cblock output[],
+DES_LONG DES_quad_cksum(const(ubyte)* input,DES_cblock[] output,
 			c_long length,int out_count,DES_cblock* seed);
 int DES_random_key(DES_cblock* ret);
 void DES_set_odd_parity(DES_cblock* key);

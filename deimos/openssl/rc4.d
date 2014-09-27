@@ -72,7 +72,7 @@ nothrow:
 
 struct rc4_key_st {
 	RC4_INT x,y;
-	RC4_INT data[256];
+	RC4_INT[256] data;
 	}
 alias rc4_key_st RC4_KEY;
 

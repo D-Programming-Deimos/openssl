@@ -557,7 +557,7 @@ alias Netscape_certificate_sequence NETSCAPE_CERT_SEQUENCE;
 
 /* Unused (and iv length is wrong)
 struct CBCParameter_st {
-	ubyte iv[8];
+	ubyte[8] iv;
 	}
 alias CBCParameter_st CBC_PARAM;
 */
