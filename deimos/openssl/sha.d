@@ -108,7 +108,7 @@ struct SHAstate_st
 	{
 	SHA_LONG h0,h1,h2,h3,h4;
 	SHA_LONG Nl,Nh;
-	SHA_LONG data[SHA_LBLOCK];
+	SHA_LONG[SHA_LBLOCK] data;
 	uint num;
 	}
 alias SHAstate_st  SHA_CTX;
@@ -141,9 +141,9 @@ enum SHA224_DIGEST_LENGTH = 28;
 enum SHA256_DIGEST_LENGTH = 32;
 
 struct SHA256state_st {
-	SHA_LONG h[8];
+	SHA_LONG[8] h;
 	SHA_LONG Nl,Nh;
-	SHA_LONG data[SHA_LBLOCK];
+	SHA_LONG[SHA_LBLOCK] data;
 	uint num,md_len;
 	}
 alias SHA256state_st SHA256_CTX;
@@ -190,11 +190,11 @@ alias ulong SHA_LONG64;
 
 struct SHA512state_st
 	{
-	SHA_LONG64 h[8];
+	SHA_LONG64[8] h;
 	SHA_LONG64 Nl,Nh;
 	union u_ {
-		SHA_LONG64	d[SHA_LBLOCK];
-		ubyte	p[SHA512_CBLOCK];
+		SHA_LONG64[SHA_LBLOCK]	d;
+		ubyte[SHA512_CBLOCK]	p;
 	}
 	u_ u;
 	uint num,md_len;

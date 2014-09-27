@@ -156,12 +156,12 @@ enum ERR_FLAG_MARK = 0x01;
 enum ERR_NUM_ERRORS = 16;
 struct err_state_st {
 	CRYPTO_THREADID tid;
-	int err_flags[ERR_NUM_ERRORS];
-	c_ulong err_buffer[ERR_NUM_ERRORS];
-	char* err_data[ERR_NUM_ERRORS];
-	int err_data_flags[ERR_NUM_ERRORS];
-	const(char)* err_file[ERR_NUM_ERRORS];
-	int err_line[ERR_NUM_ERRORS];
+	int[ERR_NUM_ERRORS] err_flags;
+	c_ulong[ERR_NUM_ERRORS] err_buffer;
+	char*[ERR_NUM_ERRORS] err_data;
+	int[ERR_NUM_ERRORS] err_data_flags;
+	const(char)*[ERR_NUM_ERRORS] err_file;
+	int[ERR_NUM_ERRORS] err_line;
 	int top,bottom;
 	}
 alias err_state_st ERR_STATE;
@@ -358,8 +358,8 @@ void ERR_print_errors(BIO* bp);
 }
 void ERR_add_error_data(int num, ...);
 void ERR_add_error_vdata(int num, va_list args);
-void ERR_load_strings(int lib,ERR_STRING_DATA str[]);
-void ERR_unload_strings(int lib,ERR_STRING_DATA str[]);
+void ERR_load_strings(int lib,ERR_STRING_DATA[] str);
+void ERR_unload_strings(int lib,ERR_STRING_DATA[] str);
 void ERR_load_ERR_strings();
 void ERR_load_crypto_strings();
 void ERR_free_strings();

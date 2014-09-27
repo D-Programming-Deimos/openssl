@@ -479,21 +479,21 @@ struct ssl_session_st
 
 	/* only really used in SSLv2 */
 	uint key_arg_length;
-	ubyte key_arg[SSL_MAX_KEY_ARG_LENGTH];
+	ubyte[SSL_MAX_KEY_ARG_LENGTH] key_arg;
 	int master_key_length;
-	ubyte master_key[SSL_MAX_MASTER_KEY_LENGTH];
+	ubyte[SSL_MAX_MASTER_KEY_LENGTH] master_key;
 	/* session_id - valid? */
 	uint session_id_length;
-	ubyte session_id[SSL_MAX_SSL_SESSION_ID_LENGTH];
+	ubyte[SSL_MAX_SSL_SESSION_ID_LENGTH] session_id;
 	/* this is used to determine whether the session is being reused in
 	 * the appropriate context. It is up to the application to set this,
 	 * via SSL_new */
 	uint sid_ctx_length;
-	ubyte sid_ctx[SSL_MAX_SID_CTX_LENGTH];
+	ubyte[SSL_MAX_SID_CTX_LENGTH] sid_ctx;
 
 version(OPENSSL_NO_KRB5) {} else {
         uint krb5_client_princ_len;
-        ubyte krb5_client_princ[SSL_MAX_KRB5_PRINCIPAL_LENGTH];
+        ubyte[SSL_MAX_KRB5_PRINCIPAL_LENGTH] krb5_client_princ;
 } /* OPENSSL_NO_KRB5 */
 version(OPENSSL_NO_PSK) {} else {
 	char* psk_identity_hint;
@@ -922,7 +922,7 @@ struct ssl_ctx_st
 
 	int verify_mode;
 	uint sid_ctx_length;
-	ubyte sid_ctx[SSL_MAX_SID_CTX_LENGTH];
+	ubyte[SSL_MAX_SID_CTX_LENGTH] sid_ctx;
 	ExternC!(int function(int ok,X509_STORE_CTX* ctx)) default_verify_callback; /* called 'verify_callback' in the SSL */
 
 	/* Default generate session ID callback. */
@@ -954,9 +954,9 @@ version(OPENSSL_NO_TLSEXT) {} else {
 	ExternC!(int function(SSL*, int*, void*)) tlsext_servername_callback;
 	void* tlsext_servername_arg;
 	/* RFC 4507 session ticket keys */
-	ubyte tlsext_tick_key_name[16];
-	ubyte tlsext_tick_hmac_key[16];
-	ubyte tlsext_tick_aes_key[16];
+	ubyte[16] tlsext_tick_key_name;
+	ubyte[16] tlsext_tick_hmac_key;
+	ubyte[16] tlsext_tick_aes_key;
 	/* Callback to support customisation of ticket key setting */
 	ExternC!(int function(SSL* ssl,
 					ubyte* name, ubyte* iv,
@@ -1267,7 +1267,7 @@ version(OPENSSL_NO_COMP) {
 	/* the session_id_context is used to ensure sessions are only reused
 	 * in the appropriate context */
 	uint sid_ctx_length;
-	ubyte sid_ctx[SSL_MAX_SID_CTX_LENGTH];
+	ubyte[SSL_MAX_SID_CTX_LENGTH] sid_ctx;
 
 	/* This can also be in the session once a session is established */
 	SSL_SESSION* session;

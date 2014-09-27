@@ -124,7 +124,7 @@ version(OPENSSL_NO_SCTP) {} else {
 struct dtls1_bitmap_st {
 	c_ulong map;		/* track 32 packets on 32-bit systems
 					   and 64 - on 64-bit systems */
-	ubyte max_seq_num[8];	/* max record number seen so far,
+	ubyte[8] max_seq_num;	/* max record number seen so far,
 					   64-bit value in big-endian
 					   encoding */
 	}
@@ -187,8 +187,8 @@ alias hm_fragment_st hm_fragment;
 
 struct dtls1_state_st {
 	uint send_cookie;
-	ubyte cookie[DTLS1_COOKIE_LENGTH];
-	ubyte rcvd_cookie[DTLS1_COOKIE_LENGTH];
+	ubyte[DTLS1_COOKIE_LENGTH] cookie;
+	ubyte[DTLS1_COOKIE_LENGTH] rcvd_cookie;
 	uint cookie_len;
 
 	/*
@@ -212,7 +212,7 @@ struct dtls1_state_st {
 	ushort handshake_read_seq;
 
 	/* save last sequence number for retransmissions */
-	ubyte last_write_sequence[8];
+	ubyte[8] last_write_sequence;
 
 	/* Received handshake records (processed and unprocessed) */
 	record_pqueue unprocessed_rcds;
@@ -249,9 +249,9 @@ struct dtls1_state_st {
 
 	/* storage for Alert/Handshake protocol data received but not
 	 * yet processed by ssl3_read_bytes: */
-	ubyte alert_fragment[DTLS1_AL_HEADER_LENGTH];
+	ubyte[DTLS1_AL_HEADER_LENGTH] alert_fragment;
 	uint alert_fragment_len;
-	ubyte handshake_fragment[DTLS1_HM_HEADER_LENGTH];
+	ubyte[DTLS1_HM_HEADER_LENGTH] handshake_fragment;
 	uint handshake_fragment_len;
 
 	uint retransmitting;
