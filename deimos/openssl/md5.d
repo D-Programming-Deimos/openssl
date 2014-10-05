@@ -101,7 +101,7 @@ enum MD5_DIGEST_LENGTH = 16;
 struct MD5state_st {
 	MD5_LONG A,B,C,D;
 	MD5_LONG Nl,Nh;
-	MD5_LONG data[MD5_LBLOCK];
+	MD5_LONG[MD5_LBLOCK] data;
 	uint num;
 	}
 alias MD5state_st MD5_CTX;

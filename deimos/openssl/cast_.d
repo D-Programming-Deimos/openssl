@@ -78,7 +78,7 @@ enum CAST_BLOCK = 8;
 enum CAST_KEY_LENGTH = 16;
 
 struct cast_key_st {
-	CAST_LONG data[32];
+	CAST_LONG[32] data;
 	int short_key;	/* Use reduced rounds for short key */
 	}
 alias cast_key_st CAST_KEY;

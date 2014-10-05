@@ -148,7 +148,7 @@ nothrow:
  */
 
 #define ASN1_SEQUENCE(tname) \
-	static const ASN1_TEMPLATE tname##_seq_tt[]
+	static const ASN1_TEMPLATE[] tname##_seq_tt
 
 #define ASN1_SEQUENCE_END(stname) ASN1_SEQUENCE_END_name(stname, stname)
 
@@ -252,7 +252,7 @@ nothrow:
  */
 
 #define ASN1_CHOICE(tname) \
-	static const ASN1_TEMPLATE tname##_ch_tt[]
+	static const ASN1_TEMPLATE[] tname##_ch_tt
 
 #define ASN1_CHOICE_cb(tname, cb) \
 	static const ASN1_AUX tname##_aux = {NULL, 0, 0, 0, cb, 0}; \
@@ -392,7 +392,7 @@ nothrow:
 /* Macros for the ASN1_ADB structure */
 
 #define ASN1_ADB(name) \
-	static const ASN1_ADB_TABLE name##_adbtbl[]
+	static const ASN1_ADB_TABLE[] name##_adbtbl
 
 #ifndef OPENSSL_EXPORT_VAR_AS_FUNCTION
 

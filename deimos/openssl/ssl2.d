@@ -199,11 +199,11 @@ struct ssl2_state_st
 
 		/* Stuff specifically to do with this SSL session */
 	uint challenge_length;
-	ubyte challenge[SSL2_MAX_CHALLENGE_LENGTH];
+	ubyte[SSL2_MAX_CHALLENGE_LENGTH] challenge;
 	uint conn_id_length;
-	ubyte conn_id[SSL2_MAX_CONNECTION_ID_LENGTH];
+	ubyte[SSL2_MAX_CONNECTION_ID_LENGTH] conn_id;
 	uint key_material_length;
-	ubyte key_material[SSL2_MAX_KEY_MATERIAL_LENGTH*2];
+	ubyte[SSL2_MAX_KEY_MATERIAL_LENGTH*2] key_material;
 
 	c_ulong read_sequence;
 	c_ulong write_sequence;
@@ -215,7 +215,7 @@ struct ssl2_state_st
 		uint csl;
 		uint clear;
 		uint enc;
-		ubyte ccl[SSL2_MAX_CERT_CHALLENGE_LENGTH];
+		ubyte[SSL2_MAX_CERT_CHALLENGE_LENGTH] ccl;
 		uint cipher_spec_length;
 		uint session_id_length;
 		uint clen;

@@ -69,7 +69,7 @@ struct _pqueue;
 alias _pqueue* pqueue;
 
 struct _pitem {
-	ubyte priority[8]; /* 64-bit value in big-endian encoding */
+	ubyte[8] priority; /* 64-bit value in big-endian encoding */
 	void* data;
 	_pitem* next;
 	}

@@ -179,7 +179,7 @@ struct pem_ctx_st
 	struct DEK_info_{
 		int cipher;
 	/* unused, and wrong size
-	   ubyte iv[8]; */
+	   ubyte[8] iv; */
 		}
 	DEK_info_ DEK_info;
 
@@ -200,7 +200,7 @@ struct pem_ctx_st
 	int key_len;		/* key length */
 	ubyte* key;	/* key */
 	/* unused, and wrong size
-	   ubyte iv[8]; */
+	   ubyte[8] iv; */
 
 
 	int  data_enc;		/* is the data encrypted */

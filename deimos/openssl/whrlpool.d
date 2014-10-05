@@ -14,14 +14,14 @@ enum WHIRLPOOL_COUNTER = (256/8);
 
 struct WHIRLPOOL_CTX {
 	union H_ {
-		ubyte	c[WHIRLPOOL_DIGEST_LENGTH];
+		ubyte[WHIRLPOOL_DIGEST_LENGTH]	c;
 		/* double q is here to ensure 64-bit alignment */
-		double		q[WHIRLPOOL_DIGEST_LENGTH/double.sizeof];
+		double[WHIRLPOOL_DIGEST_LENGTH/double.sizeof]		q;
 		}
 	H_ H;
-	ubyte	data[WHIRLPOOL_BBLOCK/8];
+	ubyte[WHIRLPOOL_BBLOCK/8]	data;
 	uint	bitoff;
-	size_t		bitlen[WHIRLPOOL_COUNTER/size_t.sizeof];
+	size_t[WHIRLPOOL_COUNTER/size_t.sizeof]		bitlen;
 	};
 
 version(OPENSSL_NO_WHIRLPOOL) {} else {

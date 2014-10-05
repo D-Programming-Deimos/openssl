@@ -74,7 +74,7 @@ enum MDC2_DIGEST_LENGTH = 16;
  
 struct mdc2_ctx_st {
 	uint num;
-	ubyte data[MDC2_BLOCK];
+	ubyte[MDC2_BLOCK] data;
 	DES_cblock h,hh;
 	int pad_type; /* either 1 or 2, default 1 */
 	}

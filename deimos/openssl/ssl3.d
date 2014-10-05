@@ -354,7 +354,7 @@ struct ssl3_record_st {
 /*rw*/	ubyte* input;   /* where the decode bytes are */
 /*r */	ubyte* comp;    /* only used with decompression - malloc()ed */
 /*r */  c_ulong epoch;    /* epoch number, needed by DTLS1 */
-/*r */  ubyte seq_num[8]; /* sequence number, needed by DTLS1 */
+/*r */  ubyte[8] seq_num; /* sequence number, needed by DTLS1 */
 	}
 alias ssl3_record_st SSL3_RECORD;
 
@@ -408,15 +408,15 @@ struct ssl3_state_st
 	c_long flags;
 	int delay_buf_pop_ret;
 
-	ubyte read_sequence[8];
+	ubyte[8] read_sequence;
 	int read_mac_secret_size;
-	ubyte read_mac_secret[EVP_MAX_MD_SIZE];
-	ubyte write_sequence[8];
+	ubyte[EVP_MAX_MD_SIZE] read_mac_secret;
+	ubyte[8] write_sequence;
 	int write_mac_secret_size;
-	ubyte write_mac_secret[EVP_MAX_MD_SIZE];
+	ubyte[EVP_MAX_MD_SIZE] write_mac_secret;
 
-	ubyte server_random[SSL3_RANDOM_SIZE];
-	ubyte client_random[SSL3_RANDOM_SIZE];
+	ubyte[SSL3_RANDOM_SIZE] server_random;
+	ubyte[SSL3_RANDOM_SIZE] client_random;
 
 	/* flags for countermeasure against known-IV weakness */
 	int need_empty_fragments;
@@ -433,9 +433,9 @@ struct ssl3_state_st
 
 	/* storage for Alert/Handshake protocol data received but not
 	 * yet processed by ssl3_read_bytes: */
-	ubyte alert_fragment[2];
+	ubyte[2] alert_fragment;
 	uint alert_fragment_len;
-	ubyte handshake_fragment[4];
+	ubyte[4] handshake_fragment;
 	uint handshake_fragment_len;
 
 	/* partial write - check the numbers match */
@@ -460,7 +460,7 @@ struct ssl3_state_st
 	/* we allow one fatal and one warning alert to be outstanding,
 	 * send close alert via the warning alert */
 	int alert_dispatch;
-	ubyte send_alert[2];
+	ubyte[2] send_alert;
 
 	/* This flag is set when we should renegotiate ASAP, basically when
 	 * there is no more data in the read or write buffers */
@@ -480,12 +480,12 @@ struct ssl3_state_st
 
 	struct tmp_ {
 		/* actually only needs to be 16+20 */
-		ubyte cert_verify_md[EVP_MAX_MD_SIZE*2];
+		ubyte[EVP_MAX_MD_SIZE*2] cert_verify_md;
 
 		/* actually only need to be 16+20 for SSLv3 and 12 for TLS */
-		ubyte finish_md[EVP_MAX_MD_SIZE*2];
+		ubyte[EVP_MAX_MD_SIZE*2] finish_md;
 		int finish_md_len;
-		ubyte peer_finish_md[EVP_MAX_MD_SIZE*2];
+		ubyte[EVP_MAX_MD_SIZE*2] peer_finish_md;
 		int peer_finish_md_len;
 
 		c_ulong message_size;
@@ -509,7 +509,7 @@ version(OPENSSL_NO_ECDH) {} else {
 		/* used for certificate requests */
 		int cert_req;
 		int ctype_num;
-		char ctype[SSL3_CT_NUMBER];
+		char[SSL3_CT_NUMBER] ctype;
 		STACK_OF!(X509_NAME) *ca_names;
 
 		int use_rsa_tmp;
@@ -531,9 +531,9 @@ version(OPENSSL_NO_COMP) {
 	tmp_ tmp;
 
         /* Connection binding to prevent renegotiation attacks */
-        ubyte previous_client_finished[EVP_MAX_MD_SIZE];
+        ubyte[EVP_MAX_MD_SIZE] previous_client_finished;
         ubyte previous_client_finished_len;
-        ubyte previous_server_finished[EVP_MAX_MD_SIZE];
+        ubyte[EVP_MAX_MD_SIZE] previous_server_finished;
         ubyte previous_server_finished_len;
         int send_connection_binding; /* TODOEKR */
 

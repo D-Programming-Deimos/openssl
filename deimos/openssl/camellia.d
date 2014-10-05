@@ -120,6 +120,6 @@ void Camellia_ofb128_encrypt(const(ubyte)* in_, ubyte* out_,
 	ubyte* ivec, int* num);
 void Camellia_ctr128_encrypt(const(ubyte)* in_, ubyte* out_,
 	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte ivec[CAMELLIA_BLOCK_SIZE],
-	ubyte ecount_buf[CAMELLIA_BLOCK_SIZE],
+	ubyte[CAMELLIA_BLOCK_SIZE] ivec,
+	ubyte[CAMELLIA_BLOCK_SIZE] ecount_buf,
 	uint* num);

@@ -10,7 +10,7 @@ alias _openssl_os_toebcdic os_toebcdic;
 alias _openssl_ebcdic2ascii ebcdic2ascii;
 alias _openssl_ascii2ebcdic ascii2ebcdic;
 
-extern const ubyte _openssl_os_toascii[256];
-extern const ubyte _openssl_os_toebcdic[256];
+extern const ubyte[256] _openssl_os_toascii;
+extern const ubyte[256] _openssl_os_toebcdic;
 void* _openssl_ebcdic2ascii(void* dest, const(void)* srce, size_t count);
 void* _openssl_ascii2ebcdic(void* dest, const(void)* srce, size_t count);

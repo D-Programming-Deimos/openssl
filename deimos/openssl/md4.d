@@ -101,7 +101,7 @@ enum MD4_DIGEST_LENGTH = 16;
 struct MD4state_st {
 	MD4_LONG A,B,C,D;
 	MD4_LONG Nl,Nh;
-	MD4_LONG data[MD4_LBLOCK];
+	MD4_LONG[MD4_LBLOCK] data;
 	uint num;
 	}
 alias MD4state_st MD4_CTX;

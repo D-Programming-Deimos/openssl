@@ -308,7 +308,7 @@ version(OPENSSL_NO_RFC3779) {} else {
 	ASIdentifiers_st* rfc3779_asid;
 }
 version(OPENSSL_NO_SHA) {} else {
-	ubyte sha1_hash[SHA_DIGEST_LENGTH];
+	ubyte[SHA_DIGEST_LENGTH] sha1_hash;
 }
 	X509_CERT_AUX* aux;
 	} /* X509 */;
@@ -483,7 +483,7 @@ struct X509_crl_st
 	ASN1_INTEGER* crl_number;
 	ASN1_INTEGER* base_crl_number;
 version(OPENSSL_NO_SHA) {} else {
-	ubyte sha1_hash[SHA_DIGEST_LENGTH];
+	ubyte[SHA_DIGEST_LENGTH] sha1_hash;
 }
 	STACK_OF!(GENERAL_NAMES) *issuers;
 	const(X509_CRL_METHOD)* meth;
@@ -557,7 +557,7 @@ alias Netscape_certificate_sequence NETSCAPE_CERT_SEQUENCE;
 
 /* Unused (and iv length is wrong)
 struct CBCParameter_st {
-	ubyte iv[8];
+	ubyte[8] iv;
 	}
 alias CBCParameter_st CBC_PARAM;
 */

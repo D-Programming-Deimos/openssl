@@ -75,7 +75,7 @@ extern (C):
 nothrow:
 
 struct rc2_key_st {
-	RC2_INT data[64];
+	RC2_INT[64] data;
 	}
 alias rc2_key_st RC2_KEY;
 

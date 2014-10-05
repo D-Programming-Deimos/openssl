@@ -178,7 +178,7 @@ struct env_md_st
 	ExternC!(int function(int type, const(ubyte)* m, uint m_length,
 		      const(ubyte)* sigbuf, uint siglen,
 		      void* key)) verify;
-	int required_pkey_type[5]; /*EVP_PKEY_xxx */
+	int[5] required_pkey_type; /*EVP_PKEY_xxx */
 	int block_size;
 	int ctx_size; /* how big does the ctx->md_data need to be */
 	/* control function */
@@ -404,7 +404,7 @@ enum EVP_GCM_TLS_TAG_LEN = 16;
 
 struct evp_cipher_info_st {
 	const(EVP_CIPHER)* cipher;
-	ubyte iv[EVP_MAX_IV_LENGTH];
+	ubyte[EVP_MAX_IV_LENGTH] iv;
 	}
 alias evp_cipher_info_st EVP_CIPHER_INFO;
 
@@ -415,10 +415,10 @@ struct evp_cipher_ctx_st
 	int encrypt;		/* encrypt or decrypt */
 	int buf_len;		/* number we have left */
 
-	ubyte  oiv[EVP_MAX_IV_LENGTH];	/* original iv */
-	ubyte  iv[EVP_MAX_IV_LENGTH];	/* working iv */
-	ubyte buf[EVP_MAX_BLOCK_LENGTH];/* saved partial block */
-	int num;				/* used by cfb/ofb/ctr mode */
+	ubyte[EVP_MAX_IV_LENGTH]  oiv;	/* original iv */
+	ubyte[EVP_MAX_IV_LENGTH]  iv;	/* working iv */
+	ubyte[EVP_MAX_BLOCK_LENGTH] buf;/* saved partial block */
+	int num;				/* used by cfb/ofb mode */
 
 	void* app_data;		/* application stuff */
 	int key_len;		/* May change for variable length cipher */
@@ -436,7 +436,7 @@ struct evp_Encode_Ctx_st {
 			 * length that is ok.  Once decoding begins,
 			 * the length is adjusted up each time a longer
 			 * line is decoded */
-	ubyte enc_data[80];	/* data to encode */
+	ubyte[80] enc_data;	/* data to encode */
 	int line_num;	/* number read on current line */
 	int expect_nl;
 	}

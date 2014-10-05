@@ -100,8 +100,8 @@ enum BF_ROUNDS = 16;
 enum BF_BLOCK = 8;
 
 struct bf_key_st {
-	BF_LONG P[BF_ROUNDS+2];
-	BF_LONG S[4*256];
+	BF_LONG[BF_ROUNDS+2] P;
+	BF_LONG[4*256] S;
 	}
 alias bf_key_st BF_KEY;
 

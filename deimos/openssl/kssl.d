@@ -126,7 +126,7 @@ enum KSSL_CLOCKSKEW = 300;;
 enum KSSL_ERR_MAX = 255;
 struct kssl_err_st {
 	int  reason;
-	char text[KSSL_ERR_MAX+1];
+	char[KSSL_ERR_MAX+1] text;
 	}
 alias kssl_err_st KSSL_ERR;
 

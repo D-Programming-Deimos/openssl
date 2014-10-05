@@ -78,7 +78,7 @@ struct hmac_ctx_st {
 	EVP_MD_CTX i_ctx;
 	EVP_MD_CTX o_ctx;
 	uint key_length;
-	ubyte key[HMAC_MAX_MD_CBLOCK];
+	ubyte[HMAC_MAX_MD_CBLOCK] key;
 	}
 alias hmac_ctx_st HMAC_CTX;
 
