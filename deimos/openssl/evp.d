@@ -742,7 +742,7 @@ version(OPENSSL_NO_RC4) {} else {
 const(EVP_CIPHER)* EVP_rc4();
 const(EVP_CIPHER)* EVP_rc4_40();
 version(OPENSSL_NO_MD5) {} else {
-const EVP_CIPHER *EVP_rc4_hmac_md5();
+const(EVP_CIPHER)* EVP_rc4_hmac_md5();
 }
 }
 version(OPENSSL_NO_IDEA) {} else {
@@ -791,9 +791,9 @@ const(EVP_CIPHER)* EVP_aes_128_cfb128();
 alias EVP_aes_128_cfb128 EVP_aes_128_cfb;
 const(EVP_CIPHER)* EVP_aes_128_ofb();
 const(EVP_CIPHER)* EVP_aes_128_ctr();
-const EVP_CIPHER *EVP_aes_128_ccm();
-const EVP_CIPHER *EVP_aes_128_gcm();
-const EVP_CIPHER *EVP_aes_128_xts();
+const(EVP_CIPHER)* EVP_aes_128_ccm();
+const(EVP_CIPHER)* EVP_aes_128_gcm();
+const(EVP_CIPHER)* EVP_aes_128_xts();
 const(EVP_CIPHER)* EVP_aes_192_ecb();
 const(EVP_CIPHER)* EVP_aes_192_cbc();
 const(EVP_CIPHER)* EVP_aes_192_cfb1();
@@ -802,8 +802,8 @@ const(EVP_CIPHER)* EVP_aes_192_cfb128();
 alias EVP_aes_192_cfb128 EVP_aes_192_cfb;
 const(EVP_CIPHER)* EVP_aes_192_ofb();
 const(EVP_CIPHER)* EVP_aes_192_ctr();
-const EVP_CIPHER *EVP_aes_192_ccm();
-const EVP_CIPHER *EVP_aes_192_gcm();
+const(EVP_CIPHER)* EVP_aes_192_ccm();
+const(EVP_CIPHER)* EVP_aes_192_gcm();
 const(EVP_CIPHER)* EVP_aes_256_ecb();
 const(EVP_CIPHER)* EVP_aes_256_cbc();
 const(EVP_CIPHER)* EVP_aes_256_cfb1();
@@ -812,12 +812,12 @@ const(EVP_CIPHER)* EVP_aes_256_cfb128();
 alias EVP_aes_256_cfb128 EVP_aes_256_cfb;
 const(EVP_CIPHER)* EVP_aes_256_ofb();
 const(EVP_CIPHER)* EVP_aes_256_ctr();
-const EVP_CIPHER *EVP_aes_256_ccm();
-const EVP_CIPHER *EVP_aes_256_gcm();
-const EVP_CIPHER *EVP_aes_256_xts();
+const(EVP_CIPHER)* EVP_aes_256_ccm();
+const(EVP_CIPHER)* EVP_aes_256_gcm();
+const(EVP_CIPHER)* EVP_aes_256_xts();
 version(OPENSSL_NO_SHA) {} else version(OPENSSL_NO_SHA1) {} else {
-const EVP_CIPHER *EVP_aes_128_cbc_hmac_sha1();
-const EVP_CIPHER *EVP_aes_256_cbc_hmac_sha1();
+const(EVP_CIPHER)* EVP_aes_128_cbc_hmac_sha1();
+const(EVP_CIPHER)* EVP_aes_256_cbc_hmac_sha1();
 }
 }
 version(OPENSSL_NO_CAMELLIA) {} else {

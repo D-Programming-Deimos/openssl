@@ -1944,13 +1944,13 @@ const(SSL_METHOD)* TLSv1_method();		/* TLSv1.0 */
 const(SSL_METHOD)* TLSv1_server_method();	/* TLSv1.0 */
 const(SSL_METHOD)* TLSv1_client_method();	/* TLSv1.0 */
 
-const SSL_METHOD *TLSv1_1_method();		/* TLSv1.1 */
-const SSL_METHOD *TLSv1_1_server_method();	/* TLSv1.1 */
-const SSL_METHOD *TLSv1_1_client_method();	/* TLSv1.1 */
+const(SSL_METHOD)* TLSv1_1_method();		/* TLSv1.1 */
+const(SSL_METHOD)* TLSv1_1_server_method();	/* TLSv1.1 */
+const(SSL_METHOD)* TLSv1_1_client_method();	/* TLSv1.1 */
 
-const SSL_METHOD *TLSv1_2_method();		/* TLSv1.2 */
-const SSL_METHOD *TLSv1_2_server_method();	/* TLSv1.2 */
-const SSL_METHOD *TLSv1_2_client_method();	/* TLSv1.2 */
+const(SSL_METHOD)* TLSv1_2_method();		/* TLSv1.2 */
+const(SSL_METHOD)* TLSv1_2_server_method();	/* TLSv1.2 */
+const(SSL_METHOD)* TLSv1_2_client_method();	/* TLSv1.2 */
 
 
 const(SSL_METHOD)* DTLSv1_method();		/* DTLSv1.0 */
