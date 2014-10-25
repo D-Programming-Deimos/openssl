@@ -689,6 +689,8 @@ int	BN_GF2m_mod_solve_quad_arr(BIGNUM* r, const(BIGNUM)* a,
 int	BN_GF2m_poly2arr(const(BIGNUM)* a, int[] p, int max);
 int	BN_GF2m_arr2poly(const int[] p, BIGNUM* a);
 
+}
+
 /* faster mod functions for the 'NIST primes'
  * 0 <= a < p^2 */
 int BN_nist_mod_192(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* p, BN_CTX* ctx);
