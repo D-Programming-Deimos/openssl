@@ -204,9 +204,6 @@ alias st_ERR_FNS ERR_FNS;
 
 struct engine_st;
 alias engine_st ENGINE;
-import deimos.openssl.ssl : ssl_st, ssl_ctx_st;
-alias ssl_st SSL;
-alias ssl_ctx_st SSL_CTX;
 
 struct X509_POLICY_NODE_st;
 alias X509_POLICY_NODE_st X509_POLICY_NODE;
