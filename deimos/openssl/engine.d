@@ -94,6 +94,7 @@ public import deimos.openssl.err;
 }
 
 public import deimos.openssl.ossl_typ;
+import deimos.openssl.ssl : SSL;
 public import deimos.openssl.symhacks;
 
 public import deimos.openssl.x509;
@@ -141,7 +142,7 @@ enum ENGINE_FLAGS_MANUAL_CMD_CTRL = 0x0002;
  * the existing ENGINE's structural reference count. */
 enum ENGINE_FLAGS_BY_ID_COPY = 0x0004;
 
-/* This flag if for an ENGINE that does not want its methods registered as 
+/* This flag if for an ENGINE that does not want its methods registered as
  * part of ENGINE_register_all_complete() for example if the methods are
  * not usable as default methods.
  */

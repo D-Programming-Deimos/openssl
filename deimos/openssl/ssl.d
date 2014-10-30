@@ -461,7 +461,7 @@ struct ssl_method_st {
  *	Peer [ 3 ] EXPLICIT	X509,		-- optional Peer Certificate
  *	Session_ID_context [ 4 ] EXPLICIT OCTET STRING,   -- the Session ID context
  *	Verify_result [ 5 ] EXPLICIT INTEGER,   -- X509_V_... code for `Peer'
- *	HostName [ 6 ] EXPLICIT OCTET STRING,   -- optional HostName from servername TLS extension 
+ *	HostName [ 6 ] EXPLICIT OCTET STRING,   -- optional HostName from servername TLS extension
  *	PSK_identity_hint [ 7 ] EXPLICIT OCTET STRING, -- optional PSK identity hint
  *	PSK_identity [ 8 ] EXPLICIT OCTET STRING,  -- optional PSK identity
  *	Ticket_lifetime_hint [9] EXPLICIT INTEGER, -- server's lifetime hint for session ticket
@@ -1014,10 +1014,10 @@ version(OPENSSL_NO_NEXTPROTONEG) {} else {
 	void *next_proto_select_cb_arg;
 }
         /* SRTP profiles we are willing to do from RFC 5764 */
-        STACK_OF!(SRTP_PROTECTION_PROFILE) *srtp_profiles;  
+        STACK_OF!(SRTP_PROTECTION_PROFILE) *srtp_profiles;
 }
 	}
-
+alias SSL_CTX = ssl_ctx_st;
 }
 
 enum SSL_SESS_CACHE_OFF = 0x0000;
@@ -1402,8 +1402,8 @@ alias initial_ctx session_ctx;
 version(OPENSSL_NO_SRP) {} else {
 	SRP_CTX srp_ctx; /* ctx for SRP authentication */
 }
-	};
-
+	}
+alias SSL = ssl_st;
 }
 
 public import deimos.openssl.ssl2;
