@@ -1,4 +1,4 @@
-module openssl.applink;
+module deimos.openssl.applink;
 import core.stdc.stdio;
 import std.stdio : _fileno, _setmode, _O_BINARY;
 import core.sys.posix.fcntl;
