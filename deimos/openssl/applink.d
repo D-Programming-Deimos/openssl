@@ -1,4 +1,4 @@
-module deimos.openssl.applink;
+module openssl.applink;
 import core.stdc.stdio;
 import std.stdio : _fileno, _setmode, _O_BINARY;
 import core.sys.posix.fcntl;
@@ -33,7 +33,7 @@ enum APPLINK_MAX	=22;	/* always same as last macro */
 
 enum _O_TEXT = 0x4000;
 
-export extern(C)
+extern(C)
 {
 	void *app_stdin()		
 	{ 
@@ -75,14 +75,13 @@ export extern(C)
 		return _setmode (_fileno(fp),mod=='b'?_O_BINARY:_O_TEXT); 
 	}
 	
-	int once = 1;
-	void*[APPLINK_MAX+1] OPENSSL_ApplinkTable;
+	__gshared bool once = true;
+	__gshared void*[APPLINK_MAX+1] OPENSSL_ApplinkTable = cast(void*)APPLINK_MAX;
 	
-	void** OPENSSL_Applink()
+	export void** OPENSSL_Applink()
 	{ 
 		if (once)
 		{	
-			OPENSSL_ApplinkTable[0]					= cast(void*)APPLINK_MAX;
 			OPENSSL_ApplinkTable[APPLINK_STDIN]		= &app_stdin;
 			OPENSSL_ApplinkTable[APPLINK_STDOUT]	= &app_stdout;
 			OPENSSL_ApplinkTable[APPLINK_STDERR]	= &app_stderr;
@@ -108,7 +107,7 @@ export extern(C)
 			OPENSSL_ApplinkTable[APPLINK_LSEEK]		= &fseek;
 			OPENSSL_ApplinkTable[APPLINK_CLOSE]		= &fclose;
 			
-			once = 0;
+			once = false;
 		}
 		
 		return OPENSSL_ApplinkTable.ptr;
