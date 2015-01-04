@@ -78,9 +78,9 @@ version(OPENSSL_NO_SCTP) {} else {
 version (Posix) {
 	import core.sys.posix.netdb;
 } else version (Windows) {
-	import std.c.windows.winsock;
+	import core.sys.windows.winsock2;
 } else version (Win64) {
-	import std.c.windows.winsock;
+	import core.sys.windows.winsock2;
 }
 
 public import deimos.openssl.crypto;
