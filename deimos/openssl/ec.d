@@ -952,7 +952,7 @@ auto ECParameters_dup()(EC_KEY* x) {return ASN1_dup_of!EC_KEY(&i2d_ECParameters,
 //# endif
 //#endif
 
-auto EVP_PKEY_CTX_set_ec_paramgen_curve_nid()(EVP_PKEX_CTX* ctx, int nid) {
+auto EVP_PKEY_CTX_set_ec_paramgen_curve_nid()(EVP_PKEY_CTX* ctx, int nid) {
 	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_EC, EVP_PKEY_OP_PARAMGEN,
 				EVP_PKEY_CTRL_EC_PARAMGEN_CURVE_NID, nid, null);
 }
