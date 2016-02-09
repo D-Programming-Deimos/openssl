@@ -78,7 +78,10 @@ version(OPENSSL_NO_SCTP) {} else {
 version (Posix) {
 	import core.sys.posix.netdb;
 } else version (Windows) {
-	import core.sys.windows.winsock2;
+	static if (__VERSION__ >= 2070)
+		import core.sys.windows.winsock2;
+	else
+		import std.c.windows.winsock;
 } else version (Win64) {
 	import core.sys.windows.winsock2;
 }
