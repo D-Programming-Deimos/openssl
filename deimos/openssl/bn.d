@@ -688,6 +688,7 @@ int	BN_GF2m_mod_solve_quad_arr(BIGNUM* r, const(BIGNUM)* a,
 	const int[] p, BN_CTX* ctx); /* r^2 + r = a mod p */
 int	BN_GF2m_poly2arr(const(BIGNUM)* a, int[] p, int max);
 int	BN_GF2m_arr2poly(const int[] p, BIGNUM* a);
+}
 
 }
 
