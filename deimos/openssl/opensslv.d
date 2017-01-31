@@ -45,7 +45,7 @@ enum OPENSSL_VERSION_PTEXT = " part of " ~ OPENSSL_VERSION_TEXT;
  *
  *	libcrypto.so.0.9
  *
- * Some unixen also make a softlink with the major verson number only:
+ * Some unixen also make a softlink with the major version number only:
  *
  *	libcrypto.so.0
  *
