@@ -76,26 +76,92 @@ alias stack_st _STACK;  /* Use STACK_OF(...) instead */
 int M_sk_num()(_STACK* sk) { return (sk ? sk.num : -1); }
 char* M_sk_value()(_STACK* sk, size_t n) { return (sk ? sk.data[n] : null); }
 
-int sk_num(const(_STACK)*);
-void* sk_value(const(_STACK)*, int);
+/*******************************************************************************
 
-void* sk_set(_STACK*, int, void*);
+    Starting from OpenSSL v1.1.0, the `sk_*` functions are prefixed with
+    `OPENSSL_`, so e.g. `sk_num` becomes `OPENSSL_sk_num`.
 
-_STACK* sk_new(ExternC!(int function(const(void)*, const(void)*)) cmp);
-_STACK* sk_new_null();
-void sk_free(_STACK*);
-void sk_pop_free(_STACK* st, ExternC!(void function(void*)) func);
-int sk_insert(_STACK* sk, void* data, int where);
-void* sk_delete(_STACK* st, int loc);
-void* sk_delete_ptr(_STACK* st, void* p);
-int sk_find(_STACK* st, void* data);
-int sk_find_ex(_STACK* st, void* data);
-int sk_push(_STACK* st, void* data);
-int sk_unshift(_STACK* st, void* data);
-void* sk_shift(_STACK* st);
-void* sk_pop(_STACK* st);
-void sk_zero(_STACK* st);
-int function(const(void)*, const(void)*) sk_set_cmp_func(_STACK* sk, ExternC!(int function(const(void)*, const(void)*)) c);
-_STACK* sk_dup(_STACK* st);
-void sk_sort(_STACK* st);
-int sk_is_sorted(const(_STACK)* st);
+    To cope with that and provide downstream with an easier interface to deal
+    with, we always provide the `OPENSSL_` methods, as they are just `extern(C)`
+    anyway, and we either provide `sk_*` as `alias`es or `extern (C)`.
+
+    The need for aliases comes from users of those binding, e.g. `safestack`.
+
+*******************************************************************************/
+
+version (DeimosOpenSSLv1_1)
+{
+    int OPENSSL_sk_num(const(_STACK)*);
+    void* OPENSSL_sk_value(const(_STACK)*, int);
+
+    void* OPENSSL_sk_set(_STACK*, int, void*);
+
+    _STACK* OPENSSL_sk_new(ExternC!(int function(const(void)*, const(void)*)) cmp);
+    _STACK* OPENSSL_sk_new_null();
+    void OPENSSL_sk_free(_STACK*);
+    void OPENSSL_sk_pop_free(_STACK* st, ExternC!(void function(void*)) func);
+    int OPENSSL_sk_insert(_STACK* sk, void* data, int where);
+    void* OPENSSL_sk_delete(_STACK* st, int loc);
+    void* OPENSSL_sk_delete_ptr(_STACK* st, void* p);
+    int OPENSSL_sk_find(_STACK* st, void* data);
+    int OPENSSL_sk_find_ex(_STACK* st, void* data);
+    int OPENSSL_sk_push(_STACK* st, void* data);
+    int OPENSSL_sk_unshift(_STACK* st, void* data);
+    void* OPENSSL_sk_shift(_STACK* st);
+    void* OPENSSL_sk_pop(_STACK* st);
+    void OPENSSL_sk_zero(_STACK* st);
+    int function(const(void)*, const(void)*) OPENSSL_sk_set_cmp_func(_STACK* sk, ExternC!(int function(const(void)*, const(void)*)) c);
+    _STACK* OPENSSL_sk_dup(_STACK* st);
+    void OPENSSL_sk_sort(_STACK* st);
+    int OPENSSL_sk_is_sorted(const(_STACK)* st);
+
+    alias sk_num = OPENSSL_sk_num;
+    alias sk_value = OPENSSL_sk_value;
+    alias sk_set = OPENSSL_sk_set;
+
+    alias sk_new = OPENSSL_sk_new;
+    alias sk_new_null = OPENSSL_sk_new_null;
+    alias sk_free = OPENSSL_sk_free;
+    alias sk_pop_free = OPENSSL_sk_pop_free;
+    alias sk_insert = OPENSSL_sk_insert;
+    alias sk_delete = OPENSSL_sk_delete;
+    alias sk_delete_ptr = OPENSSL_sk_delete_ptr;
+    alias sk_find = OPENSSL_sk_find;
+    alias sk_find_ex = OPENSSL_sk_find_ex;
+
+    alias sk_push = OPENSSL_sk_push;
+    alias sk_unshift = OPENSSL_sk_unshift;
+    alias sk_shift = OPENSSL_sk_shift;
+    alias sk_pop = OPENSSL_sk_pop;
+    alias sk_zero = OPENSSL_sk_zero;
+    alias sk_set_cmp_func = OPENSSL_sk_set_cmp_func;
+    alias sk_dup = OPENSSL_sk_dup;
+    alias sk_sort = OPENSSL_sk_sort;
+    alias sk_is_sorted = OPENSSL_sk_is_sorted;
+}
+else
+{
+    int sk_num(const(_STACK)*);
+    void* sk_value(const(_STACK)*, int);
+
+    void* sk_set(_STACK*, int, void*);
+
+    _STACK* sk_new(ExternC!(int function(const(void)*, const(void)*)) cmp);
+    _STACK* sk_new_null();
+    void sk_free(_STACK*);
+    void sk_pop_free(_STACK* st, ExternC!(void function(void*)) func);
+    int sk_insert(_STACK* sk, void* data, int where);
+    void* sk_delete(_STACK* st, int loc);
+    void* sk_delete_ptr(_STACK* st, void* p);
+    int sk_find(_STACK* st, void* data);
+    int sk_find_ex(_STACK* st, void* data);
+    int sk_push(_STACK* st, void* data);
+    int sk_unshift(_STACK* st, void* data);
+    void* sk_shift(_STACK* st);
+    void* sk_pop(_STACK* st);
+    void sk_zero(_STACK* st);
+    int function(const(void)*, const(void)*) sk_set_cmp_func(_STACK* sk, ExternC!(int function(const(void)*, const(void)*)) c);
+    _STACK* sk_dup(_STACK* st);
+    void sk_sort(_STACK* st);
+    int sk_is_sorted(const(_STACK)* st);
+}
