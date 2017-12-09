@@ -119,6 +119,7 @@ module deimos.openssl.crypto;
 import deimos.openssl._d_util;
 
 import core.stdc.stdlib;
+import std.string : toStringz;
 
 public import deimos.openssl.e_os2;
 
@@ -368,7 +369,7 @@ int MemCheck_off()() { return CRYPTO_mem_ctrl(CRYPTO_MEM_CHECK_DISABLE); }
 alias CRYPTO_is_mem_check_on is_MemCheck_on;
 
 auto OPENSSL_malloc(string file = __FILE__, size_t line = __LINE__)(int num) {
-	return CRYPTO_malloc(num,file,line);
+	return CRYPTO_malloc(num,file.toStringz,line);
 }
 auto OPENSSL_strdup(string file = __FILE__, size_t line = __LINE__)(const(char)* str) {
 	return CRYPTO_strdup(str,file,line);
