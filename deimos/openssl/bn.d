@@ -149,11 +149,11 @@ nothrow:
 /* #define BN_DEBUG */
 /* #define BN_DEBUG_RAND */
 
-// #ifndef OPENSSL_SMALL_FOOTPRINT
-// #define BN_MUL_COMBA
-// #define BN_SQR_COMBA
-// #define BN_RECURSION
-// #endif
+#ifndef OPENSSL_SMALL_FOOTPRINT
+#define BN_MUL_COMBA
+#define BN_SQR_COMBA
+#define BN_RECURSION
+#endif
 
 /* This next option uses the C libraries (2 word)/(1 word) function.
  * If it is not defined, I use my C version (which is slower).
@@ -172,91 +172,100 @@ nothrow:
 #  define BN_DIV2W
 # endif
 #endif
++/
 
-
-/* assuming c_long is 64bit - this is the DEC Alpha
- * c_ulong c_long is only 64 bits :-(, don't define
+/* assuming long is 64bit - this is the DEC Alpha
+ * unsigned long long is only 64 bits :-(, don't define
  * BN_LLONG for the DEC Alpha */
-#ifdef SIXTY_FOUR_BIT_LONG
-alias c_ulong BN_ULLONG; c_long
-alias c_ulong BN_ULONG;
-alias c_long BN_LONG;
-enum BN_BITS = 128;
-enum BN_BYTES = 8;
-enum BN_BITS2 = 64;
-enum BN_BITS4 = 32;
-#define BN_MASK		(0xffffffffffffffffffffffffffffffffLL)
-#define BN_MASK2	(0xffffffffffffffffL)
-#define BN_MASK2l	(0xffffffffL)
-#define BN_MASK2h	(0xffffffff00000000L)
-#define BN_MASK2h1	(0xffffffff80000000L)
-#define BN_TBIT		(0x8000000000000000L)
-enum BN_DEC_CONV = (10000000000000000000UL);
-enum BN_DEC_FMT1 = "%lu";
-enum BN_DEC_FMT2 = "%019lu";
-enum BN_DEC_NUM = 19;
-enum BN_HEX_FMT1 = "%lX";
-enum BN_HEX_FMT2 = "%016lX";
-#endif
+version(Posix) version(D_LP64 /*or X86_64 */) { //#ifdef SIXTY_FOUR_BIT_LONG //  /usr/include/x86_64-linux-gnu/openssl/opensslconf.h (Ubuntu) defines SIXTY_FOUR_BIT_LONG and undefines BN_LLONG
+/* for library-internal use only;  BN_ULLONG is not used internally unless BN_LLONG is defined; BN_LLONG controls whether larger than BN_BITS2 (BN_BITS) general-purpose registers are available,
+   and if yes, gets defined by the package maintainer and (only then) BN_ULLONG must reflect this larger unsigned data type (that's what BN_MASK is used for) and the library code resorts to
+   more efficient implementation pathes, thus BN_ULLONG's alias below is irritating for pure 64 bit CPU, but doesn't harm and though being 'useless' here just reflects what a C/C++ compiler does 'see' as defined. */
+alias BN_ULLONG   = ulong; // ucent on 128 bit CPU   //#define BN_ULLONG	unsigned long long
 
-/* This is where the c_long long data type is 64 bits, but c_long is 32.
+alias BN_ULONG    = ulong; // BN_ULONG.sizeof*8==BN_BITS2 ! The essential definition for BIGNUM's data storage //#define BN_ULONG	unsigned long
+/* the following BN_LONG up to BN_DEC_CONV: for library-internal use only */
+alias BN_LONG     = long;
+enum  BN_BITS     = 128;
+enum  BN_BYTES    = 8;
+enum  BN_BITS2    = 64;
+enum  BN_BITS4    = 32;
+//enum BN_MASK     = 0xffff_ffff_ffff_ffff_ffff_ffff_ffff_ffffLL; // must not be uncommented, if the CPU can't deal with cent/128 bit general-purpose registers
+enum  BN_MASK2    = 0xffff_ffff_ffff_ffffL;
+enum  BN_MASK2l   = 0xffff_ffffL;
+enum  BN_MASK2h   = 0xffff_ffff_0000_0000L;
+enum  BN_MASK2h1  = 0xffff_ffff_8000_0000L;
+enum  BN_TBIT     = 0x8000_0000_0000_0000L;
+enum  BN_DEC_CONV = 10000000000000000000UL;
+/* sizeof C's long is 8 here */
+enum const(char)* BN_DEC_FMT1 = "%lu";        // C's printf formating (CRuntime_Glibc)
+enum const(char)* BN_DEC_FMT2 = "%019lu";     // dito
+enum  BN_DEC_NUM  = 19;
+enum const(char)* BN_HEX_FMT1 = "%lX";        // dito
+enum const(char)* BN_HEX_FMT2 = "%016lX";     // dito
+} // version(Posix) version(X86_64)
+
+// currently, the above version(Posix) version(X86_64) and following version(Win64), i.e. both X86_64, have same content, except the format "strings" und the "useless" alias BN_ULLONG
+
+/* This is where the long long data type is 64 bits, but long is 32.
  * For machines where there are 64bit registers, this is the mode to use.
  * IRIX, on R4000 and above should use this mode, along with the relevant
  * assembler code :-).  Do NOT define BN_LLONG.
  */
-#ifdef SIXTY_FOUR_BIT
+version(Win64) { //#ifdef SIXTY_FOUR_BIT // Shining Light Productions OpenSSL-Win64 defines SIXTY_FOUR_BIT and undefines BN_LLONG
+/+
 #undef BN_LLONG
 #undef BN_ULLONG
-alias c_ulong BN_ULONG; c_long
-alias c_long BN_LONG; long
-enum BN_BITS = 128;
-enum BN_BYTES = 8;
-enum BN_BITS2 = 64;
-enum BN_BITS4 = 32;
-#define BN_MASK2	(0xffffffffffffffffLL)
-#define BN_MASK2l	(0xffffffffL)
-#define BN_MASK2h	(0xffffffff00000000LL)
-#define BN_MASK2h1	(0xffffffff80000000LL)
-#define BN_TBIT		(0x8000000000000000LL)
-enum BN_DEC_CONV = (10000000000000000000ULL);
-enum BN_DEC_FMT1 = "%llu";
-enum BN_DEC_FMT2 = "%019llu";
-enum BN_DEC_NUM = 19;
-enum BN_HEX_FMT1 = "%llX";
-enum BN_HEX_FMT2 = "%016llX";
-#endif
++/
+alias BN_ULONG    = ulong;
+/* the following BN_LONG up to BN_DEC_CONV: for library-internal use only */
+alias BN_LONG     = long;
+enum  BN_BITS     = 128;
+enum  BN_BYTES    = 8;
+enum  BN_BITS2    = 64;
+enum  BN_BITS4    = 32;
+enum  BN_MASK2    = 0xffff_ffff_ffff_ffffL;
+enum  BN_MASK2l   = 0xffff_ffffL;
+enum  BN_MASK2h   = 0xffff_ffff_0000_0000L;
+enum  BN_MASK2h1  = 0xffff_ffff_8000_0000L;
+enum  BN_TBIT     = 0x8000_0000_0000_0000L;
+enum  BN_DEC_CONV = 10000000000000000000UL;
+/* sizeof C's long is 4 here */
+enum const(char)* BN_DEC_FMT1 = "%llu";       // C's printf formating (CRuntime_Microsoft)
+enum const(char)* BN_DEC_FMT2 = "%019llu";    // dito
+enum  BN_DEC_NUM  = 19;
+enum const(char)* BN_HEX_FMT1 = "%llX";       // dito
+enum const(char)* BN_HEX_FMT2 = "%016llX";    // dito
+} // version(Win64)
 
-#ifdef THIRTY_TWO_BIT+/
-// #ifdef BN_LLONG
-// # if defined(_WIN32) && !defined(__GNUC__)
-// #  define BN_ULLONG	unsigned __int64
-// #  define BN_MASK	(0xffffffffffffffffI64)
-// # else
-// #  define BN_ULLONG	c_ulong c_long
-// #  define BN_MASK	(0xffffffffffffffffLL)
-// # endif
-// #endif
-// FIXME: Is this correct?
-alias ulong BN_ULLONG;
-alias uint BN_ULONG;
-alias int BN_LONG;
-enum BN_BITS = 64;
-enum BN_BYTES = 4;
-enum BN_BITS2 = 32;
-enum BN_BITS4 = 16;
-enum BN_MASK2 = 0xffffffff;
-enum BN_MASK2l = 0xffff;
-enum BN_MASK2h1 = 0xffff8000;
-enum BN_MASK2h = 0xffff0000;
-enum BN_TBIT = 0x80000000;
-enum BN_DEC_CONV = 1000000000;
-enum BN_DEC_FMT1 = "%u";
-enum BN_DEC_FMT2 = "%09u";
-enum BN_DEC_NUM = 9;
-enum BN_HEX_FMT1 = "%X";
-enum BN_HEX_FMT2 = "%08X";
-/+#endif
+/* not limited to Intel and AMD ! ; compiler switches -m32, -m32mscoff end up here for my 64 bit CPU (Intel) */
+version(X86) { //#ifdef THIRTY_TWO_BIT // Shining Light Productions OpenSSL-Win32 (assuming meant to run on 64 bit CPU)  defines THIRTY_TWO_BIT and BN_LLONG
+//#ifdef BN_LLONG
+/* for library-internal use only */
+alias BN_ULLONG   = ulong;                    // must not be used, if the CPU can't deal with dlangs ulong/64 bit general-purpose registers
+//enum  BN_MASK     = 0xffff_ffff_ffff_ffffL; // must not be uncommented, if the CPU can't deal with long/64 bit general-purpose registers
+//#endif
+alias BN_ULONG    = uint;
+/* the following BN_LONG up to BN_DEC_CONV: for library-internal use only */
+alias BN_LONG     = int;
+enum  BN_BITS     = 64;
+enum  BN_BYTES    = 4;
+enum  BN_BITS2    = 32;
+enum  BN_BITS4    = 16;
+enum int  BN_MASK2    = 0xffff_ffff;
+enum int  BN_MASK2l   = 0xffff;
+enum int  BN_MASK2h1  = 0xffff_8000;
+enum int  BN_MASK2h   = 0xffff_0000;
+enum int  BN_TBIT     = 0x8000_0000;
+enum  BN_DEC_CONV = 1000000000;
+enum const(char)* BN_DEC_FMT1 = "%u";         // C's printf formating
+enum const(char)* BN_DEC_FMT2 = "%09u";       // dito
+enum  BN_DEC_NUM  = 9;
+enum const(char)* BN_HEX_FMT1 = "%X";         // dito
+enum const(char)* BN_HEX_FMT2 = "%08X";       // dito
+} // version(X86)
 
+/+
 /* 2011-02-22 SMS.
  * In various places, a size_t variable or a type cast to size_t was
  * used to perform integer-only operations on pointers.  This failed on
@@ -267,7 +276,7 @@ enum BN_HEX_FMT2 = "%08X";
  */
 #if defined(OPENSSL_SYS_VMS)
 # if __INITIAL_POINTER_SIZE == 64
-#  define PTR_SIZE_INT c_long long
+#  define PTR_SIZE_INT long long
 # else /* __INITIAL_POINTER_SIZE == 64 */
 #  define PTR_SIZE_INT int
 # endif /* __INITIAL_POINTER_SIZE == 64 [else] */
@@ -275,6 +284,7 @@ enum BN_HEX_FMT2 = "%08X";
 # define PTR_SIZE_INT size_t
 #endif /* defined(OPENSSL_SYS_VMS) [else] */
 +/
+
 enum BN_DEFAULT_BITS = 1280;
 
 enum BN_FLG_MALLOCED = 0x01;
