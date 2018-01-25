@@ -553,6 +553,10 @@ void	EVP_MD_CTX_init(EVP_MD_CTX* ctx);
 int	EVP_MD_CTX_cleanup(EVP_MD_CTX* ctx);
 EVP_MD_CTX* EVP_MD_CTX_create();
 void	EVP_MD_CTX_destroy(EVP_MD_CTX* ctx);
+EVP_MD_CTX* EVP_MD_CTX_new();
+int     EVP_MD_CTX_reset(EVP_MD_CTX* ctx);
+void    EVP_MD_CTX_free(EVP_MD_CTX* ctx);
+void    EVP_MD_CTX_ctrl(EVP_MD_CTX* ctx, int cmd, int p1, const(void) *p2);
 int     EVP_MD_CTX_copy_ex(EVP_MD_CTX* out_,const(EVP_MD_CTX)* in_);
 void	EVP_MD_CTX_set_flags(EVP_MD_CTX* ctx, int flags);
 void	EVP_MD_CTX_clear_flags(EVP_MD_CTX* ctx, int flags);
@@ -561,6 +565,7 @@ int	EVP_DigestInit_ex(EVP_MD_CTX* ctx, const(EVP_MD)* type, ENGINE* impl);
 int	EVP_DigestUpdate(EVP_MD_CTX* ctx,const(void)* d,
 			 size_t cnt);
 int	EVP_DigestFinal_ex(EVP_MD_CTX* ctx,ubyte* md,uint* s);
+int EVP_DigestFinalXOF(EVP_MD_CTX* ctx,ubyte* md,size_t len);
 int	EVP_Digest(const(void)* data, size_t count,
 		ubyte* md, uint* size, const(EVP_MD)* type, ENGINE* impl);
 
