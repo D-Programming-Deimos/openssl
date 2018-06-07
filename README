@@ -9,7 +9,7 @@ library. The project is managed by a worldwide community of volunteers that
 use the Internet to communicate, plan, and develop the OpenSSL toolkit and its
 related documentation."
 
-Library version: 1.0.0e
+Library version: 1.1.0h
 
 Status: (Almost) complete, typical application should build fine. Most of the
 functions from <openssl/kssl.h> are not available due to missing Kerberos
