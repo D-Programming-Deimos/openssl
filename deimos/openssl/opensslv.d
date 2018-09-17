@@ -26,14 +26,40 @@ import deimos.openssl._d_util;
  * (Prior to 0.9.5a beta1, a different scheme was used: MMNNFFRBB for
  * major minor fix final patch/beta)
  */
-enum OPENSSL_VERSION_NUMBER = 0x1000107f;
+
+/* Version macros for compile-time API version detection */
+enum
+{
+    OPENSSL_VERSION_MAJOR   = 1,
+    OPENSSL_VERSION_MINOR   = 1,
+    OPENSSL_VERSION_PATCH   = 0,
+    OPENSSL_VERSION_BUILD   = 'h' - '`'
+}
+
+int OPENSSL_MAKE_VERSION(int major, int minor, int patch, int build)
+{
+    return (major << 28) | (minor << 20) | (patch << 12) | (build << 4) | 0xf;
+}
+
+enum OPENSSL_VERSION_NUMBER =
+    OPENSSL_MAKE_VERSION(OPENSSL_VERSION_MAJOR, OPENSSL_VERSION_MINOR, OPENSSL_VERSION_PATCH, OPENSSL_VERSION_BUILD);
+
+bool OPENSSL_VERSION_AT_LEAST(int major, int minor, int patch = 0, int build = 0)
+{
+    return OPENSSL_VERSION_NUMBER >= OPENSSL_MAKE_VERSION(major, minor, patch, build);
+}
+
+bool OPENSSL_VERSION_BEFORE(int major, int minor, int patch = 0, int build = 0)
+{
+    return OPENSSL_VERSION_NUMBER < OPENSSL_MAKE_VERSION(major, minor, patch, build);
+}
+
 version (OPENSSL_FIPS) {
-enum OPENSSL_VERSION_TEXT = "OpenSSL 1.0.1g-fips 7 Apr 2014";
+enum OPENSSL_VERSION_TEXT = "OpenSSL 1.1.0h-fips 27 Mar 2018";
 } else {
-enum OPENSSL_VERSION_TEXT = "OpenSSL 1.0.1g 7 Apr 2014";
+enum OPENSSL_VERSION_TEXT = "OpenSSL 1.1.0h 27 Mar 2018";
 }
 enum OPENSSL_VERSION_PTEXT = " part of " ~ OPENSSL_VERSION_TEXT;
-
 
 /* The macros below are to be used for shared library (.so, .dll, ...)
  * versioning.  That kind of versioning works a bit differently between

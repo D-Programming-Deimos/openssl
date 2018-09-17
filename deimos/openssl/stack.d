@@ -59,6 +59,7 @@
 module deimos.openssl.stack;
 
 import deimos.openssl._d_util;
+import deimos.openssl.opensslv;
 
 extern (C):
 nothrow:
@@ -89,7 +90,7 @@ char* M_sk_value()(_STACK* sk, size_t n) { return (sk ? sk.data[n] : null); }
 
 *******************************************************************************/
 
-version (DeimosOpenSSLv1_1)
+static if (OPENSSL_VERSION_AT_LEAST(1, 1))
 {
     int OPENSSL_sk_num(const(_STACK)*);
     void* OPENSSL_sk_value(const(_STACK)*, int);

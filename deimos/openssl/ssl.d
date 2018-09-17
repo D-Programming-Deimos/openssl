@@ -1926,19 +1926,13 @@ const(char)* SSL_get_version(const(SSL)* s);
 /* This sets the 'default' SSL version that SSL_new() will create */
 int SSL_CTX_set_ssl_version(SSL_CTX* ctx, const(SSL_METHOD)* meth);
 
-version(OPENSSL_NO_SSL2) {} else {
-const(SSL_METHOD)* SSLv2_method();		/* SSLv2 */
-const(SSL_METHOD)* SSLv2_server_method();	/* SSLv2 */
-const(SSL_METHOD)* SSLv2_client_method();	/* SSLv2 */
-}
-
 const(SSL_METHOD)* SSLv3_method();		/* SSLv3 */
 const(SSL_METHOD)* SSLv3_server_method();	/* SSLv3 */
 const(SSL_METHOD)* SSLv3_client_method();	/* SSLv3 */
 
-const(SSL_METHOD)* SSLv23_method();	/* SSLv3 but can rollback to v2 */
-const(SSL_METHOD)* SSLv23_server_method();	/* SSLv3 but can rollback to v2 */
-const(SSL_METHOD)* SSLv23_client_method();	/* SSLv3 but can rollback to v2 */
+const(SSL_METHOD)* TLS_method();		/* handshake SSLv3 or later, negotiate to highest possible security */
+const(SSL_METHOD)* TLS_server_method();		/* see above */
+const(SSL_METHOD)* TLS_client_method();		/* see above */
 
 const(SSL_METHOD)* TLSv1_method();		/* TLSv1.0 */
 const(SSL_METHOD)* TLSv1_server_method();	/* TLSv1.0 */
@@ -1951,7 +1945,6 @@ const(SSL_METHOD)* TLSv1_1_client_method();	/* TLSv1.1 */
 const(SSL_METHOD)* TLSv1_2_method();		/* TLSv1.2 */
 const(SSL_METHOD)* TLSv1_2_server_method();	/* TLSv1.2 */
 const(SSL_METHOD)* TLSv1_2_client_method();	/* TLSv1.2 */
-
 
 const(SSL_METHOD)* DTLSv1_method();		/* DTLSv1.0 */
 const(SSL_METHOD)* DTLSv1_server_method();	/* DTLSv1.0 */

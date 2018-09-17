@@ -419,20 +419,10 @@ void CRYPTO_free_ex_data(int class_index, void* obj, CRYPTO_EX_DATA* ad);
  * (relative to the class type involved) */
 int CRYPTO_set_ex_data(CRYPTO_EX_DATA* ad, int idx, void* val);
 void* CRYPTO_get_ex_data(const(CRYPTO_EX_DATA)* ad,int idx);
-/* This function cleans up all "ex_data" state. It mustn't be called under
- * potential race-conditions. */
-void CRYPTO_cleanup_all_ex_data();
 
 int CRYPTO_get_new_lockid(char* name);
 
-int CRYPTO_num_locks(); /* return CRYPTO_NUM_LOCKS (shared libs!) */
 void CRYPTO_lock(int mode, int type,const(char)* file,int line);
-void CRYPTO_set_locking_callback(ExternC!(void function(int mode,int type,
-					      const(char)* file,int line)) func);
-ExternC!(void function(int mode,int type,const(char)* file,int line)) CRYPTO_get_locking_callback();
-void CRYPTO_set_add_lock_callback(ExternC!(int function(int* num,int mount,int type,
-					      const(char)* file, int line)) func);
-ExternC!(void function(int* num,int mount,int type,const(char)* file, int line)) CRYPTO_get_add_lock_callback();
 
 /* Don't use this structure directly. */
 struct crypto_threadid_st {
@@ -463,12 +453,6 @@ int CRYPTO_get_new_dynlockid();
 void CRYPTO_destroy_dynlockid(int i);
 struct CRYPTO_dynlock_value;
 CRYPTO_dynlock_value* CRYPTO_get_dynlock_value(int i);
-void CRYPTO_set_dynlock_create_callback(ExternC!(CRYPTO_dynlock_value* function(const(char)* file, int line)) dyn_create_function);
-void CRYPTO_set_dynlock_lock_callback(ExternC!(void function(int mode, CRYPTO_dynlock_value* l, const(char)* file, int line)) dyn_lock_function);
-void CRYPTO_set_dynlock_destroy_callback(ExternC!(void function(CRYPTO_dynlock_value* l, const(char)* file, int line)) dyn_destroy_function);
-ExternC!(CRYPTO_dynlock_value* function(const(char)* file,int line)) CRYPTO_get_dynlock_create_callback();
-ExternC!(void function(int mode, CRYPTO_dynlock_value* l, const(char)* file,int line)) CRYPTO_get_dynlock_lock_callback();
-ExternC!(void function(CRYPTO_dynlock_value* l, const(char)* file,int line)) CRYPTO_get_dynlock_destroy_callback();
 
 /* CRYPTO_set_mem_functions includes CRYPTO_set_locked_mem_functions --
  * call the latter last if you need different functions */
