@@ -386,7 +386,7 @@ ExternC!(type* function()) CHECKED_NEW_OF(type)(ExternC!(type* function()) xnew)
 void* CHECKED_PTR_OF(type)(type* p) {
     return cast(void*)(1 ? p : null);
 }
-void* CHECKED_PPTR_OF(type)(type** p) {
+void** CHECKED_PPTR_OF(type)(type** p) {
     return cast(void**)(1 ? p : null);
 }
 
