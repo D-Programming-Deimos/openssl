@@ -88,8 +88,6 @@ HMAC_CTX * HMAC_CTX_new();
 void HMAC_CTX_free(HMAC_CTX *ctx);
 void HMAC_CTX_reset(HMAC_CTX * ctx);
 
-alias HMAC_CTX_cleanup HMAC_cleanup; /* deprecated */
-
 int HMAC_Init(HMAC_CTX* ctx, const(void)* key, int len,
 	       const(EVP_MD)* md); /* deprecated */
 int HMAC_Init_ex(HMAC_CTX* ctx, const(void)* key, int len,
