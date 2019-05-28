@@ -879,7 +879,8 @@ int ASN1_UTCTIME_cmp_time_t(const(ASN1_UTCTIME)* s, time_t t);
 version (none) {
 time_t ASN1_UTCTIME_get(const(ASN1_UTCTIME)* s);
 }
-
+int ASN1_TIME_diff(int *pday, int *psec,
+                   const ASN1_TIME *from, const ASN1_TIME *to);
 int ASN1_GENERALIZEDTIME_check(ASN1_GENERALIZEDTIME* a);
 ASN1_GENERALIZEDTIME* ASN1_GENERALIZEDTIME_set(ASN1_GENERALIZEDTIME* s,time_t t);
 ASN1_GENERALIZEDTIME* ASN1_GENERALIZEDTIME_adj(ASN1_GENERALIZEDTIME* s,
