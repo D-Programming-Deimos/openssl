@@ -617,8 +617,8 @@ auto X509_get_version()(x509_st* x) { return ASN1_INTEGER_get(x.cert_info.versio
 auto X509_get_notBefore()(x509_st* x) { return (x.cert_info.validity.notBefore); }
 auto X509_get_notAfter()(x509_st* x) { return (x.cert_info.validity.notAfter); }
 alias X509_get_pubkey X509_extract_key;
-auto X509_REQ_get_version()(x509_st* x) { return ASN1_INTEGER_get(x.req_info.version_); }
-auto X509_REQ_get_subject_name()(x509_st* x) { return (x.req_info.subject); }
+auto X509_REQ_get_version()(X509_req_st* x) { return ASN1_INTEGER_get(x.req_info.version_); }
+auto X509_REQ_get_subject_name()(X509_req_st* x) { return (x.req_info.subject); }
 alias X509_REQ_get_pubkey X509_REQ_extract_key;
 alias X509_NAME_cmp X509_name_cmp;
 auto X509_get_signature_type()(x509_st* x) { return EVP_PKEY_type(OBJ_obj2nid(x.sig_alg.algorithm)); }
