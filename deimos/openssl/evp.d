@@ -551,8 +551,9 @@ auto EVP_delete_digest_alias()(const(char)* alias_) {
 
 void	EVP_MD_CTX_init(EVP_MD_CTX* ctx);
 int	EVP_MD_CTX_cleanup(EVP_MD_CTX* ctx);
-EVP_MD_CTX* EVP_MD_CTX_create();
 void	EVP_MD_CTX_destroy(EVP_MD_CTX* ctx);
+EVP_MD_CTX* EVP_MD_CTX_new();
+alias EVP_MD_CTX_new EVP_MD_CTX_create;
 int     EVP_MD_CTX_copy_ex(EVP_MD_CTX* out_,const(EVP_MD_CTX)* in_);
 void	EVP_MD_CTX_set_flags(EVP_MD_CTX* ctx, int flags);
 void	EVP_MD_CTX_clear_flags(EVP_MD_CTX* ctx, int flags);
