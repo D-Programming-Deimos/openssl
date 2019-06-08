@@ -84,11 +84,9 @@ alias hmac_ctx_st HMAC_CTX;
 
 auto HMAC_size()(HMAC_CTX* e) { return EVP_MD_size(e.md); }
 
-
-void HMAC_CTX_init(HMAC_CTX* ctx);
-void HMAC_CTX_cleanup(HMAC_CTX* ctx);
-
-alias HMAC_CTX_cleanup HMAC_cleanup; /* deprecated */
+HMAC_CTX * HMAC_CTX_new();
+void HMAC_CTX_free(HMAC_CTX *ctx);
+void HMAC_CTX_reset(HMAC_CTX * ctx);
 
 int HMAC_Init(HMAC_CTX* ctx, const(void)* key, int len,
 	       const(EVP_MD)* md); /* deprecated */
