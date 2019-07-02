@@ -253,10 +253,10 @@ alias X509_req_st X509_REQ;
 
 struct x509_cinf_st {
 	ASN1_INTEGER* version_;		/* [ 0 ] default of v1 */
-	ASN1_INTEGER* serialNumber;
-	X509_ALGOR* signature;
+	ASN1_INTEGER serialNumber;
+	X509_ALGOR signature;
 	X509_NAME* issuer;
-	X509_VAL* validity;
+	X509_VAL validity;
 	X509_NAME* subject;
 	X509_PUBKEY* key;
 	ASN1_BIT_STRING* issuerUID;		/* [ 1 ] optional in v2 */
@@ -283,9 +283,9 @@ alias x509_cert_aux_st X509_CERT_AUX;
 
 struct x509_st
 	{
-	X509_CINF* cert_info;
-	X509_ALGOR* sig_alg;
-	ASN1_BIT_STRING* signature;
+	X509_CINF cert_info;
+	X509_ALGOR sig_alg;
+	ASN1_BIT_STRING signature;
 	int valid;
 	int references;
 	char* name;
