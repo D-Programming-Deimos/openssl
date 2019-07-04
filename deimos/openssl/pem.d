@@ -477,8 +477,6 @@ mixin(DECLARE_PEM_rw!("X509", "X509")());
 
 mixin(DECLARE_PEM_rw!("X509_AUX", "X509")());
 
-mixin(DECLARE_PEM_rw!("X509_CERT_PAIR", "X509_CERT_PAIR")());
-
 mixin(DECLARE_PEM_rw!("X509_REQ", "X509_REQ")());
 mixin(DECLARE_PEM_write!("X509_REQ_NEW", "X509_REQ")());
 

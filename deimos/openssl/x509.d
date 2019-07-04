@@ -13,11 +13,34 @@
  * SUN MICROSYSTEMS, INC., and contributed to the OpenSSL project.
  */
 
-import core.stdc.config;
-import core.stdc.stdio;
-import core.sys.posix.sched;
+module deimos.openssl.x509;
+
+import core.stdc.time;
+
+import deimos.openssl._d_util;
+import deimos.openssl.x509v3 : stack_st_ASN1_OBJECT;
+
+public import deimos.openssl.e_os2;
+public import deimos.openssl.ossl_typ;
+public import deimos.openssl.symhacks;
+public import deimos.openssl.buffer;
+public import deimos.openssl.evp;
+public import deimos.openssl.bio;
+public import deimos.openssl.stack;
+public import deimos.openssl.asn1;
+public import deimos.openssl.safestack;
+public import deimos.openssl.ec;
+
+/* if OPENSSL_API_COMPAT < 0x10100000L */
+public import deimos.openssl.rsa;
+public import deimos.openssl.dsa;
+public import deimos.openssl.dh;
+/* endif */
+
+public import deimos.openssl.sha;
 
 extern (C):
+nothrow:
 
 enum X509_FILETYPE_PEM = 1;
 enum X509_FILETYPE_ASN1 = 2;
@@ -563,14 +586,18 @@ int X509_signature_print(
 int X509_sign(X509* x, EVP_PKEY* pkey, const(EVP_MD)* md);
 int X509_sign_ctx(X509* x, EVP_MD_CTX* ctx);
 
+version(OPENSSL_NO_OCSP) {} else {
 int X509_http_nbio(OCSP_REQ_CTX* rctx, X509** pcert);
+}
 
 int X509_REQ_sign(X509_REQ* x, EVP_PKEY* pkey, const(EVP_MD)* md);
 int X509_REQ_sign_ctx(X509_REQ* x, EVP_MD_CTX* ctx);
 int X509_CRL_sign(X509_CRL* x, EVP_PKEY* pkey, const(EVP_MD)* md);
 int X509_CRL_sign_ctx(X509_CRL* x, EVP_MD_CTX* ctx);
 
+version(OPENSSL_NO_OCSP) {} else {
 int X509_CRL_http_nbio(OCSP_REQ_CTX* rctx, X509_CRL** pcrl);
+}
 
 int NETSCAPE_SPKI_sign(NETSCAPE_SPKI* x, EVP_PKEY* pkey, const(EVP_MD)* md);
 
@@ -596,6 +623,7 @@ int X509_NAME_digest(
     ubyte* md,
     uint* len);
 
+version(OPENSSL_NO_STDIO) {} else {
 X509* d2i_X509_fp(FILE* fp, X509** x509);
 int i2d_X509_fp(FILE* fp, X509* x509);
 X509_CRL* d2i_X509_CRL_fp(FILE* fp, X509_CRL** crl);
@@ -603,22 +631,28 @@ int i2d_X509_CRL_fp(FILE* fp, X509_CRL* crl);
 X509_REQ* d2i_X509_REQ_fp(FILE* fp, X509_REQ** req);
 int i2d_X509_REQ_fp(FILE* fp, X509_REQ* req);
 
+version(OPENSSL_NO_RSA) {} else {
 RSA* d2i_RSAPrivateKey_fp(FILE* fp, RSA** rsa);
 int i2d_RSAPrivateKey_fp(FILE* fp, RSA* rsa);
 RSA* d2i_RSAPublicKey_fp(FILE* fp, RSA** rsa);
 int i2d_RSAPublicKey_fp(FILE* fp, RSA* rsa);
 RSA* d2i_RSA_PUBKEY_fp(FILE* fp, RSA** rsa);
 int i2d_RSA_PUBKEY_fp(FILE* fp, RSA* rsa);
+}
 
+version(OPENSSL_NO_DSA) {} else {
 DSA* d2i_DSA_PUBKEY_fp(FILE* fp, DSA** dsa);
 int i2d_DSA_PUBKEY_fp(FILE* fp, DSA* dsa);
 DSA* d2i_DSAPrivateKey_fp(FILE* fp, DSA** dsa);
 int i2d_DSAPrivateKey_fp(FILE* fp, DSA* dsa);
+}
 
+version(OPENSSL_NO_EC) {} else {
 EC_KEY* d2i_EC_PUBKEY_fp(FILE* fp, EC_KEY** eckey);
 int i2d_EC_PUBKEY_fp(FILE* fp, EC_KEY* eckey);
 EC_KEY* d2i_ECPrivateKey_fp(FILE* fp, EC_KEY** eckey);
 int i2d_ECPrivateKey_fp(FILE* fp, EC_KEY* eckey);
+}
 
 X509_SIG* d2i_PKCS8_fp(FILE* fp, X509_SIG** p8);
 int i2d_PKCS8_fp(FILE* fp, X509_SIG* p8);
@@ -631,7 +665,7 @@ int i2d_PrivateKey_fp(FILE* fp, EVP_PKEY* pkey);
 EVP_PKEY* d2i_PrivateKey_fp(FILE* fp, EVP_PKEY** a);
 int i2d_PUBKEY_fp(FILE* fp, EVP_PKEY* pkey);
 EVP_PKEY* d2i_PUBKEY_fp(FILE* fp, EVP_PKEY** a);
-
+} /+ OPENSSL_NO_STDIO +/
 X509* d2i_X509_bio(BIO* bp, X509** x509);
 int i2d_X509_bio(BIO* bp, X509* x509);
 X509_CRL* d2i_X509_CRL_bio(BIO* bp, X509_CRL** crl);
@@ -639,22 +673,28 @@ int i2d_X509_CRL_bio(BIO* bp, X509_CRL* crl);
 X509_REQ* d2i_X509_REQ_bio(BIO* bp, X509_REQ** req);
 int i2d_X509_REQ_bio(BIO* bp, X509_REQ* req);
 
+version(OPENSSL_NO_RSA) {} else {
 RSA* d2i_RSAPrivateKey_bio(BIO* bp, RSA** rsa);
 int i2d_RSAPrivateKey_bio(BIO* bp, RSA* rsa);
 RSA* d2i_RSAPublicKey_bio(BIO* bp, RSA** rsa);
 int i2d_RSAPublicKey_bio(BIO* bp, RSA* rsa);
 RSA* d2i_RSA_PUBKEY_bio(BIO* bp, RSA** rsa);
 int i2d_RSA_PUBKEY_bio(BIO* bp, RSA* rsa);
+}
 
+version(OPENSSL_NO_DSA) {} else {
 DSA* d2i_DSA_PUBKEY_bio(BIO* bp, DSA** dsa);
 int i2d_DSA_PUBKEY_bio(BIO* bp, DSA* dsa);
 DSA* d2i_DSAPrivateKey_bio(BIO* bp, DSA** dsa);
 int i2d_DSAPrivateKey_bio(BIO* bp, DSA* dsa);
+}
 
+version(OPENSSL_NO_EC) {} else {
 EC_KEY* d2i_EC_PUBKEY_bio(BIO* bp, EC_KEY** eckey);
 int i2d_EC_PUBKEY_bio(BIO* bp, EC_KEY* eckey);
 EC_KEY* d2i_ECPrivateKey_bio(BIO* bp, EC_KEY** eckey);
 int i2d_ECPrivateKey_bio(BIO* bp, EC_KEY* eckey);
+}
 
 X509_SIG* d2i_PKCS8_bio(BIO* bp, X509_SIG** p8);
 int i2d_PKCS8_bio(BIO* bp, X509_SIG* p8);
@@ -735,14 +775,20 @@ c_long X509_get_pathlen(X509* x);
 int i2d_PUBKEY(EVP_PKEY* a, ubyte** pp);
 EVP_PKEY* d2i_PUBKEY(EVP_PKEY** a, const(ubyte*)* pp, c_long length);
 
+version(OPENSSL_NO_RSA) {} else {
 int i2d_RSA_PUBKEY(RSA* a, ubyte** pp);
 RSA* d2i_RSA_PUBKEY(RSA** a, const(ubyte*)* pp, c_long length);
+}
 
+version(OPENSSL_NO_DSA) {} else {
 int i2d_DSA_PUBKEY(DSA* a, ubyte** pp);
 DSA* d2i_DSA_PUBKEY(DSA** a, const(ubyte*)* pp, c_long length);
+}
 
+version(OPENSSL_NO_EC) {} else {
 int i2d_EC_PUBKEY(EC_KEY* a, ubyte** pp);
 EC_KEY* d2i_EC_PUBKEY(EC_KEY** a, const(ubyte*)* pp, c_long length);
+}
 
 X509_SIG* X509_SIG_new();
 void X509_SIG_free(X509_SIG* a);
@@ -971,10 +1017,10 @@ int X509_set_pubkey(X509* x, EVP_PKEY* pkey);
 int X509_up_ref(X509* x);
 int X509_get_signature_type(const(X509)* x);
 
-enum X509_get_notBefore = X509_getm_notBefore;
-enum X509_get_notAfter = X509_getm_notAfter;
-enum X509_set_notBefore = X509_set1_notBefore;
-enum X509_set_notAfter = X509_set1_notAfter;
+alias X509_get_notBefore = X509_getm_notBefore;
+alias X509_get_notAfter = X509_getm_notAfter;
+alias X509_set_notBefore = X509_set1_notBefore;
+alias X509_set_notAfter = X509_set1_notAfter;
 
 /*
  * This one is only used so that a binary form can output, as in
@@ -1051,8 +1097,8 @@ int X509_CRL_set1_nextUpdate(X509_CRL* x, const(ASN1_TIME)* tm);
 int X509_CRL_sort(X509_CRL* crl);
 int X509_CRL_up_ref(X509_CRL* crl);
 
-enum X509_CRL_set_lastUpdate = X509_CRL_set1_lastUpdate;
-enum X509_CRL_set_nextUpdate = X509_CRL_set1_nextUpdate;
+alias X509_CRL_set_lastUpdate = X509_CRL_set1_lastUpdate;
+alias X509_CRL_set_nextUpdate = X509_CRL_set1_nextUpdate;
 
 c_long X509_CRL_get_version(const(X509_CRL)* crl);
 const(ASN1_TIME)* X509_CRL_get0_lastUpdate(const(X509_CRL)* crl);
@@ -1103,8 +1149,10 @@ c_ulong X509_issuer_name_hash(X509* a);
 int X509_subject_name_cmp(const(X509)* a, const(X509)* b);
 c_ulong X509_subject_name_hash(X509* x);
 
+version(OPENSSL_NO_MD5) {} else {
 c_ulong X509_issuer_name_hash_old(X509* a);
 c_ulong X509_subject_name_hash_old(X509* x);
+}
 
 int X509_cmp(const(X509)* a, const(X509)* b);
 int X509_NAME_cmp(const(X509_NAME)* a, const(X509_NAME)* b);
@@ -1115,6 +1163,7 @@ int X509_CRL_cmp(const(X509_CRL)* a, const(X509_CRL)* b);
 int X509_CRL_match(const(X509_CRL)* a, const(X509_CRL)* b);
 int X509_aux_print(BIO* out_, X509* x, int indent);
 
+version(OPENSSL_NO_STDIO) {} else {
 int X509_print_ex_fp(FILE* bp, X509* x, c_ulong nmflag, c_ulong cflag);
 int X509_print_fp(FILE* bp, X509* x);
 int X509_CRL_print_fp(FILE* bp, X509_CRL* x);
@@ -1124,6 +1173,7 @@ int X509_NAME_print_ex_fp(
     const(X509_NAME)* nm,
     int indent,
     c_ulong flags);
+}
 
 int X509_NAME_print(BIO* bp, const(X509_NAME)* name, int obase);
 int X509_NAME_print_ex(
@@ -1450,6 +1500,7 @@ X509_ALGOR* PKCS5_pbe2_set_iv(
     ubyte* aiv,
     int prf_nid);
 
+version(OPENSSL_NO_SCRYPT) {} else {
 X509_ALGOR* PKCS5_pbe2_set_scrypt(
     const(EVP_CIPHER)* cipher,
     const(ubyte)* salt,
@@ -1458,6 +1509,7 @@ X509_ALGOR* PKCS5_pbe2_set_scrypt(
     ulong N,
     ulong r,
     ulong p);
+}
 
 X509_ALGOR* PKCS5_pbkdf2_set(
     int iter,

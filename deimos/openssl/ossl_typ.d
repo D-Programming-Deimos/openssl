@@ -175,13 +175,18 @@ import deimos.openssl.x509_vfy;
 struct ssl_dane_st;
 alias SSL_DANE = ssl_dane_st;
 
+struct x509_st;
 alias x509_st X509;
 alias X509_algor_st X509_ALGOR;
+struct X509_crl_st;
 alias X509_crl_st X509_CRL;
 struct x509_crl_method_st;
 alias x509_crl_method_st X509_CRL_METHOD;
+struct x509_revoked_st;
 alias x509_revoked_st X509_REVOKED;
+struct X509_name_st;
 alias X509_name_st X509_NAME;
+struct X509_pubkey_st;
 alias X509_pubkey_st X509_PUBKEY;
 struct x509_store_st;
 alias x509_store_st X509_STORE;
@@ -197,7 +202,7 @@ alias X509_LOOKUP_METHOD = x509_lookup_method_st;
 struct X509_VERIFY_PARAM_st;
 alias X509_VERIFY_PARAM = X509_VERIFY_PARAM_st;
 
-
+struct pkcs8_priv_key_info_st;
 alias pkcs8_priv_key_info_st PKCS8_PRIV_KEY_INFO;
 
 import deimos.openssl.x509v3;
