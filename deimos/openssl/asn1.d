@@ -820,6 +820,8 @@ ASN1_OBJECT* 	d2i_ASN1_OBJECT(ASN1_OBJECT** a,const(ubyte)** pp,
 mixin(DECLARE_ASN1_ITEM!"ASN1_OBJECT");
 
 /+mixin DECLARE_STACK_OF!(ASN1_OBJECT);+/
+struct stack_st_ASN1_OBJECT;  // define type to make it compile, needed until this module and safestack.d is converted and supports "DEFINE_STACK_OF"
+
 mixin DECLARE_ASN1_SET_OF!(ASN1_OBJECT);
 
 ASN1_STRING* 	ASN1_STRING_new();

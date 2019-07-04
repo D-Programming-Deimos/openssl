@@ -7,10 +7,21 @@
  * https://www.openssl.org/source/license.html
  */
 
-import core.stdc.config;
-import core.sys.posix.sched;
+module deimos.openssl.x509_vfy;
+
+import core.stdc.time;
+
+import deimos.openssl._d_util;
+import deimos.openssl.asn1:ASN1_OBJECT, stack_st_ASN1_OBJECT;
+
+public import deimos.openssl.opensslconf;
+public import deimos.openssl.lhash;
+public import deimos.openssl.bio;
+public import deimos.openssl.crypto;
+public import deimos.openssl.symhacks;
 
 extern (C):
+nothrow:
 
 /*
  * Protect against recursion, x509.h and x509_vfy.h each include the other.
@@ -449,12 +460,12 @@ X509_STORE_CTX_lookup_certs_fn X509_STORE_CTX_get_lookup_certs(X509_STORE_CTX* c
 X509_STORE_CTX_lookup_crls_fn X509_STORE_CTX_get_lookup_crls(X509_STORE_CTX* ctx);
 X509_STORE_CTX_cleanup_fn X509_STORE_CTX_get_cleanup(X509_STORE_CTX* ctx);
 
-enum X509_STORE_CTX_get_chain = X509_STORE_CTX_get0_chain;
-enum X509_STORE_CTX_set_chain = X509_STORE_CTX_set0_untrusted;
-enum X509_STORE_CTX_trusted_stack = X509_STORE_CTX_set0_trusted_stack;
-enum X509_STORE_get_by_subject = X509_STORE_CTX_get_by_subject;
-enum X509_STORE_get1_cert = X509_STORE_CTX_get1_certs;
-enum X509_STORE_get1_crl = X509_STORE_CTX_get1_crls;
+alias X509_STORE_CTX_get_chain = X509_STORE_CTX_get0_chain;
+alias X509_STORE_CTX_set_chain = X509_STORE_CTX_set0_untrusted;
+alias X509_STORE_CTX_trusted_stack = X509_STORE_CTX_set0_trusted_stack;
+alias X509_STORE_get_by_subject = X509_STORE_CTX_get_by_subject;
+alias X509_STORE_get1_cert = X509_STORE_CTX_get1_certs;
+alias X509_STORE_get1_crl = X509_STORE_CTX_get1_crls;
 
 X509_LOOKUP* X509_STORE_add_lookup(X509_STORE* v, X509_LOOKUP_METHOD* m);
 X509_LOOKUP_METHOD* X509_LOOKUP_hash_dir();
