@@ -831,10 +831,11 @@ mixin(DECLARE_ASN1_FUNCTIONS!"X509_ATTRIBUTE");
 X509_ATTRIBUTE* X509_ATTRIBUTE_create(int nid, int atrtype, void* value);
 
 mixin(DECLARE_ASN1_FUNCTIONS!"X509_EXTENSION");
+struct stack_st_X509_EXTENSION;     // declare type to make it compile, needed until this module is uplifted to >= 1.1.0h and expands macro "DEFINE_STACK_OF(X509_EXTENSION)"
 mixin(DECLARE_ASN1_ENCODE_FUNCTIONS!("X509_EXTENSIONS", "X509_EXTENSIONS", "X509_EXTENSIONS"));
 
 mixin(DECLARE_ASN1_FUNCTIONS!"X509_NAME_ENTRY");
-
+struct stack_st_X509_NAME_ENTRY;    // declare type to make it compile, needed until this module is uplifted to >= 1.1.0h and expands macro "DEFINE_STACK_OF(X509_NAME_ENTRY)"
 mixin(DECLARE_ASN1_FUNCTIONS!"X509_NAME");
 
 int		X509_NAME_set(X509_NAME** xn, X509_NAME* name);

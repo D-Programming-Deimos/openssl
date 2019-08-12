@@ -7,11 +7,19 @@
  * https://www.openssl.org/source/license.html
  */
 
-import core.stdc.config;
-import core.stdc.stdio;
-import core.sys.posix.sched;
+module deimos.openssl.x509v3;
+
+import deimos.openssl._d_util;
+import deimos.openssl.crypto:OPENSSL_buf2hexstr, OPENSSL_hexstr2buf;
+import deimos.openssl.asn1:ASN1_OBJECT;
+
+public import deimos.openssl.bio;
+public import deimos.openssl.x509;
+public import deimos.openssl.conf;
+
 
 extern (C):
+nothrow:
 
 /* Forward reference */
 
@@ -1126,8 +1134,8 @@ int X509V3_add1_i2d(
     c_ulong flags);
 
 /* The new declarations are in crypto.h, but the old ones were here. */
-enum hex_to_string = OPENSSL_buf2hexstr;
-enum string_to_hex = OPENSSL_hexstr2buf;
+alias hex_to_string = OPENSSL_buf2hexstr;
+alias string_to_hex = OPENSSL_hexstr2buf;
 
 void X509V3_EXT_val_prn(
     BIO* out_,
@@ -1136,7 +1144,9 @@ void X509V3_EXT_val_prn(
     int ml);
 int X509V3_EXT_print(BIO* out_, X509_EXTENSION* ext, c_ulong flag, int indent);
 
+version(OPENSSL_NO_STDIO) {} else {
 int X509V3_EXT_print_fp(FILE* out_, X509_EXTENSION* ext, int flag, int indent);
+}
 
 int X509V3_extensions_print(
     BIO* out_,
@@ -1251,6 +1261,7 @@ stack_st_X509_POLICY_NODE* sk_X509_POLICY_NODE_dup(const(stack_st_X509_POLICY_NO
 stack_st_X509_POLICY_NODE* sk_X509_POLICY_NODE_deep_copy(const(stack_st_X509_POLICY_NODE)* sk, sk_X509_POLICY_NODE_copyfunc copyfunc, sk_X509_POLICY_NODE_freefunc freefunc);
 sk_X509_POLICY_NODE_compfunc sk_X509_POLICY_NODE_set_cmp_func(stack_st_X509_POLICY_NODE* sk, sk_X509_POLICY_NODE_compfunc compare);
 
+version(OPENSSL_NO_RFC3779) {} else {
 struct ASRange_st
 {
     ASN1_INTEGER* min;
@@ -1561,7 +1572,7 @@ int X509v3_addr_validate_resource_set(
     IPAddrBlocks* ext,
     int allow_inheritance);
 
-/* OPENSSL_NO_RFC3779 */
+}  /* OPENSSL_NO_RFC3779 */
 
 /* BEGIN ERROR CODES */
 /*
