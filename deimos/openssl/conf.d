@@ -78,6 +78,8 @@ struct CONF_VALUE
 	char* value;
 	}
 
+struct lhash_st_CONF_VALUE;     // declare type to make it compile, needed until this module and lhash.d is uplifted to >= 1.1.0h and supports "DEFINE_LHASH_OF"
+
 /+mixin DECLARE_STACK_OF!(CONF_VALUE);+/
 mixin DECLARE_LHASH_OF!(CONF_VALUE);
 

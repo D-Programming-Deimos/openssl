@@ -142,6 +142,9 @@ public import deimos.openssl.symhacks;
 extern (C):
 nothrow:
 
+alias OPENSSL_buf2hexstr = char* function(const ubyte*, long);
+alias OPENSSL_hexstr2buf = ubyte* function(const char*, long*);
+
 /* Backward compatibility to SSLeay */
 /* This is more to be used to check the correct DLL is being used
  * in the MS world. */

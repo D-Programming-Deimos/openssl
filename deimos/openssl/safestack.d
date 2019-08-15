@@ -126,6 +126,8 @@ mixin DECLARE_SPECIAL_STACK_OF!(OPENSSL_STRING, char);
  * nul-terminated. These should also be distinguished from "normal"
  * stacks. */
 
+struct stack_st_OPENSSL_STRING;  // declare type to make it compile, needed until this module is uplifted to >= 1.1.0h and supports "DECLARE_SPECIAL_STACK_OF"
+
 alias void* OPENSSL_BLOCK;
 mixin DECLARE_SPECIAL_STACK_OF!(OPENSSL_BLOCK, void);
 /* SKM_sk_... stack macros are internal to safestack.h:
