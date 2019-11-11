@@ -1930,6 +1930,10 @@ const(SSL_METHOD)* SSLv3_method();		/* SSLv3 */
 const(SSL_METHOD)* SSLv3_server_method();	/* SSLv3 */
 const(SSL_METHOD)* SSLv3_client_method();	/* SSLv3 */
 
+const(SSL_METHOD)* SSLv23_method();        /* SSLv3 but can rollback to v2 */
+const(SSL_METHOD)* SSLv23_server_method(); /* SSLv3 but can rollback to v2 */
+const(SSL_METHOD)* SSLv23_client_method(); /* SSLv3 but can rollback to v2 */
+
 const(SSL_METHOD)* TLS_method();		/* handshake SSLv3 or later, negotiate to highest possible security */
 const(SSL_METHOD)* TLS_server_method();		/* see above */
 const(SSL_METHOD)* TLS_client_method();		/* see above */
