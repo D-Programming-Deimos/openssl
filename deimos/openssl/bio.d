@@ -485,7 +485,7 @@ auto BIO_get_conn_ip()(BIO* b) { return { return BIO_ptr_ctrl(b,BIO_C_GET_CONNEC
 auto BIO_get_conn_int_port()(BIO* b) { return { return BIO_int_ctrl(b,BIO_C_GET_CONNECT,3,0); }; }
 
 
-auto BIO_set_nbio()(BIO* b,n)	{ return BIO_ctrl(b,BIO_C_SET_NBIO,(n),null); }
+auto BIO_set_nbio()(BIO* b, int n)	{ return BIO_ctrl(b,BIO_C_SET_NBIO,(n),null); }
 
 /* BIO_s_accept_socket() */
 auto BIO_set_accept_port()(BIO* b,char* name) { return BIO_ctrl(b,BIO_C_SET_ACCEPT,0,name); }
