@@ -1110,6 +1110,24 @@ enum OPENSSL_NPN_NEGOTIATED = 1;
 enum OPENSSL_NPN_NO_OVERLAP = 2;
 }
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 0, 2))
+{
+	int SSL_CTX_set_alpn_protos(SSL_CTX *ctx, const(ubyte)* protos,
+					uint protos_len);
+	int SSL_set_alpn_protos(SSL *ssl, const(ubyte)* protos,
+					uint protos_len);
+	void SSL_CTX_set_alpn_select_cb(SSL_CTX *ctx,
+					ExternC!(int function(SSL *ssl,
+						const(ubyte)** out_,
+						ubyte* outlen,
+						const(ubyte)* in_,
+						uint inlen,
+						void *arg)),
+						void *arg);
+	void SSL_get0_alpn_selected(const SSL *ssl,
+					const(ubyte)** data, uint *len);
+}
+
 version(OPENSSL_NO_PSK) {} else {
 /* the maximum length of the buffer given to callbacks containing the
  * resulting identity/psk */
@@ -2268,6 +2286,7 @@ enum SSL_F_SSL_CTRL = 232;
 enum SSL_F_SSL_CTX_CHECK_PRIVATE_KEY = 168;
 enum SSL_F_SSL_CTX_MAKE_PROFILES = 309;
 enum SSL_F_SSL_CTX_NEW = 169;
+enum SSL_F_SSL_CTX_SET_ALPN_PROTOS = 343;
 enum SSL_F_SSL_CTX_SET_CIPHER_LIST = 269;
 enum SSL_F_SSL_CTX_SET_CLIENT_CERT_ENGINE = 290;
 enum SSL_F_SSL_CTX_SET_PURPOSE = 226;
@@ -2310,6 +2329,7 @@ enum SSL_F_SSL_SESSION_NEW = 189;
 enum SSL_F_SSL_SESSION_PRINT_FP = 190;
 enum SSL_F_SSL_SESSION_SET1_ID_CONTEXT = 312;
 enum SSL_F_SSL_SESS_CERT_NEW = 225;
+enum SSL_F_SSL_SET_ALPN_PROTOS = 344;
 enum SSL_F_SSL_SET_CERT = 191;
 enum SSL_F_SSL_SET_CIPHER_LIST = 271;
 enum SSL_F_SSL_SET_FD = 192;
