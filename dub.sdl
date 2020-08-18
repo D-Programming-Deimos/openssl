@@ -1,0 +1,22 @@
+name "openssl"
+description "Deimos bindings for the OpenSSL cryptographic library"
+homepage "http://www.openssl.org/"
+license "OpenSSL or SSLeay"
+libs "ssl" "crypto" platform="posix"
+importPaths "."
+
+configuration "library" {
+	targetType "sourceLibrary"
+	excludedSourceFiles "deimos/openssl/applink.d"
+}
+
+configuration "library-applink" {
+	targetType "sourceLibrary"
+}
+
+configuration "unittest" {
+	targetType "executable"
+	dflags "-main"
+	sourcePaths "deimos/openssl"
+	excludedSourceFiles "deimos/openssl/applink.d"
+}
