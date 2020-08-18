@@ -8,13 +8,19 @@
 	"configurations" : [
 	    {
 		"name": "library",
-		"targetType": "sourceLibrary",
+		"excludedSourceFiles": ["deimos/openssl/applink.d"],
+		"targetType": "sourceLibrary"
+	    },
+	    {
+		"name": "library-applink",
+		"targetType": "sourceLibrary"
 	    },
 	    {
 		"name": "unittest",
+		"excludedSourceFiles": ["deimos/openssl/applink.d"],
 		"targetType": "executable",
 		"sourcePaths": ["deimos/openssl"],
-                "dflags": ["-main"],
+                "dflags": ["-main"]
 	    }
 	]
 }
