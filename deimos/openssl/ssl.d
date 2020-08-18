@@ -1442,6 +1442,60 @@ auto SSL_SESSION_get_app_data()(const(SSL_SESSION)* s) { return (SSL_SESSION_get
 auto SSL_CTX_get_app_data()(const(SSL_CTX)* ctx) { return (SSL_CTX_get_ex_data(ctx,0)); }
 auto SSL_CTX_set_app_data()(SSL_CTX* ctx, char* arg) { return (SSL_CTX_set_ex_data(ctx,0,arg)); }
 
+/*
+ * The valid handshake states (one for each type message sent and one for each
+ * type of message received). There are also two "special" states:
+ * TLS = TLS or DTLS state
+ * DTLS = DTLS specific state
+ * CR/SR = Client Read/Server Read
+ * CW/SW = Client Write/Server Write
+ *
+ * The "special" states are:
+ * TLS_ST_BEFORE = No handshake has been initiated yet
+ * TLS_ST_OK = A handshake has been successfully completed
+ */
+enum
+{
+    TLS_ST_BEFORE,
+    TLS_ST_OK,
+    DTLS_ST_CR_HELLO_VERIFY_REQUEST,
+    TLS_ST_CR_SRVR_HELLO,
+    TLS_ST_CR_CERT,
+    TLS_ST_CR_CERT_STATUS,
+    TLS_ST_CR_KEY_EXCH,
+    TLS_ST_CR_CERT_REQ,
+    TLS_ST_CR_SRVR_DONE,
+    TLS_ST_CR_SESSION_TICKET,
+    TLS_ST_CR_CHANGE,
+    TLS_ST_CR_FINISHED,
+    TLS_ST_CW_CLNT_HELLO,
+    TLS_ST_CW_CERT,
+    TLS_ST_CW_KEY_EXCH,
+    TLS_ST_CW_CERT_VRFY,
+    TLS_ST_CW_CHANGE,
+    TLS_ST_CW_NEXT_PROTO,
+    TLS_ST_CW_FINISHED,
+    TLS_ST_SW_HELLO_REQ,
+    TLS_ST_SR_CLNT_HELLO,
+    DTLS_ST_SW_HELLO_VERIFY_REQUEST,
+    TLS_ST_SW_SRVR_HELLO,
+    TLS_ST_SW_CERT,
+    TLS_ST_SW_KEY_EXCH,
+    TLS_ST_SW_CERT_REQ,
+    TLS_ST_SW_SRVR_DONE,
+    TLS_ST_SR_CERT,
+    TLS_ST_SR_KEY_EXCH,
+    TLS_ST_SR_CERT_VRFY,
+    TLS_ST_SR_NEXT_PROTO,
+    TLS_ST_SR_CHANGE,
+    TLS_ST_SR_FINISHED,
+    TLS_ST_SW_SESSION_TICKET,
+    TLS_ST_SW_CERT_STATUS,
+    TLS_ST_SW_CHANGE,
+    TLS_ST_SW_FINISHED
+}
+alias OSSL_HANDSHAKE_STATE = typeof(TLS_ST_BEFORE);
+
 /* The following are the possible values for ssl->state are are
  * used to indicate where we are up to in the SSL connection establishment.
  * The macros that follow are about the only things you should need to use
@@ -1472,12 +1526,11 @@ enum SSL_CB_HANDSHAKE_START = 0x10;
 enum SSL_CB_HANDSHAKE_DONE = 0x20;
 
 /* Is the SSL_connection established? */
-auto SSL_get_state()(const(SSL)* a) { return SSL_state(a); }
-auto SSL_is_init_finished()(const(SSL)* a) { return (SSL_state(a) == SSL_ST_OK); }
-auto SSL_in_init()(const(SSL)* a) { return (SSL_state(a)&SSL_ST_INIT); }
-auto SSL_in_before()(const(SSL)* a) { return (SSL_state(a)&SSL_ST_BEFORE); }
-auto SSL_in_connect_init()(const(SSL)* a) { return (SSL_state(a)&SSL_ST_CONNECT); }
-auto SSL_in_accept_init()(const(SSL)* a) { return (SSL_state(a)&SSL_ST_ACCEPT); }
+bool SSL_in_connect_init()(const(SSL)* a) { return SSL_in_init(a) && !SSL_is_server(a); }
+bool SSL_in_accept_init()(const(SSL)* a) { return SSL_in_init(a) && SSL_is_server(a); }
+int SSL_in_init(SSL *s);
+int SSL_in_before(SSL *s);
+int SSL_is_init_finished(SSL *s);
 
 /* The following 2 states are kept in ssl->rstate when reads fail,
  * you should not need these */
@@ -2023,8 +2076,7 @@ SSL_CTX* SSL_set_SSL_CTX(SSL* ssl, SSL_CTX* ctx);
 void SSL_set_info_callback(SSL* ssl,
 			   ExternC!(void function(const(SSL)* ssl,int type,int val)) cb);
 ExternC!(void function(const(SSL)* ssl,int type,int val)) SSL_get_info_callback(const(SSL)* ssl);
-int SSL_state(const(SSL)* ssl);
-void SSL_set_state(SSL *ssl, int state);
+OSSL_HANDSHAKE_STATE SSL_get_state(const SSL *ssl);
 
 void SSL_set_verify_result(SSL* ssl,c_long v);
 c_long SSL_get_verify_result(const(SSL)* ssl);
