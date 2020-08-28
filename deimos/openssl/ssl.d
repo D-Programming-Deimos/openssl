@@ -1953,6 +1953,11 @@ int SSL_set_purpose(SSL* s, int purpose);
 int SSL_CTX_set_trust(SSL_CTX* s, int trust);
 int SSL_set_trust(SSL* s, int trust);
 
+int SSL_set1_host(SSL* s, const(char)* hostname);
+int SSL_add1_host(SSL* s, const(char)* hostname);
+const(char)* SSL_get0_peername(SSL* s);
+void SSL_set_hostflags(SSL* s, uint flags);
+
 int SSL_CTX_set1_param(SSL_CTX* ctx, X509_VERIFY_PARAM* vpm);
 int SSL_set1_param(SSL* ssl, X509_VERIFY_PARAM* vpm);
 
