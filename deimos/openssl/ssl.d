@@ -661,24 +661,12 @@ enum SSL_MODE_SEND_SERVERHELLO_TIME = 0x00000040L;
 /* Note: SSL[_CTX]_set_{options,mode} use |= op on the previous value,
  * they cannot be used to clear bits. */
 
-auto SSL_CTX_set_options()(SSL_CTX* ctx, c_long op) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_OPTIONS,op,null);
-}
-auto SSL_CTX_clear_options()(SSL_CTX* ctx, c_long op) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_OPTIONS,op,null);
-}
-auto SSL_CTX_get_options()(SSL_CTX* ctx) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_OPTIONS,0,null);
-}
-auto SSL_set_options()(SSL* ssl, c_long op) {
-	return SSL_ctrl(ssl,SSL_CTRL_OPTIONS,op,null);
-}
-auto SSL_clear_options()(SSL* ssl, c_long op) {
-	return SSL_ctrl(ssl,SSL_CTRL_CLEAR_OPTIONS,op,null);
-}
-auto SSL_get_options()(SSL* ssl) {
-	return SSL_ctrl(ssl,SSL_CTRL_OPTIONS,0,null);
-}
+c_ulong SSL_CTX_get_options(const SSL_CTX *ctx);
+c_ulong SSL_get_options(const SSL *s);
+c_ulong SSL_CTX_clear_options(SSL_CTX *ctx, c_ulong op);
+c_ulong SSL_clear_options(SSL *s, c_ulong op);
+c_ulong SSL_CTX_set_options(SSL_CTX *ctx, c_ulong op);
+c_ulong SSL_set_options(SSL *s, c_ulong op);
 
 auto SSL_CTX_set_mode()(SSL_CTX* ctx, c_long op) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,op,null);
