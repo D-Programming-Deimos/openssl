@@ -544,6 +544,9 @@ struct PBKDF2PARAM_st
 
 alias PBKDF2PARAM = PBKDF2PARAM_st;
 
+public import deimos.openssl.x509_vfy;
+public import deimos.openssl.pkcs7;
+
 enum X509_EXT_PACK_UNKNOWN = 1;
 enum X509_EXT_PACK_STRING = 2;
 
