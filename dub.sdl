@@ -4,7 +4,14 @@ homepage "http://www.openssl.org/"
 license "OpenSSL or SSLeay"
 libs "ssl" "crypto" platform="posix"
 
-configuration "library" {
+configuration "library-autodetect" {
+	targetType "sourceLibrary"
+	excludedSourceFiles "source/deimos/openssl/applink.d"
+	preGenerateCommands `${DUB} scripts/generate_version.d` platform="posix"
+	versions `DeimosOpenSSLAutoDetect`
+}
+
+configuration "library-manual-version" {
 	targetType "sourceLibrary"
 	excludedSourceFiles "source/deimos/openssl/applink.d"
 }
@@ -19,4 +26,6 @@ configuration "unittest" {
 	targetType "executable"
 	dflags "-main"
 	excludedSourceFiles "source/deimos/openssl/applink.d"
+	preGenerateCommands `${DUB} scripts/generate_version.d` platform="posix"
+	versions `DeimosOpenSSLAutoDetect`
 }

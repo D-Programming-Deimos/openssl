@@ -1,6 +1,92 @@
+/**
+ * Module to deal with the library version being used
+ *
+ * This library provide bindings for a wide range of OpenSSL versions,
+ * ranging from v0.9.x to v3.0.x. Some versions are not compatible with
+ * one another, either due to different ABI or different behavior,
+ * for example OpenSSL 1.0 requires initialization but later versions do not.
+ *
+ * While things tend to mostly work or error out while linking when the version
+ * the bindings assume and the actually C library version are too different,
+ * we prefer to try detecting the currently used version, and allow users
+ * to specify the version explicitly, before falling back to the latest bindings
+ */
 module deimos.openssl.opensslv;
 
 import deimos.openssl._d_util;
+
+version (DeimosOpenSSL_1_0_0)
+{
+    // https://www.openssl.org/news/changelog.html#openssl-100
+    // OpenSSL 1.0.0t was released 2015-12-03
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.0.0t";
+}
+else version (DeimosOpenSSL_1_0_1)
+{
+    // https://www.openssl.org/news/changelog.html#openssl-101
+    // OpenSSL 1.0.1u was released 2016-09-22
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.0.1u";
+}
+else version (DeimosOpenSSL_1_0_2)
+{
+    // https://www.openssl.org/news/changelog.html#openssl-102
+    // OpenSSL 1.0.2t was released 2019-09-10
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.0.2t";
+}
+else version (DeimosOpenSSL_1_1_0)
+{
+    // https://www.openssl.org/news/changelog.html#openssl-110
+    // OpenSSL 1.1.0l was released 2019-09-10
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.1.0l";
+}
+else version (DeimosOpenSSL_1_1_1)
+{
+    // https://www.openssl.org/news/changelog.html#openssl-111
+    // OpenSSL 1.1.1m was released 2021-12-14
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.1.1m";
+}
+else version (DeimosOpenSSL_3_0)
+{
+    // https://www.openssl.org/news/changelog.html#openssl-30
+    // OpenSSL 3.0.3 was released 2022-05-03
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"3.0.3";
+}
+else version (DeimosOpenSSLAutoDetect)
+{
+    import deimos.openssl.version_;
+
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!OpenSSLTextVersion;
+}
+else
+{
+    // It was decided in https://github.com/D-Programming-Deimos/openssl/pull/66
+    // that we should fall back to the latest supported version of the bindings,
+    // should the user provide neither explicit version nor `DeimosOpenSSLAutoDetect`
+    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.1.0h";
+}
+
+// Publicly aliased above
+private struct OpenSSLVersionTemplate (string textVersion)
+{
+    enum text = textVersion;
+
+    enum int major = (text[0] - '0');
+    static assert (major >= 0);
+
+    enum int minor = (text[2] - '0');
+    static assert (minor >= 0);
+
+    enum int patch = (text[4] - '0');
+    static assert (patch >= 0);
+
+    static if (text.length == "1.1.0h".length)
+    {
+        enum int build = (text[5] - '`');
+        static assert (build >= 0);
+    }
+    else
+        enum int build = 0;
+}
 
 /* Numeric release version identifier:
  * MNNFFPPS: major minor fix patch status
@@ -28,13 +114,13 @@ import deimos.openssl._d_util;
  */
 
 /* Version macros for compile-time API version detection */
-enum
-{
-    OPENSSL_VERSION_MAJOR   = 1,
-    OPENSSL_VERSION_MINOR   = 1,
-    OPENSSL_VERSION_PATCH   = 0,
-    OPENSSL_VERSION_BUILD   = 'h' - '`'
-}
+enum OPENSSL_VERSION_MAJOR   = OpenSSLVersion.major;
+
+enum OPENSSL_VERSION_MINOR   = OpenSSLVersion.minor;
+
+enum OPENSSL_VERSION_PATCH   = OpenSSLVersion.patch;
+
+enum OPENSSL_VERSION_BUILD   = OpenSSLVersion.build;
 
 int OPENSSL_MAKE_VERSION(int major, int minor, int patch, int build)
 {
@@ -42,7 +128,8 @@ int OPENSSL_MAKE_VERSION(int major, int minor, int patch, int build)
 }
 
 enum OPENSSL_VERSION_NUMBER =
-    OPENSSL_MAKE_VERSION(OPENSSL_VERSION_MAJOR, OPENSSL_VERSION_MINOR, OPENSSL_VERSION_PATCH, OPENSSL_VERSION_BUILD);
+    OPENSSL_MAKE_VERSION(OpenSSLVersion.major, OpenSSLVersion.minor,
+                         OpenSSLVersion.patch, OpenSSLVersion.build);
 
 bool OPENSSL_VERSION_AT_LEAST(int major, int minor, int patch = 0, int build = 0)
 {
@@ -53,13 +140,6 @@ bool OPENSSL_VERSION_BEFORE(int major, int minor, int patch = 0, int build = 0)
 {
     return OPENSSL_VERSION_NUMBER < OPENSSL_MAKE_VERSION(major, minor, patch, build);
 }
-
-version (OPENSSL_FIPS) {
-enum OPENSSL_VERSION_TEXT = "OpenSSL 1.1.0h-fips 27 Mar 2018";
-} else {
-enum OPENSSL_VERSION_TEXT = "OpenSSL 1.1.0h 27 Mar 2018";
-}
-enum OPENSSL_VERSION_PTEXT = " part of " ~ OPENSSL_VERSION_TEXT;
 
 /* The macros below are to be used for shared library (.so, .dll, ...)
  * versioning.  That kind of versioning works a bit differently between

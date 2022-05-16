@@ -1,0 +1,7 @@
+# Generated version file
+/source/deimos/openssl/version_.d
+
+# DUB artifacts
+/.dub/
+/openssl
+/*-test-library
