@@ -1,4 +1,14 @@
+/**
+ * Glue between OpenSSL BIO and Win32 compiler run-time
+ *
+ * Duplicate the content of the `applink.c` source file
+ * to avoid linking it in user code without adding a dependency
+ * to a C build system/compiler.
+ *
+ * See_Also: https://www.openssl.org/docs/manmaster/man3/OPENSSL_Applink.html
+ */
 module deimos.openssl.applink;
+
 import core.stdc.stdio;
 import std.stdio : _fileno, _setmode, _O_BINARY;
 import core.sys.posix.fcntl;

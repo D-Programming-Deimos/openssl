@@ -10,6 +10,8 @@ configuration "library" {
 	excludedSourceFiles "deimos/openssl/applink.d"
 }
 
+// Includes a module to replace `applink.c` as described in:
+// https://www.openssl.org/docs/manmaster/man3/OPENSSL_Applink.html
 configuration "library-applink" {
 	targetType "sourceLibrary"
 }
