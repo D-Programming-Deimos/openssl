@@ -3,11 +3,10 @@ description "Deimos bindings for the OpenSSL cryptographic library"
 homepage "http://www.openssl.org/"
 license "OpenSSL or SSLeay"
 libs "ssl" "crypto" platform="posix"
-importPaths "."
 
 configuration "library" {
 	targetType "sourceLibrary"
-	excludedSourceFiles "deimos/openssl/applink.d"
+	excludedSourceFiles "source/deimos/openssl/applink.d"
 }
 
 // Includes a module to replace `applink.c` as described in:
@@ -19,6 +18,5 @@ configuration "library-applink" {
 configuration "unittest" {
 	targetType "executable"
 	dflags "-main"
-	sourcePaths "deimos/openssl"
-	excludedSourceFiles "deimos/openssl/applink.d"
+	excludedSourceFiles "source/deimos/openssl/applink.d"
 }
