@@ -1,4 +1,14 @@
+/**
+ * Glue between OpenSSL BIO and Win32 compiler run-time
+ *
+ * Duplicate the content of the `applink.c` source file
+ * to avoid linking it in user code without adding a dependency
+ * to a C build system/compiler.
+ *
+ * See_Also: https://www.openssl.org/docs/manmaster/man3/OPENSSL_Applink.html
+ */
 module deimos.openssl.applink;
+
 import core.stdc.stdio;
 import std.stdio : _fileno, _setmode, _O_BINARY;
 import core.sys.posix.fcntl;
@@ -35,53 +45,53 @@ enum _O_TEXT = 0x4000;
 
 extern(C)
 {
-	void *app_stdin()		
-	{ 
-		return cast(void*)stdin;  
+	void *app_stdin()
+	{
+		return cast(void*)stdin;
 	}
-	
-	void *app_stdout()		
-	{ 
-		return cast(void*)stdout; 
+
+	void *app_stdout()
+	{
+		return cast(void*)stdout;
 	}
-	
-	void *app_stderr()		
-	{ 
-		return cast(void*)stderr; 
+
+	void *app_stderr()
+	{
+		return cast(void*)stderr;
 	}
-	
-	int app_feof(FILE *fp)		
-	{ 
-		return feof(fp); 
+
+	int app_feof(FILE *fp)
+	{
+		return feof(fp);
 	}
-	
-	int app_ferror(FILE *fp)	
-	{ 
-		return ferror(fp); 
+
+	int app_ferror(FILE *fp)
+	{
+		return ferror(fp);
 	}
-	
+
 	void app_clearerr(FILE *fp)
-	{ 
-		clearerr(fp); 
+	{
+		clearerr(fp);
 	}
-	
-	int app_fileno(FILE *fp)	
-	{ 
-		return _fileno(fp); 
+
+	int app_fileno(FILE *fp)
+	{
+		return _fileno(fp);
 	}
-	
+
 	int app_fsetmod(FILE *fp, char mod)
-	{ 
-		return _setmode (_fileno(fp),mod=='b'?_O_BINARY:_O_TEXT); 
+	{
+		return _setmode (_fileno(fp),mod=='b'?_O_BINARY:_O_TEXT);
 	}
-	
+
 	__gshared bool once = true;
 	__gshared void*[APPLINK_MAX+1] OPENSSL_ApplinkTable = cast(void*)APPLINK_MAX;
-	
+
 	export void** OPENSSL_Applink()
-	{ 
+	{
 		if (once)
-		{	
+		{
 			OPENSSL_ApplinkTable[APPLINK_STDIN]		= &app_stdin;
 			OPENSSL_ApplinkTable[APPLINK_STDOUT]	= &app_stdout;
 			OPENSSL_ApplinkTable[APPLINK_STDERR]	= &app_stderr;
@@ -92,7 +102,7 @@ extern(C)
 			OPENSSL_ApplinkTable[APPLINK_FSETMOD]	= &app_fsetmod;
 			OPENSSL_ApplinkTable[APPLINK_FEOF]		= &app_feof;
 			OPENSSL_ApplinkTable[APPLINK_FCLOSE]	= &fclose;
-			
+
 			OPENSSL_ApplinkTable[APPLINK_FOPEN]		= &fopen;
 			OPENSSL_ApplinkTable[APPLINK_FSEEK]		= &fseek;
 			OPENSSL_ApplinkTable[APPLINK_FTELL]		= &ftell;
@@ -100,16 +110,16 @@ extern(C)
 			OPENSSL_ApplinkTable[APPLINK_FERROR]	= &app_ferror;
 			OPENSSL_ApplinkTable[APPLINK_CLEARERR]	= &app_clearerr;
 			OPENSSL_ApplinkTable[APPLINK_FILENO]	= &app_fileno;
-			
+
 			OPENSSL_ApplinkTable[APPLINK_OPEN]		= &fopen;
 			OPENSSL_ApplinkTable[APPLINK_READ]		= &fread;
 			OPENSSL_ApplinkTable[APPLINK_WRITE]		= &fwrite;
 			OPENSSL_ApplinkTable[APPLINK_LSEEK]		= &fseek;
 			OPENSSL_ApplinkTable[APPLINK_CLOSE]		= &fclose;
-			
+
 			once = false;
 		}
-		
+
 		return OPENSSL_ApplinkTable.ptr;
 	}
 }

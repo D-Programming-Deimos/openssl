@@ -3,13 +3,21 @@ description "Deimos bindings for the OpenSSL cryptographic library"
 homepage "http://www.openssl.org/"
 license "OpenSSL or SSLeay"
 libs "ssl" "crypto" platform="posix"
-importPaths "."
 
-configuration "library" {
+configuration "library-autodetect" {
 	targetType "sourceLibrary"
-	excludedSourceFiles "deimos/openssl/applink.d"
+	excludedSourceFiles "source/deimos/openssl/applink.d"
+	preGenerateCommands `${DUB} scripts/generate_version.d` platform="posix"
+	versions `DeimosOpenSSLAutoDetect`
 }
 
+configuration "library-manual-version" {
+	targetType "sourceLibrary"
+	excludedSourceFiles "source/deimos/openssl/applink.d"
+}
+
+// Includes a module to replace `applink.c` as described in:
+// https://www.openssl.org/docs/manmaster/man3/OPENSSL_Applink.html
 configuration "library-applink" {
 	targetType "sourceLibrary"
 }
@@ -17,6 +25,7 @@ configuration "library-applink" {
 configuration "unittest" {
 	targetType "executable"
 	dflags "-main"
-	sourcePaths "deimos/openssl"
-	excludedSourceFiles "deimos/openssl/applink.d"
+	excludedSourceFiles "source/deimos/openssl/applink.d"
+	preGenerateCommands `${DUB} scripts/generate_version.d` platform="posix"
+	versions `DeimosOpenSSLAutoDetect`
 }
