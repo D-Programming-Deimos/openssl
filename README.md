@@ -11,11 +11,9 @@ From the OpenSSL website:
 > community of volunteers that use the Internet to communicate, plan,
 > and develop the OpenSSL toolkit and its related documentation.
 
-Library version: 1.1.0h
+This repository contains D bindings for OpenSSL.
 
-Status: (Almost) complete, typical application should build fine. Most of the
-functions from `<openssl/kssl.h>` are not available due to missing Kerberos
-headers.
+Status: Varies, depending on targeted OpenSSL version.
 
 The OpenSSL headers are huge (>35k LOC) and make quite liberal use of the C
 preprocessor, and thus a fully automatic translation is as desirable as
@@ -24,8 +22,11 @@ approach, and while all header files have been ported (and successfully
 compile), some preprocessor artifacts still need to be ported (currently
 commented out and tagged with a `FIXME` note).
 
-The `OPENSSL_NO_*` family of conditional compilation switches has been
-translated to D version()s, none of which is set by default.
+The latest version of this package aims to provide compatibility with
+[current versions of OpenSSL](https://www.openssl.org/news/changelog.html);
+to facilitate this, a build script will detect the OpenSSL version on the
+host system and configure the bindings appropriately. This will be done
+automatically when using these bindings with Dub.
 
 ### License
 
