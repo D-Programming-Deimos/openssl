@@ -779,7 +779,7 @@ int BIO_meth_set_puts(BIO_METHOD *biom,
 int function(BIO_METHOD *biom) BIO_meth_get_gets(BIO *, char *, int);
 int BIO_meth_set_gets(BIO_METHOD *biom,
                       int function(BIO *, char *, int) gets);
-c_long function(BIO_METHOD *biom) BIO_meth_get_ctrl(BIO *, int, c_long, void *);
+c_long function(BIO *, int, c_long, void *) BIO_meth_get_ctrl(BIO_METHOD *biom);
 int BIO_meth_set_ctrl(BIO_METHOD *biom,
                       c_long function(BIO *, int, c_long, void *) ctrl);
 int function(BIO_METHOD *bion) BIO_meth_get_create(BIO *);
