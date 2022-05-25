@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/sslecho
+sslecho.so
+sslecho.dylib
+sslecho.dll
+sslecho.a
+sslecho.lib
+sslecho-test-*
+*.exe
+*.o
+*.obj
+*.lst

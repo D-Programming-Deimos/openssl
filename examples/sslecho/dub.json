@@ -1,0 +1,10 @@
+{
+    "name": "sslecho",
+    "description": "Port of OpenSSL demo of the same name",
+
+    "dependencies": {
+        "openssl": {
+            "path": "../../"
+        }
+    }
+}
