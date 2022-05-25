@@ -300,8 +300,9 @@ int SSL_export_keying_material(SSL *s, ubyte* out_, size_t olen,
 	const char *label, size_t llen, const(ubyte)* p, size_t plen,
 	int use_context);
 
-auto SSL_set_tlsext_host_name()(SSL* s,char* name) {
-	return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_HOSTNAME,TLSEXT_NAMETYPE_host_name,name);
+/// https://www.openssl.org/docs/man1.1.1/man3/SSL_set_tlsext_host_name.html
+auto SSL_set_tlsext_host_name()(SSL* s, const(char)* name) {
+	return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_HOSTNAME,TLSEXT_NAMETYPE_host_name, cast(void*)name);
 }
 
 auto SSL_set_tlsext_debug_callback()(SSL* ssl, ExternC!(void function()) cb) {
