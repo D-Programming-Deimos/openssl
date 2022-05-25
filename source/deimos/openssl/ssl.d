@@ -662,32 +662,73 @@ enum SSL_MODE_SEND_SERVERHELLO_TIME = 0x00000040L;
 /* Note: SSL[_CTX]_set_{options,mode} use |= op on the previous value,
  * they cannot be used to clear bits. */
 
-c_ulong SSL_CTX_get_options(const SSL_CTX *ctx);
-c_ulong SSL_get_options(const SSL *s);
-c_ulong SSL_CTX_clear_options(SSL_CTX *ctx, c_ulong op);
-c_ulong SSL_clear_options(SSL *s, c_ulong op);
-c_ulong SSL_CTX_set_options(SSL_CTX *ctx, c_ulong op);
-c_ulong SSL_set_options(SSL *s, c_ulong op);
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	static if (OPENSSL_VERSION_AT_LEAST(3, 0, 0))
+	{
+		// The argument type for `SSL_[CTX_][gs]et_options was changed between 1.1.1
+		// and 3.0.0, from `c_long` to `uint64_t`. See below commit.
+		// https://github.com/openssl/openssl/commit/56bd17830f2d5855b533d923d4e0649d3ed61d11
+		private alias SSLOptionType = ulong;
+	}
+	else
+	{
+		// Note: Despite the manuals listing the return type (as well as parameter)
+		// as 'long', the `.h` was `unsigned long`.
+		private alias SSLOptionType = c_ulong;
+	}
+	SSLOptionType SSL_CTX_get_options(const SSL_CTX* ctx);
+	SSLOptionType SSL_get_options(const SSL* ssl);
+	SSLOptionType SSL_CTX_clear_options(SSL_CTX* ctx, SSLOptionType op);
+	SSLOptionType SSL_clear_options(SSL* ssl, SSLOptionType op);
+	SSLOptionType SSL_CTX_set_options(SSL_CTX* ctx, SSLOptionType op);
+	SSLOptionType SSL_set_options(SSL* ssl, SSLOptionType op);
+}
+else
+{
+	// Before v1.1.0, those were macros. See below commit.
+	// https://github.com/openssl/openssl/commit/8106cb8b6d706079cbcabd4631f05e4526a316e1
+	private alias SSLOptionType = c_ulong;
 
-auto SSL_CTX_set_mode()(SSL_CTX* ctx, c_long op) {
+	SSLOptionType SSL_CTX_set_options()(SSL_CTX* ctx, SSLOptionType op) {
+		return SSL_CTX_ctrl(ctx, SSL_CTRL_OPTIONS, op, null);
+	}
+	SSLOptionType SSL_CTX_clear_options()(SSL_CTX* ctx, SSLOptionType op) {
+		return SSL_CTX_ctrl(ctx, SSL_CTRL_CLEAR_OPTIONS, op, null);
+	}
+	SSLOptionType SSL_CTX_get_options()(SSL_CTX* ctx) {
+		return SSL_CTX_ctrl(ctx, SSL_CTRL_OPTIONS, 0, null);
+	}
+	SSLOptionType SSL_set_options()(SSL* ssl, SSLOptionType op) {
+		return SSL_ctrl(ssl, SSL_CTRL_OPTIONS, op, null);
+	}
+	SSLOptionType SSL_clear_options()(SSL* ssl, SSLOptionType op) {
+		return SSL_ctrl(ssl, SSL_CTRL_CLEAR_OPTIONS, op, null);
+	}
+	SSLOptionType SSL_get_options()(SSL* ssl) {
+		return SSL_ctrl(ssl, SSL_CTRL_OPTIONS, 0, null);
+	}
+}
+
+auto SSL_CTX_set_mode()(SSL_CTX* ctx, SSLOptionType op) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,op,null);
 }
-auto SSL_CTX_clear_mode()(SSL_CTX* ctx, c_long op) {
+auto SSL_CTX_clear_mode()(SSL_CTX* ctx, SSLOptionType op) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_MODE,op,null);
 }
 auto SSL_CTX_get_mode()(SSL_CTX* ctx) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,0,null);
 }
-auto SSL_clear_mode()(SSL* ssl, c_long op) {
+auto SSL_clear_mode()(SSL* ssl, SSLOptionType op) {
 	return SSL_ctrl(ssl,SSL_CTRL_CLEAR_MODE,op,null);
 }
-auto SSL_set_mode()(SSL* ssl, c_long op) {
+auto SSL_set_mode()(SSL* ssl, SSLOptionType op) {
 	return SSL_ctrl(ssl,SSL_CTRL_MODE,op,null);
 }
 auto SSL_get_mode()(SSL* ssl) {
 	return SSL_ctrl(ssl,SSL_CTRL_MODE,0,null);
 }
-auto SSL_set_mtu()(SSL* ssl, c_long mtu) {
+auto SSL_set_mtu()(SSL* ssl, SSLOptionType mtu) {
 	return SSL_ctrl(ssl,SSL_CTRL_MTU,mtu,null);
 }
 
@@ -898,7 +939,7 @@ struct ssl_ctx_st
 
 	/* Default values to use in SSL structures follow (these are copied by SSL_new) */
 
-	c_ulong options;
+	SSLOptionType options;
 	c_ulong mode;
 	c_long max_cert_list;
 
@@ -1317,7 +1358,7 @@ version(OPENSSL_NO_PSK) {} else {
 	STACK_OF!(X509_NAME) *client_CA;
 
 	int references;
-	c_ulong options; /* protocol behaviour */
+	SSLOptionType options; /* protocol behaviour */
 	c_ulong mode; /* API behaviour */
 	c_long max_cert_list;
 	int first_packet;
