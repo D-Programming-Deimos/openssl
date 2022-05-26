@@ -143,6 +143,7 @@
 module deimos.openssl.ssl;
 
 import deimos.openssl._d_util;
+import deimos.openssl.opensslv;
 
 import deimos.openssl.x509_vfy; // Needed for x509_store_st.
 import deimos.openssl.ssl2; // Needed for SSL2_TXT_NULL_WITH_MD5, etc.
@@ -1994,9 +1995,23 @@ const(SSL_METHOD)* SSLv3_method();		/* SSLv3 */
 const(SSL_METHOD)* SSLv3_server_method();	/* SSLv3 */
 const(SSL_METHOD)* SSLv3_client_method();	/* SSLv3 */
 
-const(SSL_METHOD)* TLS_method();		/* handshake SSLv3 or later, negotiate to highest possible security */
-const(SSL_METHOD)* TLS_server_method();		/* see above */
-const(SSL_METHOD)* TLS_client_method();		/* see above */
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+    const(SSL_METHOD)* SSLv23_method();
+    const(SSL_METHOD)* SSLv23_server_method();
+    const(SSL_METHOD)* SSLv23_client_method();
+
+    /// Forward compatible alias
+    alias TLS_method = SSLv23_method;
+    alias TLS_server_method = SSLv23_server_method;
+    alias TLS_client_method = SSLv23_server_method;
+}
+else
+{
+    const(SSL_METHOD)* TLS_method();		/* handshake SSLv3 or later, negotiate to highest possible security */
+    const(SSL_METHOD)* TLS_server_method();		/* see above */
+    const(SSL_METHOD)* TLS_client_method();		/* see above */
+}
 
 const(SSL_METHOD)* TLSv1_method();		/* TLSv1.0 */
 const(SSL_METHOD)* TLSv1_server_method();	/* TLSv1.0 */
