@@ -87,7 +87,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ${{ github.workspace }}/openssl/
-        key: ${{ matrix.os }}-${{ matrix.openssl.version }}
+        key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.openssl.version }}
 
     - name: 'Make sure OpenSSL was loaded from cache'
       if: steps.lookup-openssl.outputs.cache-hit != 'true'
