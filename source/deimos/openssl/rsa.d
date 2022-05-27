@@ -59,6 +59,7 @@
 module deimos.openssl.rsa;
 
 import deimos.openssl._d_util;
+import deimos.openssl.opensslv;
 
 import deimos.openssl.evp; // Needed for EVP_PKEY_ALG_CTRL.
 
@@ -244,14 +245,44 @@ auto EVP_PKEY_CTX_get_rsa_pss_saltlen()(EVP_PKEY_CTX* ctx, int *plen) {
                                  0, plen);
 }
 
-auto EVP_PKEY_CTX_set_rsa_keygen_bits()(EVP_PKEY_CTX* ctx, int bits) {
-	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_KEYGEN,
-				EVP_PKEY_CTRL_RSA_KEYGEN_BITS, bits, null);
-}
+static if (OPENSSL_VERSION_AT_LEAST(3, 0, 0))
+{
+	// v3.0.0 deprecated `EVP_PKEY_CTX_set_rsa_keygen_pubexp` and introduced
+	// a `[...]set1[...]` alternative:
+	// https://github.com/openssl/openssl/commit/3786d74868fe440250f902ce1a78974136ca9304
+	// This is for forward compatibility: Old code still works with new OpenSSL version
+	alias EVP_PKEY_CTX_set_rsa_keygen_pubexp = EVP_PKEY_CTX_set1_rsa_keygen_pubexp;
 
-auto EVP_PKEY_CTX_set_rsa_keygen_pubexp()(EVP_PKEY_CTX* ctx, void* pubexp) {
-	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_KEYGEN,
-				EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pubexp);
+	// Before v3.0.0, those functions were macros (including above deprecated one):
+	// https://github.com/openssl/openssl/commit/2972af109e10c5ce30e548190e3eee28327d6043
+	int EVP_PKEY_CTX_set_rsa_keygen_bits(EVP_PKEY_CTX* ctx, int bits);
+	int EVP_PKEY_CTX_set1_rsa_keygen_pubexp(EVP_PKEY_CTX* ctx, void* pubexp);
+	int EVP_PKEY_CTX_set_rsa_keygen_primes(EVP_PKEY_CTX* ctx, int primes);
+}
+else
+{
+	// Forward compatibility alias: Code written for v3.0.0 works with v1.1.1 and below
+	alias EVP_PKEY_CTX_set1_rsa_keygen_pubexp = EVP_PKEY_CTX_set_rsa_keygen_pubexp;
+
+	auto EVP_PKEY_CTX_set_rsa_keygen_bits()(EVP_PKEY_CTX* ctx, int bits) {
+		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_KEYGEN,
+								EVP_PKEY_CTRL_RSA_KEYGEN_BITS, bits, null);
+	}
+
+	auto EVP_PKEY_CTX_set_rsa_keygen_pubexp()(EVP_PKEY_CTX* ctx, void* pubexp) {
+		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_KEYGEN,
+								 EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pubexp);
+	}
+
+	static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
+	{
+		// Multi-prime RSA (RFC 8017), introduced in v1.1.1:
+		// https://github.com/openssl/openssl/commit/665d899fa6d3571da016925067ebcf1789d7d19c
+		auto EVP_PKEY_CTX_set_rsa_keygen_primes()(EVP_PKEY_CTX* ctx, int primes) {
+			return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_KEYGEN,
+									 EVP_PKEY_CTRL_RSA_KEYGEN_PRIMES, primes, null);
+		}
+	}
 }
 
 auto EVP_PKEY_CTX_set_rsa_mgf1_md()(EVP_PKEY_CTX* ctx, EVP_MD* md) {
@@ -274,6 +305,9 @@ enum EVP_PKEY_CTRL_RSA_MGF1_MD = (EVP_PKEY_ALG_CTRL + 5);
 enum EVP_PKEY_CTRL_GET_RSA_PADDING = (EVP_PKEY_ALG_CTRL + 6);
 enum EVP_PKEY_CTRL_GET_RSA_PSS_SALTLEN = (EVP_PKEY_ALG_CTRL + 7);
 enum EVP_PKEY_CTRL_GET_RSA_MGF1_MD = (EVP_PKEY_ALG_CTRL + 8);
+
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
+	enum EVP_PKEY_CTRL_RSA_KEYGEN_PRIMES = (EVP_PKEY_ALG_CTRL + 13);
 
 enum RSA_PKCS1_PADDING = 1;
 enum RSA_SSLV23_PADDING = 2;
