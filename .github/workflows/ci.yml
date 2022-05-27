@@ -106,6 +106,7 @@ jobs:
             echo "Expected version '${{ matrix.openssl.version }}' but got `pkg-config --modversion openssl`"
             exit 1
         fi
+        dub test
         cd examples/sslecho/
         ${{ github.workspace }}/openssl/install/bin/openssl req -batch -newkey rsa:4096 -x509 -sha256 -days 3650 -subj "/C=GB/CN=localhost" -nodes -out cert.pem -keyout key.pem
         dub build
