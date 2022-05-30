@@ -21,7 +21,7 @@ import deimos.openssl._d_util;
 import deimos.openssl.x509v3 : stack_st_ASN1_OBJECT;
 
 public import deimos.openssl.e_os2;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 public import deimos.openssl.symhacks;
 public import deimos.openssl.buffer;
 public import deimos.openssl.evp;
@@ -1684,4 +1684,3 @@ enum X509_R_UNKNOWN_TRUST_ID = 120;
 enum X509_R_UNSUPPORTED_ALGORITHM = 111;
 enum X509_R_WRONG_LOOKUP_TYPE = 112;
 enum X509_R_WRONG_TYPE = 122;
-

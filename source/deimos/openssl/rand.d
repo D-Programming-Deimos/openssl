@@ -61,7 +61,7 @@ module deimos.openssl.rand;
 import deimos.openssl._d_util;
 
 import core.stdc.stdlib;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 public import deimos.openssl.e_os2;
 
 version (Win32) {
@@ -77,7 +77,7 @@ version (OPENSSL_FIPS) {
 alias size_t FIPS_RAND_SIZE_T;
 }
 
-/* Already defined in ossl_typ.h */
+/* Already defined in types.h */
 /* typedef rand_meth_st RAND_METHOD; */
 
 struct rand_meth_st

@@ -21,7 +21,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer. 
+ *   notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimer in
@@ -77,7 +77,7 @@ version (OPENSSL_NO_ECDH) {
 }
 
 public import deimos.openssl.ec;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 version(OPENSSL_NO_DEPRECATED) {} else {
 public import deimos.openssl.bn;
 }
@@ -94,7 +94,7 @@ int 	  ECDH_set_method(EC_KEY*, const(ECDH_METHOD)*);
 int ECDH_compute_key(void* out_, size_t outlen, const(EC_POINT)* pub_key, EC_KEY* ecdh,
                      ExternC!(void* function(const(void)* in_, size_t inlen, void* out_, size_t* outlen)) KDF);
 
-int 	  ECDH_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new 
+int 	  ECDH_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new
 		*new_func, CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
 int 	  ECDH_set_ex_data(EC_KEY* d, int idx, void* arg);
 void* ECDH_get_ex_data(EC_KEY* d, int idx);

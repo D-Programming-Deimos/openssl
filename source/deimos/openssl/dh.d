@@ -71,7 +71,7 @@ version (OPENSSL_NO_DH) {
 version(OPENSSL_NO_BIO) {} else {
 public import deimos.openssl.bio;
 }
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 version(OPENSSL_NO_DEPRECATED) {} else {
 public import deimos.openssl.bn;
 }
@@ -107,7 +107,7 @@ enum DH_FLAG_NON_FIPS_ALLOW = 0x0400;
 extern (C):
 nothrow:
 
-/* Already defined in ossl_typ.h */
+/* Already defined in types.h */
 /* typedef dh_st DH; */
 /* typedef dh_method DH_METHOD; */
 

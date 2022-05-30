@@ -129,7 +129,7 @@ import core.stdc.stdio;
 public import deimos.openssl.stack;
 public import deimos.openssl.safestack;
 public import deimos.openssl.opensslv;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 
 version (CHARSET_EBCDIC) {
 public import deimos.openssl.ebcdic;
@@ -156,7 +156,7 @@ enum SSLEAY_BUILT_ON = 3;
 enum SSLEAY_PLATFORM = 4;
 enum SSLEAY_DIR = 5;
 
-/* Already declared in ossl_typ.h */
+/* Already declared in types.h */
 /+#if 0
 alias crypto_ex_data_st CRYPTO_EX_DATA;
 /* Called when a new object is created */

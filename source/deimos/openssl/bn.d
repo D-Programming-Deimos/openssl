@@ -130,7 +130,7 @@ public import deimos.openssl.e_os2;
 version(OPENSSL_NO_FP_API) {} else {
 import core.stdc.stdio; /* FILE */
 }
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 public import deimos.openssl.crypto;
 
 extern (C):
@@ -310,7 +310,7 @@ void BN_with_flags()(BIGNUM* dest, BIGNUM* b, int n) {
 		| n;
 }
 
-/* Already declared in ossl_typ.h */
+/* Already declared in types.h */
 version (none) {
 alias bignum_st BIGNUM;
 /* Used for temp variables (declaration hidden in bn_lcl.h) */

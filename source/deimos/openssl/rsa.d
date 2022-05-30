@@ -69,7 +69,7 @@ version(OPENSSL_NO_BIO) {} else {
 public import deimos.openssl.bio;
 }
 public import deimos.openssl.crypto;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 version(OPENSSL_NO_DEPRECATED) {} else {
 public import deimos.openssl.bn;
 }
@@ -81,7 +81,7 @@ version (OPENSSL_NO_RSA) {
 extern (C):
 nothrow:
 
-/* Declared already in ossl_typ.h */
+/* Declared already in types.h */
 /* typedef rsa_st RSA; */
 /* typedef rsa_meth_st RSA_METHOD; */
 

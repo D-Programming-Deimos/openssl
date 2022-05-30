@@ -59,7 +59,7 @@ module deimos.openssl.asn1t;
 
 import deimos.openssl._d_util;
 
-import deimos.openssl.ossl_typ; // Needed for ASN1_BOOLEAN, etc.
+import deimos.openssl.types; // Needed for ASN1_BOOLEAN, etc.
 
 import core.stdc.config;
 public import deimos.openssl.e_os2;

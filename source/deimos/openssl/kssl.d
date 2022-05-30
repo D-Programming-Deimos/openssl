@@ -72,7 +72,7 @@ import core.stdc.stdio;
 // #include <krb5.h>
 // #ifdef OPENSSL_SYS_WIN32
 // /* These can sometimes get redefined indirectly by krb5 header files
-//  * after they get undefed in ossl_typ.h
+//  * after they get undefed in types.h
 // */
 // #undef X509_NAME
 // #undef X509_EXTENSIONS
