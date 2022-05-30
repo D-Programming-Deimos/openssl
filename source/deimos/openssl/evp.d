@@ -70,7 +70,7 @@ public import deimos.openssl.opensslconf;
 //# undef OPENSSL_ALGORITHM_DEFINES
 //#endif
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 
 public import deimos.openssl.symhacks;
 

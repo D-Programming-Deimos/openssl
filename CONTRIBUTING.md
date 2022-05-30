@@ -51,9 +51,9 @@ Below is a checklist for common known issues which needs manual work:
    compilation error similar to "missing argument for parameter #1".
    Replace "enum" with "alias" accordingly.
 3. Many struct definitions is removed, instead a declaration ia added into
-   `ossl_typ.d`, Example `grep -r 'struct X509_pubkey_st' C/` shows that struct
+   `types.d`, Example `grep -r 'struct X509_pubkey_st' C/` shows that struct
    definition is removed from `x509.h` and instead a declaration is added in
-   `ossl_typ.h`. Other types might be removed, check the header-file and adjust
+   `types.h`. Other types might be removed, check the header-file and adjust
    accordingly if the type is missing when compiling.
 4. Check the header-file for "ifdef|ifndef", search for "OPENSSL_*" where some
    statements has historically been translated into "version" in d-modules.

@@ -65,7 +65,7 @@ module deimos.openssl.ocsp;
 
 import deimos.openssl._d_util;
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 public import deimos.openssl.x509;
 public import deimos.openssl.x509v3;
 public import deimos.openssl.safestack;

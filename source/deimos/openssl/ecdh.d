@@ -77,7 +77,7 @@ version (OPENSSL_NO_ECDH) {
 }
 
 public import deimos.openssl.ec;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 version(OPENSSL_NO_DEPRECATED) {} else {
 public import deimos.openssl.bn;
 }

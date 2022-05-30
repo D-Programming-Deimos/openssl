@@ -66,7 +66,7 @@ public import deimos.openssl.stack;
 public import deimos.openssl.safestack;
 public import deimos.openssl.e_os2;
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 
 extern (C):
 nothrow:

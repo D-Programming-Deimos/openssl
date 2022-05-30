@@ -93,7 +93,7 @@ public import deimos.openssl.ui;
 public import deimos.openssl.err;
 }
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 import deimos.openssl.ssl : SSL;
 public import deimos.openssl.symhacks;
 

@@ -120,7 +120,7 @@ import core.stdc.stdio;
 import core.stdc.stdlib;
 }
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 version(OPENSSL_NO_BIO) {} else {
 public import deimos.openssl.bio;
 }
@@ -381,7 +381,7 @@ int ERR_get_next_error_library();
 int ERR_set_mark();
 int ERR_pop_to_mark();
 
-/* Already defined in ossl_typ.h */
+/* Already defined in types.h */
 /* typedef st_ERR_FNS ERR_FNS; */
 /* An application can use this function and provide the return value to loaded
  * modules that should use the application's ERR state/functionality */

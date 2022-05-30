@@ -72,7 +72,7 @@ public import deimos.openssl.safestack;
 
 public import deimos.openssl.symhacks;
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 version(OPENSSL_NO_DEPRECATED) {} else {
 public import deimos.openssl.bn;
 }

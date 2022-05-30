@@ -21,7 +21,7 @@ import deimos.openssl._d_util;
 import deimos.openssl.x509v3 : stack_st_ASN1_OBJECT;
 
 public import deimos.openssl.e_os2;
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 public import deimos.openssl.symhacks;
 public import deimos.openssl.buffer;
 public import deimos.openssl.evp;

@@ -60,7 +60,7 @@ module deimos.openssl.buffer;
 
 import deimos.openssl._d_util;
 
-public import deimos.openssl.ossl_typ;
+public import deimos.openssl.types;
 
 extern (C):
 nothrow:
@@ -71,7 +71,7 @@ import core.stdc.config;
 //#include <sys/types.h>
 //#endif
 
-/* Already declared in ossl_typ.h */
+/* Already declared in types.h */
 /* typedef buf_mem_st BUF_MEM; */
 
 struct buf_mem_st
