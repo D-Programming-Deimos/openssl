@@ -18,7 +18,7 @@ to match the C-headers version, in this case current version is 1.1.0h.
 2. Clone openssl with `git clone https://github.com/openssl/openssl` and
    checkout correct tag, example `cd openssl && git checkout OpenSSL_1_1_0h`.
 3. Headers with suffix ".h.in" need to be parsed to .h before generation,
-   Configure openssl with `./configure` and build generated file with 
+   Configure openssl with `./configure` and build generated file with
    `make build_generated`.
 
 ### Check dependencies
@@ -63,7 +63,6 @@ Below is a checklist for common known issues which needs manual work:
    uplifted, a declaration sometimes need to be inserted to make it
    compile. It will result in "type missing "stack_st_...". Check in which
    header the macro `DEFINE_STACK_OF(<type>)` is defined in and manually add
-   `struct stack_st_<type-name>` to make it compile. However these functions 
+   `struct stack_st_<type-name>` to make it compile. However these functions
    will not work properly during linkage until `safestack.d` is uplifted,
    see macro `DEFINE_STACK_OF` in safestack.h.
-   
