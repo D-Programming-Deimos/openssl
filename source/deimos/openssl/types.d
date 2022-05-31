@@ -113,7 +113,7 @@ alias dsa_st DSA;
 alias dsa_method DSA_METHOD;
 
 import deimos.openssl.rsa;
-/*struct rsa_st;*/
+private struct rsa_st;
 alias rsa_st RSA;
 /*struct rsa_meth_st;*/
 alias rsa_meth_st RSA_METHOD;

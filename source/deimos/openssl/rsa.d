@@ -34,7 +34,6 @@ extern (C):
 nothrow:
 
 /* Declared already in types.h */
-/* typedef rsa_st RSA; */
 /* typedef rsa_meth_st RSA_METHOD; */
 
 struct rsa_meth_st
@@ -81,8 +80,25 @@ struct rsa_meth_st
 	ExternC!(int function(RSA* rsa, int bits, BIGNUM* e, BN_GENCB* cb)) rsa_keygen;
 	};
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	// https://github.com/openssl/openssl/commit/9862e9aa98ee1e38fbcef8d1dd5db0e750eb5e8d
+	int RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d);
+	int RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q);
+	int RSA_set0_crt_params(RSA *r,BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp);
+	void RSA_get0_key(const RSA *r, BIGNUM **n, BIGNUM **e, BIGNUM **d);
+	void RSA_get0_factors(const RSA *r, BIGNUM **p, BIGNUM **q);
+	void RSA_get0_crt_params(const RSA *r,
+							 BIGNUM **dmp1, BIGNUM **dmq1, BIGNUM **iqmp);
+	void RSA_clear_flags(RSA *r, int flags);
+	int RSA_test_flags(const RSA *r, int flags);
+	void RSA_set_flags(RSA *r, int flags);
+	ENGINE *RSA_get0_engine(RSA *r);
+}
+else
+{
 struct rsa_st
-	{
+{
 	/* The first parameter is used to pickup errors where
 	 * this is passed instead of aEVP_PKEY, it is set to 0 */
 	int pad;
@@ -113,7 +129,8 @@ struct rsa_st
 	char* bignum_data;
 	BN_BLINDING* blinding;
 	BN_BLINDING* mt_blinding;
-	};
+}
+}
 
 // #ifndef OPENSSL_RSA_MAX_MODULUS_BITS
 enum OPENSSL_RSA_MAX_MODULUS_BITS = 16384;
