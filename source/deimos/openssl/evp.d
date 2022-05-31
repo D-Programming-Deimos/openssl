@@ -1131,6 +1131,8 @@ int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX* ctx, int keytype, int optype,
 				int cmd, int p1, void* p2);
 int EVP_PKEY_CTX_ctrl_str(EVP_PKEY_CTX* ctx, const(char)* type,
 						const(char)* value);
+int EVP_PKEY_CTX_ctrl_uint64(EVP_PKEY_CTX* ctx, int keytype, int optype,
+                             int cmd, ulong value);
 
 int EVP_PKEY_CTX_get_operation(EVP_PKEY_CTX* ctx);
 void EVP_PKEY_CTX_set0_keygen_info(EVP_PKEY_CTX* ctx, int* dat, int datlen);

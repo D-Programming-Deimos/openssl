@@ -15,6 +15,8 @@ import deimos.openssl._d_util;
 
 public import deimos.openssl.e_os2;
 
+struct OSSL_PROVIDER; /* Provider Object */
+
 version (NO_ASN1_TYPEDEFS) {
 alias ASN1_STRING ASN1_INTEGER;
 alias ASN1_STRING ASN1_ENUMERATED;
@@ -99,6 +101,9 @@ struct evp_pkey_method_st;
 alias evp_pkey_method_st EVP_PKEY_METHOD;
 struct evp_pkey_ctx_st;
 alias evp_pkey_ctx_st EVP_PKEY_CTX;
+
+struct EVP_KDF;
+struct EVP_KDF_CTX;
 
 import deimos.openssl.dh;
 /*struct dh_st;*/
@@ -218,3 +223,7 @@ alias ocsp_req_ctx_st OCSP_REQ_CTX;
 alias ocsp_response_st OCSP_RESPONSE;
 /*struct ocsp_responder_id_st;*/
 alias ocsp_responder_id_st OCSP_RESPID;
+
+struct OSSL_LIB_CTX;
+
+struct OSSL_PARAM;
