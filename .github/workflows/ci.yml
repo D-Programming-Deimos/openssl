@@ -58,8 +58,8 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         dc:
-          - dmd-latest
-          - ldc-latest
+          - dmd-2.100.0
+          - ldc-1.29.0
         openssl:
           - version: 1.0.2u
             lib-dir: lib
@@ -74,12 +74,42 @@ jobs:
     timeout-minutes: 60
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        path: deimos-openssl
 
     - name: Prepare compiler
       uses: dlang-community/setup-dlang@v1
       with:
           compiler: ${{ matrix.dc }}
+
+    # Checkout Vibe.d and its dependencies
+    #
+    # Do this before we remove the system OpenSSL, as `git clone` depends on it
+    # We fetch all dependencies but openssl early so we can use `--skip-registry=all`
+    # while building/testing, preventing dub from ever fetching the actual `openssl`
+    # package from the registry, which would make this job always succeed.
+    - name: 'Clone Vibe.d'
+      uses: actions/checkout@v3
+      with:
+        repository: 'vibe-d/vibe.d'
+        # Use a fixed ref to avoid random breakage due to upstream
+        # The first release compatible with this CI is v0.9.5-beta.2,
+        # feel free to update on new releases (commits can also be used).
+        ref: 'f9f122e71e679ca41130330a66b589e643fe23be'
+        path: 'vibe.d'
+    - name: 'Fetch Vibe.d dependencies'
+      run: |
+        # Versions are pinned to avoid upstream change breaking the CI
+        # When updating the Vibe.d version used, make sure to update this as well.
+        dub fetch 'vibe-core@~>1.22'
+        dub fetch 'memutils@~>1.0'
+        dub fetch 'taggedalgebraic@~>0.11'
+        dub fetch 'botan-math@~>1.0'
+        dub fetch 'stdx-allocator@~>2.77'
+        dub fetch 'botan@~>1.12'
+        dub fetch 'eventcore@~>0.9'
+        dub fetch 'libasync@~>0.8'
 
     # Restore or install build openssl version
     - name: 'Restore openssl from cache'
@@ -106,6 +136,10 @@ jobs:
             echo "Expected version '${{ matrix.openssl.version }}' but got `pkg-config --modversion openssl`"
             exit 1
         fi
+
+        # We don't checkout in $GITHUB_WORKSPACE to avoid polluting the repository with artifacts,
+        # e.g. the C openssl library or Vibe.d
+        cd ${{ github.workspace }}/deimos-openssl/
         dub test
         cd examples/sslecho/
         ${{ github.workspace }}/openssl/install/bin/openssl req -batch -newkey rsa:4096 -x509 -sha256 -days 3650 -subj "/C=GB/CN=localhost" -nodes -out cert.pem -keyout key.pem
@@ -113,3 +147,11 @@ jobs:
         # TODO: FIXME: This currently does not work because certificate verification fails (works on my machine).
         # But at least it links, which is a good starting point.
         #$DC -run test.d
+
+    - name: 'Test with Vibe.d'
+      if: matrix.openssl.version != '1.0.2u'
+      run: |
+        dub add-local ${{ github.workspace }}/deimos-openssl/ 3.42.0
+
+        cd ${{ github.workspace }}/vibe.d/
+        dub test --skip-registry=all :tls
