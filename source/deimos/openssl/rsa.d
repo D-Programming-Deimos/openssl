@@ -33,30 +33,83 @@ version (OPENSSL_NO_RSA) {
 extern (C):
 nothrow:
 
-/* Declared already in types.h */
-/* typedef rsa_meth_st RSA_METHOD; */
+// The following aliases are derived from the `RSA_meth_*` functions' signatures
+// They are not present in the code, hence are `private`.
+private alias RSA_enc_dec_fn = extern(C) int function(int flen,
+	const(ubyte)* from, ubyte* to, RSA* rsa, int padding);
+private alias RSA_modexp_fn = extern(C) int function(BIGNUM* r0,
+	const(BIGNUM)* I, RSA* rsa, BN_CTX* ctx);
+private alias RSA_bn_modexp_fn = extern(C) int function(BIGNUM* r,
+	const(BIGNUM)* a, const(BIGNUM)* p, const(BIGNUM)* m, BN_CTX* ctx,
+	BN_MONT_CTX* m_ctx);
+private alias RSA_lifetime_fn = extern(C) int function(RSA* rsa);
+private alias RSA_sign_fn = extern(C) int function(int type,
+	const(ubyte)* m, uint m_length, ubyte* sigret, uint* siglen, const(RSA)* rsa);
+private alias RSA_verify_fn = extern(C) int function(int dtype,
+	const(ubyte)* m, uint m_length, const(ubyte)* sigret, uint* siglen,
+	const(RSA)* rsa);
+private alias RSA_keygen_fn = extern(C) int function(RSA* rsa,
+	int bits, BIGNUM* e, BN_GENCB* cb);
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	// https://github.com/openssl/openssl/commit/b72c9121379a5de0c8be0d4e1a4a6b9495042621
+
+	RSA_METHOD* RSA_meth_new(const(char)* name, int flags);
+	void RSA_meth_free(RSA_METHOD* meth);
+	RSA_METHOD* RSA_meth_dup(const(RSA_METHOD)* meth);
+
+	const(char)* RSA_meth_get0_name(const(RSA_METHOD)* meth);
+	int RSA_meth_set1_name(RSA_METHOD* meth, const(char)* name);
+
+	int RSA_meth_get_flags(RSA_METHOD* meth);
+	int RSA_meth_set_flags(RSA_METHOD* meth, int flags);
+	void* RSA_meth_get0_app_data(const(RSA_METHOD)* meth);
+	int RSA_meth_set0_app_data(RSA_METHOD* meth, void *app_data);
+
+	RSA_enc_dec_fn RSA_meth_get_pub_enc(const(RSA_METHOD)* meth);
+	int RSA_meth_set_pub_enc(RSA_METHOD* rsa, RSA_enc_dec_fn pub_enc);
+	RSA_enc_dec_fn RSA_meth_get_pub_dec(const(RSA_METHOD)* meth);
+	int RSA_meth_set_pub_dec(RSA_METHOD* rsa, RSA_enc_dec_fn pub_dec);
+
+	RSA_enc_dec_fn RSA_meth_get_priv_enc(const(RSA_METHOD)* meth);
+	int RSA_meth_set_priv_enc(RSA_METHOD* rsa, RSA_enc_dec_fn priv_enc);
+	RSA_enc_dec_fn RSA_meth_get_priv_dec(const(RSA_METHOD)* meth);
+	int RSA_meth_set_priv_dec(RSA_METHOD* rsa, RSA_enc_dec_fn priv_dec);
+
+	RSA_modexp_fn RSA_meth_get_mod_exp(const(RSA_METHOD)* meth);
+	int RSA_meth_set_mod_exp(RSA_METHOD* rsa, RSA_modexp_fn mod_exp);
+
+	RSA_bn_modexp_fn RSA_meth_get_bn_mod_exp(const(RSA_METHOD)* meth);
+	int RSA_meth_set_bn_mod_exp(RSA_METHOD* rsa, RSA_bn_modexp_fn bn_mod_exp);
+
+	RSA_lifetime_fn RSA_meth_get_init(const(RSA_METHOD)* meth);
+	int RSA_meth_set_init(RSA_METHOD* rsa, RSA_lifetime_fn init);
+	RSA_lifetime_fn RSA_meth_get_finish(const(RSA_METHOD)* meth);
+	int RSA_meth_set_finish(RSA_METHOD* rsa, RSA_lifetime_fn finish);
+
+	RSA_sign_fn RSA_meth_get_sign(const(RSA_METHOD)* meth);
+	int RSA_meth_set_sign(RSA_METHOD* rsa, RSA_sign_fn sign);
+
+	RSA_verify_fn RSA_meth_get_verify(const(RSA_METHOD)* meth);
+	int RSA_meth_set_verify(RSA_METHOD* rsa, RSA_verify_fn verify);
+
+	RSA_keygen_fn RSA_meth_get_keygen(const(RSA_METHOD)* meth);
+	int RSA_meth_set_keygen(RSA_METHOD* rsa, RSA_keygen_fn keygen);
+}
+else
+{
 struct rsa_meth_st
-	{
+{
 	const(char)* name;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			   ubyte* to,
-			   RSA* rsa,int padding)) rsa_pub_enc;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			   ubyte* to,
-			   RSA* rsa,int padding)) rsa_pub_dec;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			    ubyte* to,
-			    RSA* rsa,int padding)) rsa_priv_enc;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			    ubyte* to,
-			    RSA* rsa,int padding)) rsa_priv_dec;
-	ExternC!(int function(BIGNUM* r0,const(BIGNUM)* I,RSA* rsa,BN_CTX* ctx)) rsa_mod_exp; /* Can be null */
-	ExternC!(int function(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* p,
-			  const(BIGNUM)* m, BN_CTX* ctx,
-			  BN_MONT_CTX* m_ctx)) bn_mod_exp; /* Can be null */
-	ExternC!(int function(RSA* rsa)) init_;		/* called at new */
-	ExternC!(int function(RSA* rsa)) finish;	/* called at free */
+	RSA_enc_dec_fn rsa_pub_enc;
+	RSA_enc_dec_fn rsa_pub_dec;
+	RSA_enc_dec_fn rsa_priv_enc;
+	RSA_enc_dec_fn rsa_priv_dec;
+	RSA_modexp_fn rsa_mod_exp; /* Can be null */
+	RSA_bn_modexp_fn bn_mod_exp; /* Can be null */
+	RSA_lifetime_fn init_;		/* called at new */
+	RSA_lifetime_fn finish;	/* called at free */
 	int flags;			/* RSA_METHOD_FLAG_* things */
 	char* app_data;			/* may be needed! */
 /* New sign and verify functions: some libraries don't allow arbitrary data
@@ -66,19 +119,15 @@ struct rsa_meth_st
  * compatibility this functionality is only enabled if the RSA_FLAG_SIGN_VER
  * option is set in 'flags'.
  */
-	ExternC!(int function(int type,
-		const(ubyte)* m, uint m_length,
-		ubyte* sigret, uint* siglen, const(RSA)* rsa)) rsa_sign;
-	ExternC!(int function(int dtype,
-		const(ubyte)* m, uint m_length,
-		const(ubyte)* sigbuf, uint siglen,
-								const(RSA)* rsa)) rsa_verify;
+	RSA_sign_fn rsa_sign;
+	RSA_verify_fn rsa_verify;
 /* If this callback is NULL, the builtin software RSA key-gen will be used. This
  * is for behavioural compatibility whilst the code gets rewired, but one day
  * it would be nice to assume there are no such things as "builtin software"
  * implementations. */
-	ExternC!(int function(RSA* rsa, int bits, BIGNUM* e, BN_GENCB* cb)) rsa_keygen;
-	};
+	RSA_keygen_fn rsa_keygen;
+}
+}
 
 static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 {
