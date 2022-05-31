@@ -1825,6 +1825,44 @@ auto SSL_CTX_clear_extra_chain_certs()(SSL_CTX* ctx, void* x509) {
     return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_EXTRA_CHAIN_CERTS,0,null);
 }
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	enum SSL_CTRL_SET_MIN_PROTO_VERSION = 123;
+	enum SSL_CTRL_SET_MAX_PROTO_VERSION = 124;
+
+	auto SSL_CTX_set_min_proto_version(SSL_CTX* ctx, int version_) {
+		return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MIN_PROTO_VERSION, version_, null);
+	}
+	auto SSL_CTX_set_max_proto_version(SSL_CTX* ctx, int version_) {
+		return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MAX_PROTO_VERSION, version_, null);
+	}
+	auto SSL_set_min_proto_version(SSL* s, int version_) {
+		return SSL_ctrl(s, SSL_CTRL_SET_MIN_PROTO_VERSION, version_, null);
+	}
+	auto SSL_set_max_proto_version(SSL* s, int version_) {
+		return SSL_ctrl(s, SSL_CTRL_SET_MAX_PROTO_VERSION, version_, null);
+	}
+
+	static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
+	{
+		enum SSL_CTRL_GET_MIN_PROTO_VERSION = 130;
+		enum SSL_CTRL_GET_MAX_PROTO_VERSION = 131;
+
+		auto SSL_CTX_get_min_proto_version(SSL_CTX* ctx) {
+			return SSL_CTX_ctrl(ctx, SSL_CTRL_GET_MIN_PROTO_VERSION, 0, null);
+		}
+		auto SSL_CTX_get_max_proto_version(SSL_CTX* ctx) {
+			return SSL_CTX_ctrl(ctx, SSL_CTRL_GET_MAX_PROTO_VERSION, 0, null);
+		}
+		auto SSL_get_min_proto_version(SSL* s) {
+			return SSL_ctrl(s, SSL_CTRL_GET_MIN_PROTO_VERSION, 0, null);
+		}
+		auto SSL_get_max_proto_version(SSL* s) {
+			return SSL_ctrl(s, SSL_CTRL_GET_MAX_PROTO_VERSION, 0, null);
+		}
+	}
+}
+
 version(OPENSSL_NO_BIO) {} else {
 BIO_METHOD* BIO_f_ssl();
 BIO* BIO_new_ssl(SSL_CTX* ctx,int client);
