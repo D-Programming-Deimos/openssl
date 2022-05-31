@@ -1,61 +1,13 @@
-/* crypto/rsa/rsa.h */
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
+/**
+ * Port of `openssl.rsa.h`
  *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
+ * Copyright 1995-2021 The OpenSSL Project Authors. All Rights Reserved.
  *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *   notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *   must display the following acknowledgement:
- *   "This product includes cryptographic software written by
- *    Eric Young (eay@cryptsoft.com)"
- *   The word 'cryptographic' can be left out if the rouines from the library
- *   being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *   the apps directory (application code) you must include an acknowledgement:
- *   "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
+ * Licensed under the Apache License 2.0 (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution or at
+ * https://www.openssl.org/source/license.html
  */
-
 module deimos.openssl.rsa;
 
 import deimos.openssl._d_util;
@@ -81,31 +33,83 @@ version (OPENSSL_NO_RSA) {
 extern (C):
 nothrow:
 
-/* Declared already in types.h */
-/* typedef rsa_st RSA; */
-/* typedef rsa_meth_st RSA_METHOD; */
+// The following aliases are derived from the `RSA_meth_*` functions' signatures
+// They are not present in the code, hence are `private`.
+private alias RSA_enc_dec_fn = extern(C) int function(int flen,
+	const(ubyte)* from, ubyte* to, RSA* rsa, int padding);
+private alias RSA_modexp_fn = extern(C) int function(BIGNUM* r0,
+	const(BIGNUM)* I, RSA* rsa, BN_CTX* ctx);
+private alias RSA_bn_modexp_fn = extern(C) int function(BIGNUM* r,
+	const(BIGNUM)* a, const(BIGNUM)* p, const(BIGNUM)* m, BN_CTX* ctx,
+	BN_MONT_CTX* m_ctx);
+private alias RSA_lifetime_fn = extern(C) int function(RSA* rsa);
+private alias RSA_sign_fn = extern(C) int function(int type,
+	const(ubyte)* m, uint m_length, ubyte* sigret, uint* siglen, const(RSA)* rsa);
+private alias RSA_verify_fn = extern(C) int function(int dtype,
+	const(ubyte)* m, uint m_length, const(ubyte)* sigret, uint* siglen,
+	const(RSA)* rsa);
+private alias RSA_keygen_fn = extern(C) int function(RSA* rsa,
+	int bits, BIGNUM* e, BN_GENCB* cb);
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	// https://github.com/openssl/openssl/commit/b72c9121379a5de0c8be0d4e1a4a6b9495042621
+
+	RSA_METHOD* RSA_meth_new(const(char)* name, int flags);
+	void RSA_meth_free(RSA_METHOD* meth);
+	RSA_METHOD* RSA_meth_dup(const(RSA_METHOD)* meth);
+
+	const(char)* RSA_meth_get0_name(const(RSA_METHOD)* meth);
+	int RSA_meth_set1_name(RSA_METHOD* meth, const(char)* name);
+
+	int RSA_meth_get_flags(RSA_METHOD* meth);
+	int RSA_meth_set_flags(RSA_METHOD* meth, int flags);
+	void* RSA_meth_get0_app_data(const(RSA_METHOD)* meth);
+	int RSA_meth_set0_app_data(RSA_METHOD* meth, void *app_data);
+
+	RSA_enc_dec_fn RSA_meth_get_pub_enc(const(RSA_METHOD)* meth);
+	int RSA_meth_set_pub_enc(RSA_METHOD* rsa, RSA_enc_dec_fn pub_enc);
+	RSA_enc_dec_fn RSA_meth_get_pub_dec(const(RSA_METHOD)* meth);
+	int RSA_meth_set_pub_dec(RSA_METHOD* rsa, RSA_enc_dec_fn pub_dec);
+
+	RSA_enc_dec_fn RSA_meth_get_priv_enc(const(RSA_METHOD)* meth);
+	int RSA_meth_set_priv_enc(RSA_METHOD* rsa, RSA_enc_dec_fn priv_enc);
+	RSA_enc_dec_fn RSA_meth_get_priv_dec(const(RSA_METHOD)* meth);
+	int RSA_meth_set_priv_dec(RSA_METHOD* rsa, RSA_enc_dec_fn priv_dec);
+
+	RSA_modexp_fn RSA_meth_get_mod_exp(const(RSA_METHOD)* meth);
+	int RSA_meth_set_mod_exp(RSA_METHOD* rsa, RSA_modexp_fn mod_exp);
+
+	RSA_bn_modexp_fn RSA_meth_get_bn_mod_exp(const(RSA_METHOD)* meth);
+	int RSA_meth_set_bn_mod_exp(RSA_METHOD* rsa, RSA_bn_modexp_fn bn_mod_exp);
+
+	RSA_lifetime_fn RSA_meth_get_init(const(RSA_METHOD)* meth);
+	int RSA_meth_set_init(RSA_METHOD* rsa, RSA_lifetime_fn init);
+	RSA_lifetime_fn RSA_meth_get_finish(const(RSA_METHOD)* meth);
+	int RSA_meth_set_finish(RSA_METHOD* rsa, RSA_lifetime_fn finish);
+
+	RSA_sign_fn RSA_meth_get_sign(const(RSA_METHOD)* meth);
+	int RSA_meth_set_sign(RSA_METHOD* rsa, RSA_sign_fn sign);
+
+	RSA_verify_fn RSA_meth_get_verify(const(RSA_METHOD)* meth);
+	int RSA_meth_set_verify(RSA_METHOD* rsa, RSA_verify_fn verify);
+
+	RSA_keygen_fn RSA_meth_get_keygen(const(RSA_METHOD)* meth);
+	int RSA_meth_set_keygen(RSA_METHOD* rsa, RSA_keygen_fn keygen);
+}
+else
+{
 struct rsa_meth_st
-	{
+{
 	const(char)* name;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			   ubyte* to,
-			   RSA* rsa,int padding)) rsa_pub_enc;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			   ubyte* to,
-			   RSA* rsa,int padding)) rsa_pub_dec;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			    ubyte* to,
-			    RSA* rsa,int padding)) rsa_priv_enc;
-	ExternC!(int function(int flen,const(ubyte)* from,
-			    ubyte* to,
-			    RSA* rsa,int padding)) rsa_priv_dec;
-	ExternC!(int function(BIGNUM* r0,const(BIGNUM)* I,RSA* rsa,BN_CTX* ctx)) rsa_mod_exp; /* Can be null */
-	ExternC!(int function(BIGNUM* r, const(BIGNUM)* a, const(BIGNUM)* p,
-			  const(BIGNUM)* m, BN_CTX* ctx,
-			  BN_MONT_CTX* m_ctx)) bn_mod_exp; /* Can be null */
-	ExternC!(int function(RSA* rsa)) init_;		/* called at new */
-	ExternC!(int function(RSA* rsa)) finish;	/* called at free */
+	RSA_enc_dec_fn rsa_pub_enc;
+	RSA_enc_dec_fn rsa_pub_dec;
+	RSA_enc_dec_fn rsa_priv_enc;
+	RSA_enc_dec_fn rsa_priv_dec;
+	RSA_modexp_fn rsa_mod_exp; /* Can be null */
+	RSA_bn_modexp_fn bn_mod_exp; /* Can be null */
+	RSA_lifetime_fn init_;		/* called at new */
+	RSA_lifetime_fn finish;	/* called at free */
 	int flags;			/* RSA_METHOD_FLAG_* things */
 	char* app_data;			/* may be needed! */
 /* New sign and verify functions: some libraries don't allow arbitrary data
@@ -115,22 +119,35 @@ struct rsa_meth_st
  * compatibility this functionality is only enabled if the RSA_FLAG_SIGN_VER
  * option is set in 'flags'.
  */
-	ExternC!(int function(int type,
-		const(ubyte)* m, uint m_length,
-		ubyte* sigret, uint* siglen, const(RSA)* rsa)) rsa_sign;
-	ExternC!(int function(int dtype,
-		const(ubyte)* m, uint m_length,
-		const(ubyte)* sigbuf, uint siglen,
-								const(RSA)* rsa)) rsa_verify;
+	RSA_sign_fn rsa_sign;
+	RSA_verify_fn rsa_verify;
 /* If this callback is NULL, the builtin software RSA key-gen will be used. This
  * is for behavioural compatibility whilst the code gets rewired, but one day
  * it would be nice to assume there are no such things as "builtin software"
  * implementations. */
-	ExternC!(int function(RSA* rsa, int bits, BIGNUM* e, BN_GENCB* cb)) rsa_keygen;
-	};
+	RSA_keygen_fn rsa_keygen;
+}
+}
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	// https://github.com/openssl/openssl/commit/9862e9aa98ee1e38fbcef8d1dd5db0e750eb5e8d
+	int RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d);
+	int RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q);
+	int RSA_set0_crt_params(RSA *r,BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp);
+	void RSA_get0_key(const RSA *r, BIGNUM **n, BIGNUM **e, BIGNUM **d);
+	void RSA_get0_factors(const RSA *r, BIGNUM **p, BIGNUM **q);
+	void RSA_get0_crt_params(const RSA *r,
+							 BIGNUM **dmp1, BIGNUM **dmq1, BIGNUM **iqmp);
+	void RSA_clear_flags(RSA *r, int flags);
+	int RSA_test_flags(const RSA *r, int flags);
+	void RSA_set_flags(RSA *r, int flags);
+	ENGINE *RSA_get0_engine(RSA *r);
+}
+else
+{
 struct rsa_st
-	{
+{
 	/* The first parameter is used to pickup errors where
 	 * this is passed instead of aEVP_PKEY, it is set to 0 */
 	int pad;
@@ -161,7 +178,8 @@ struct rsa_st
 	char* bignum_data;
 	BN_BLINDING* blinding;
 	BN_BLINDING* mt_blinding;
-	};
+}
+}
 
 // #ifndef OPENSSL_RSA_MAX_MODULUS_BITS
 enum OPENSSL_RSA_MAX_MODULUS_BITS = 16384;

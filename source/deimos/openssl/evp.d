@@ -137,7 +137,7 @@ struct evp_pkey_st
 	union pkey_ {
 		char* ptr;
 version(OPENSSL_NO_RSA) {} else {
-		rsa_st* rsa;	/* RSA */
+		RSA* rsa;	/* RSA */
 }
 version(OPENSSL_NO_DSA) {} else {
 		dsa_st* dsa;	/* DSA */
@@ -901,9 +901,9 @@ int 		EVP_PKEY_assign(EVP_PKEY* pkey,int type,void* key);
 void* 		EVP_PKEY_get0(EVP_PKEY* pkey);
 
 version(OPENSSL_NO_RSA) {} else {
-import deimos.openssl.rsa; /*struct rsa_st;*/
-int EVP_PKEY_set1_RSA(EVP_PKEY* pkey,rsa_st* key);
-rsa_st* EVP_PKEY_get1_RSA(EVP_PKEY* pkey);
+import deimos.openssl.rsa;
+int EVP_PKEY_set1_RSA(EVP_PKEY* pkey, RSA* key);
+RSA* EVP_PKEY_get1_RSA(EVP_PKEY* pkey);
 }
 version(OPENSSL_NO_DSA) {} else {
 import deimos.openssl.dsa; /*struct dsa_st;*/
