@@ -334,6 +334,18 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
 								 EVP_PKEY_CTRL_RSA_OAEP_LABEL, len, label);
 	}
+
+	auto EVP_PKEY_CTX_get_rsa_oaep_md () (EVP_PKEY_CTX* ctx, EVP_MD** pmd)
+	{
+		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
+			EVP_PKEY_CTRL_GET_RSA_OAEP_MD, 0, pmd);
+	}
+
+	auto EVP_PKEY_CTX_get0_rsa_oaep_label () (EVP_PKEY_CTX* ctx, ubyte** label)
+	{
+		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
+			EVP_PKEY_CTRL_GET_RSA_OAEP_LABEL, 0, label);
+	}
 }
 
 
@@ -352,6 +364,8 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 {
 	enum EVP_PKEY_CTRL_RSA_OAEP_MD    = (EVP_PKEY_ALG_CTRL + 9);
 	enum EVP_PKEY_CTRL_RSA_OAEP_LABEL = (EVP_PKEY_ALG_CTRL + 10);
+	enum EVP_PKEY_CTRL_GET_RSA_OAEP_MD = (EVP_PKEY_ALG_CTRL + 11);
+	enum EVP_PKEY_CTRL_GET_RSA_OAEP_LABEL = (EVP_PKEY_ALG_CTRL + 12);
 }
 
 static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
