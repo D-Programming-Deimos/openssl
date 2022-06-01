@@ -5,6 +5,7 @@
 /.dub/
 /openssl
 /*-test-library
+dub.selections.json
 
 /examples/sslecho/sslecho
 /examples/sslecho/test
