@@ -304,14 +304,38 @@ else
 }
 
 auto EVP_PKEY_CTX_set_rsa_mgf1_md()(EVP_PKEY_CTX* ctx, EVP_MD* md) {
-	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_SIG,
-							 EVP_PKEY_CTRL_RSA_MGF1_MD, 0, cast(void*)md);
+	static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+		enum ExtraFlags = EVP_PKEY_OP_TYPE_CRYPT;
+	else
+		enum ExtraFlags = 0;
+
+	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_SIG | ExtraFlags,
+							 EVP_PKEY_CTRL_RSA_MGF1_MD, 0, md);
 }
 
 auto EVP_PKEY_CTX_get_rsa_mgf1_md()(EVP_PKEY_CTX* ctx, EVP_MD** pmd) {
-	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_SIG,
-							 EVP_PKEY_CTRL_GET_RSA_MGF1_MD, 0, cast(void*)pmd);
+	static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+		enum ExtraFlags = EVP_PKEY_OP_TYPE_CRYPT;
+	else
+		enum ExtraFlags = 0;
+
+	return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_SIG | ExtraFlags,
+							 EVP_PKEY_CTRL_GET_RSA_MGF1_MD, 0, pmd);
 }
+
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	auto EVP_PKEY_CTX_set_rsa_oaep_md()(EVP_PKEY_CTX* ctx, EVP_MD* md) {
+		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
+								 EVP_PKEY_CTRL_RSA_OAEP_MD, 0, md);
+	}
+
+	auto EVP_PKEY_CTX_set0_rsa_oaep_label()(EVP_PKEY_CTX* ctx, ubyte* label, int len) {
+		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
+								 EVP_PKEY_CTRL_RSA_OAEP_LABEL, llen, l);
+	}
+}
+
 
 enum EVP_PKEY_CTRL_RSA_PADDING = (EVP_PKEY_ALG_CTRL + 1);
 enum EVP_PKEY_CTRL_RSA_PSS_SALTLEN = (EVP_PKEY_ALG_CTRL + 2);
@@ -323,6 +347,12 @@ enum EVP_PKEY_CTRL_RSA_MGF1_MD = (EVP_PKEY_ALG_CTRL + 5);
 enum EVP_PKEY_CTRL_GET_RSA_PADDING = (EVP_PKEY_ALG_CTRL + 6);
 enum EVP_PKEY_CTRL_GET_RSA_PSS_SALTLEN = (EVP_PKEY_ALG_CTRL + 7);
 enum EVP_PKEY_CTRL_GET_RSA_MGF1_MD = (EVP_PKEY_ALG_CTRL + 8);
+
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	enum EVP_PKEY_CTRL_RSA_OAEP_MD    = (EVP_PKEY_ALG_CTRL + 9);
+	enum EVP_PKEY_CTRL_RSA_OAEP_LABEL = (EVP_PKEY_ALG_CTRL + 10);
+}
 
 static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
 	enum EVP_PKEY_CTRL_RSA_KEYGEN_PRIMES = (EVP_PKEY_ALG_CTRL + 13);
@@ -456,6 +486,17 @@ int RSA_padding_add_PKCS1_OAEP(ubyte* to,int tlen,
 int RSA_padding_check_PKCS1_OAEP(ubyte* to,int tlen,
 	const(ubyte)* f,int fl,int rsa_len,
 	const(ubyte)* p,int pl);
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+    int RSA_padding_add_PKCS1_OAEP_mgf1(ubyte* to, int tlen,
+        const(ubyte)* from, int flen,
+        const(ubyte)* param, int plen,
+        const(EVP_MD)* md, const(EVP_MD)* mgf1md);
+    int RSA_padding_check_PKCS1_OAEP_mgf1(ubyte* to, int tlen,
+        const(ubyte)* from, int flen, int num,
+        const(ubyte)* param, int plen,
+        const(EVP_MD)* md, const(EVP_MD)* mgf1md);
+}
 int RSA_padding_add_SSLv23(ubyte* to,int tlen,
 	const(ubyte)* f,int fl);
 int RSA_padding_check_SSLv23(ubyte* to,int tlen,
@@ -549,6 +590,7 @@ enum RSA_F_RSA_NULL_PUBLIC_DECRYPT = 134;
 enum RSA_F_RSA_NULL_PUBLIC_ENCRYPT = 135;
 enum RSA_F_RSA_PADDING_ADD_NONE = 107;
 enum RSA_F_RSA_PADDING_ADD_PKCS1_OAEP = 121;
+enum RSA_F_RSA_PADDING_ADD_PKCS1_OAEP_MGF1 = 154;
 enum RSA_F_RSA_PADDING_ADD_PKCS1_PSS = 125;
 enum RSA_F_RSA_PADDING_ADD_PKCS1_PSS_MGF1 = 148;
 enum RSA_F_RSA_PADDING_ADD_PKCS1_TYPE_1 = 108;
@@ -557,6 +599,7 @@ enum RSA_F_RSA_PADDING_ADD_SSLV23 = 110;
 enum RSA_F_RSA_PADDING_ADD_X931 = 127;
 enum RSA_F_RSA_PADDING_CHECK_NONE = 111;
 enum RSA_F_RSA_PADDING_CHECK_PKCS1_OAEP = 122;
+enum RSA_F_RSA_PADDING_CHECK_PKCS1_OAEP_MGF1 = 153;
 enum RSA_F_RSA_PADDING_CHECK_PKCS1_TYPE_1 = 112;
 enum RSA_F_RSA_PADDING_CHECK_PKCS1_TYPE_2 = 113;
 enum RSA_F_RSA_PADDING_CHECK_SSLV23 = 114;
@@ -598,6 +641,7 @@ enum RSA_R_DMQ1_NOT_CONGRUENT_TO_D = 125;
 enum RSA_R_D_E_NOT_CONGRUENT_TO_1 = 123;
 enum RSA_R_FIRST_OCTET_INVALID = 133;
 enum RSA_R_ILLEGAL_OR_UNSUPPORTED_PADDING_MODE = 144;
+enum RSA_R_INVALID_DIGEST = 157;
 enum RSA_R_INVALID_DIGEST_LENGTH = 143;
 enum RSA_R_INVALID_HEADER = 137;
 enum RSA_R_INVALID_KEYBITS = 145;
