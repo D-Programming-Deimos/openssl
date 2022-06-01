@@ -332,7 +332,7 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 
 	auto EVP_PKEY_CTX_set0_rsa_oaep_label()(EVP_PKEY_CTX* ctx, ubyte* label, int len) {
 		return EVP_PKEY_CTX_ctrl(ctx, EVP_PKEY_RSA, EVP_PKEY_OP_TYPE_CRYPT,
-								 EVP_PKEY_CTRL_RSA_OAEP_LABEL, llen, l);
+								 EVP_PKEY_CTRL_RSA_OAEP_LABEL, len, label);
 	}
 }
 
