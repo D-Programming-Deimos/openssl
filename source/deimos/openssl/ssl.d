@@ -1981,7 +1981,16 @@ SSL_SESSION* d2i_SSL_SESSION(SSL_SESSION** a,const(ubyte)** pp,
 			     c_long length);
 
 //#ifdef HEADER_X509_H
-X509* 	SSL_get_peer_certificate(const(SSL)* s);
+static if (OPENSSL_VERSION_BEFORE(3, 0, 0))
+{
+	X509* SSL_get_peer_certificate(const(SSL)* s);
+}
+else
+{
+	X509* SSL_get0_peer_certificate(const(SSL)* s);
+	X509* SSL_get1_peer_certificate(const(SSL)* s);
+	alias SSL_get_peer_certificate = SSL_get1_peer_certificate;
+}
 //#endif
 
 STACK_OF!(X509) *SSL_get_peer_cert_chain(const(SSL)* s);
