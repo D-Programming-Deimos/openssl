@@ -269,6 +269,9 @@ struct evp_pkey_ctx_st;
 alias evp_pkey_ctx_st EVP_PKEY_CTX;
 
 
+static if (OPENSSL_VERSION_AT_LEAST(3, 0, 0))
+    struct EVP_KEYEXCH;
+
 import deimos.openssl.dh;
 /*struct dh_st;*/
 alias dh_st DH;
