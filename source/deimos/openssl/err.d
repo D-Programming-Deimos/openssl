@@ -133,21 +133,6 @@ import core.vararg : va_list;
 extern (C):
 nothrow:
 
-// #ifndef OPENSSL_NO_ERR
-// #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,d,e)
-// #else
-// #define ERR_PUT_error(a,b,c,d,e)	ERR_put_error(a,b,c,NULL,0)
-// #endif
-version (OPENSSL_NO_ERR) {
-	void ERR_PUT_error()(int a, int b,int c,const(char)* d,int e) {
-		ERR_put_error(a,b,c,null,0);
-	}
-} else {
-	alias ERR_put_error ERR_PUT_error;
-}
-
-// #include <errno.h>
-
 enum ERR_TXT_MALLOCED = 0x01;
 enum ERR_TXT_STRING = 0x02;
 
@@ -327,7 +312,51 @@ struct ERR_string_data_st {
 	}
 alias ERR_string_data_st ERR_STRING_DATA;
 
-void ERR_put_error(int lib, int func,int reason,const(char)* file,int line);
+static if (OPENSSL_VERSION_BEFORE(3, 0, 0))
+{
+	void ERR_put_error(int lib, int func,int reason,const(char)* file,int line);
+	alias ERR_PUT_error = ERR_put_error;
+}
+else
+{
+	// New Error API
+
+	// 12 lines and some on an 80 column terminal
+	enum ERR_MAX_DATA_SIZE = 1024;
+
+	/* Building blocks */
+	void ERR_new();
+	void ERR_set_debug(const(char)* file, int line, const(char)* func);
+	void ERR_set_error(int lib, int reason, const(char)* fmt, ...);
+	void ERR_vset_error(int lib, int reason, const(char)* fmt, va_list args);
+
+	// Due to the API of those macro, we are forced to use CT arguments for FILE/LINE/FUNC
+	// This is not ideal as it creates lots of template instantiations
+	// Prefer using individual functions.
+	auto ERR_raise (string file = __FILE__, int line = __LINE__, string func = __FUNCTION__)
+		(int lib, int reason)
+	{
+		return ERR_raise_data!(file, line, func)(lib, reason, null);
+	}
+
+	auto ERR_raise_data (string file = __FILE__, int line = __LINE__, string func = __FUNCTION__)
+		(int lib, int reason, const(char)* fmt, ...)
+	{
+		ERR_new();
+		ERR_set_debug(file.ptr, line, func.ptr);
+		ERR_set_error(lib, reason, fmt);
+	}
+
+	// Deprecated in v3.0.0 and re-implemented as macro
+	auto ERR_put_error () (int lib, int func, int reason, const(char)* file, int line)
+	{
+		ERR_new();
+		ERR_set_debug(file, line, null);
+		ERR_set_error(lib, reason, null);
+	}
+	alias ERR_PUT_error = ERR_put_error;
+}
+
 void ERR_set_error_data(char* data,int flags);
 
 c_ulong ERR_get_error();
@@ -358,6 +387,11 @@ void ERR_print_errors(BIO* bp);
 }
 void ERR_add_error_data(int num, ...);
 void ERR_add_error_vdata(int num, va_list args);
+static if (OPENSSL_VERSION_AT_LEAST(3, 0, 0))
+{
+	void ERR_add_error_txt(const(char)* sepr, const(char)* txt);
+	void ERR_add_error_mem_bio(const(char)* sep, BIO* bio);
+}
 void ERR_load_strings(int lib,ERR_STRING_DATA[] str);
 void ERR_unload_strings(int lib,ERR_STRING_DATA[] str);
 void ERR_load_ERR_strings();
