@@ -11,6 +11,10 @@
  */
 module deimos.openssl.types;
 
+extern(C):
+@system:
+nothrow:
+
 import deimos.openssl._d_util;
 
 public import deimos.openssl.e_os2;
