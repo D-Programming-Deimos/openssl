@@ -67,19 +67,8 @@ nothrow:
 
 import core.stdc.config;
 
-//#if !defined(NO_SYS_TYPES_H)
-//#include <sys/types.h>
-//#endif
-
-/* Already declared in types.h */
-/* typedef buf_mem_st BUF_MEM; */
-
-struct buf_mem_st
-	{
-	size_t length;	/* current number of bytes */
-	char* data;
-	size_t max;	/* size of buffer */
-	};
+// Without this, the frontend is unaware of types defined in `static if`.
+private enum avoidDMDIssue16666 = __traits(allMembers, deimos.openssl.types);
 
 BUF_MEM* BUF_MEM_new();
 void	BUF_MEM_free(BUF_MEM* a);

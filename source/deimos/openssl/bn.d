@@ -310,66 +310,6 @@ void BN_with_flags()(BIGNUM* dest, BIGNUM* b, int n) {
 		| n;
 }
 
-/* Already declared in types.h */
-version (none) {
-alias bignum_st BIGNUM;
-/* Used for temp variables (declaration hidden in bn_lcl.h) */
-alias bignum_ctx BN_CTX;
-alias bn_blinding_st BN_BLINDING;
-alias bn_mont_ctx_st BN_MONT_CTX;
-alias bn_recp_ctx_st BN_RECP_CTX;
-alias bn_gencb_st BN_GENCB;
-}
-
-struct bignum_st
-	{
-	BN_ULONG* d;	/* Pointer to an array of 'BN_BITS2' bit chunks. */
-	int top;	/* Index of last used d +1. */
-	/* The next are internal book keeping for bn_expand. */
-	int dmax;	/* Size of the d array. */
-	int neg;	/* one if the number is negative */
-	int flags;
-	};
-
-/* Used for montgomery multiplication */
-struct bn_mont_ctx_st
-	{
-	int ri;        /* number of bits in R */
-	BIGNUM RR;     /* used to convert to montgomery form */
-	BIGNUM N;      /* The modulus */
-	BIGNUM Ni;     /* R*(1/R mod N) - N*Ni = 1
-	                * (Ni is only stored for bignum algorithm) */
-	BN_ULONG[2] n0;/* least significant word(s) of Ni;
-	                  (type changed with 0.9.9, was "BN_ULONG n0;" before) */
-	int flags;
-	};
-
-/* Used for reciprocal division/mod functions
- * It cannot be shared between threads
- */
-struct bn_recp_ctx_st
-	{
-	BIGNUM N;	/* the divisor */
-	BIGNUM Nr;	/* the reciprocal */
-	int num_bits;
-	int shift;
-	int flags;
-	};
-
-/* Used for slow "generation" functions. */
-struct bn_gencb_st
-	{
-	uint ver;	/* To handle binary (in)compatibility */
-	void* arg;		/* callback-specific data */
-	union cb_
-		{
-		/* if(ver==1) - handles old style callbacks */
-		ExternC!(void function(int, int, void*)) cb_1;
-		/* if(ver==2) - new callback style */
-		ExternC!(int function(int, int, BN_GENCB*)) cb_2;
-		}
-	cb_ cb;
-	};
 /* Wrapper function to make using BN_GENCB easier,  */
 int BN_GENCB_call(BN_GENCB* cb, int a, int b);
 /* Macro to populate a BN_GENCB structure with an "old"-style callback */
