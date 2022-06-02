@@ -72,15 +72,21 @@ enum HMAC_MAX_MD_CBLOCK = 128;	/* largest known is SHA512 */
 extern (C):
 nothrow:
 
-struct hmac_ctx_st {
-	const(EVP_MD)* md;
-	EVP_MD_CTX md_ctx;
-	EVP_MD_CTX i_ctx;
-	EVP_MD_CTX o_ctx;
-	uint key_length;
-	ubyte[HMAC_MAX_MD_CBLOCK] key;
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	struct hmac_ctx_st {
+		const(EVP_MD)* md;
+		EVP_MD_CTX md_ctx;
+		EVP_MD_CTX i_ctx;
+		EVP_MD_CTX o_ctx;
+		uint key_length;
+		ubyte[HMAC_MAX_MD_CBLOCK] key;
 	}
-alias hmac_ctx_st HMAC_CTX;
+
+	alias HMAC_CTX = hmac_ctx_st;
+}
+else
+	struct HMAC_CTX;
 
 auto HMAC_size()(HMAC_CTX* e) { return EVP_MD_size(e.md); }
 

@@ -67,37 +67,199 @@ alias ASN1_ITEM_st ASN1_ITEM;
 struct asn1_pctx_st;
 alias asn1_pctx_st ASN1_PCTX;
 
-//#ifdef OPENSSL_SYS_WIN32
-//#undef X509_NAME
-//#undef X509_EXTENSIONS
-//#undef X509_CERT_PAIR
-//#undef PKCS7_ISSUER_AND_SERIAL
-//#undef OCSP_REQUEST
-//#undef OCSP_RESPONSE
-//#endif
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	struct BIGNUM;
+	struct BN_CTX;
+	struct BN_BLINDING;
+	struct BN_MONT_CTX;
+	struct BN_RECP_CTX;
+	struct BN_GENCB;
 
-//#ifdef BIGNUM
-//#undef BIGNUM
-//#endif
-import deimos.openssl.bn;
-alias bignum_st BIGNUM;
-struct bignum_ctx;
-alias bignum_ctx BN_CTX;
-struct bn_blinding_st;
-alias bn_blinding_st BN_BLINDING;
-alias bn_mont_ctx_st BN_MONT_CTX;
-alias bn_recp_ctx_st BN_RECP_CTX;
-alias bn_gencb_st BN_GENCB;
+	struct BUF_MEM;
 
-import deimos.openssl.buffer;
-alias buf_mem_st BUF_MEM;
+	struct EVP_CIPHER;
+	struct EVP_CIPHER_CTX;
+	struct EVP_MD;
+	struct EVP_MD_CTX;
+	struct EVP_PKEY;
 
-import deimos.openssl.evp;
-alias evp_cipher_st EVP_CIPHER;
-alias evp_cipher_ctx_st EVP_CIPHER_CTX;
-alias env_md_st EVP_MD;
-alias env_md_ctx_st EVP_MD_CTX;
-alias evp_pkey_st EVP_PKEY;
+	struct EVP_KDF;
+	struct EVP_KDF_CTX;
+
+	// Backward compatible aliases, should not be used
+	struct bignum_st;
+	struct bn_mont_ctx_st;
+	struct bn_recp_ctx_st;
+	struct bn_gencb_st;
+	struct buf_mem_st;
+	struct env_md_ctx_st;
+	struct evp_pkey_st;
+	struct env_md_st;
+	struct evp_cipher_st;
+}
+else
+{
+	struct bignum_st
+	{
+		BN_ULONG* d;	/* Pointer to an array of 'BN_BITS2' bit chunks. */
+		int top;	/* Index of last used d +1. */
+		/* The next are internal book keeping for bn_expand. */
+		int dmax;	/* Size of the d array. */
+		int neg;	/* one if the number is negative */
+		int flags;
+	}
+
+	/* Used for montgomery multiplication */
+	struct bn_mont_ctx_st
+	{
+		int ri;		   /* number of bits in R */
+		BIGNUM RR;	   /* used to convert to montgomery form */
+		BIGNUM N;	   /* The modulus */
+		BIGNUM Ni;	   /* R*(1/R mod N) - N*Ni = 1
+						   * (Ni is only stored for bignum algorithm) */
+		BN_ULONG[2] n0;/* least significant word(s) of Ni;
+						  (type changed with 0.9.9, was "BN_ULONG n0;" before) */
+		int flags;
+	}
+
+	/* Used for reciprocal division/mod functions
+	 * It cannot be shared between threads
+	 */
+	struct bn_recp_ctx_st
+	{
+		BIGNUM N;	/* the divisor */
+		BIGNUM Nr;	/* the reciprocal */
+		int num_bits;
+		int shift;
+		int flags;
+	}
+
+	/* Used for slow "generation" functions. */
+	struct bn_gencb_st
+	{
+		uint ver;	/* To handle binary (in)compatibility */
+		void* arg;		/* callback-specific data */
+		union cb_
+		{
+			/* if(ver==1) - handles old style callbacks */
+			ExternC!(void function(int, int, void*)) cb_1;
+			/* if(ver==2) - new callback style */
+			ExternC!(int function(int, int, BN_GENCB*)) cb_2;
+		}
+		cb_ cb;
+	}
+
+	alias BIGNUM = bignum_st;
+	struct BN_CTX;
+	struct BN_BLINDING;
+	alias BN_MONT_CTX = bn_mont_ctx_st;
+	alias BN_RECP_CTX = bn_recp_ctx_st;
+	alias BN_GENCB = bn_gencb_st;
+
+	struct buf_mem_st
+	{
+		size_t length;	/* current number of bytes */
+		char* data;
+		size_t max;	/* size of buffer */
+	}
+
+	alias BUF_MEM = buf_mem_st;
+
+
+	struct env_md_ctx_st
+	{
+		const(EVP_MD)* digest;
+		ENGINE* engine; /* functional reference if 'digest' is ENGINE-provided */
+		c_ulong flags;
+		void* md_data;
+		/* Public key context for sign/verify */
+		EVP_PKEY_CTX* pctx;
+		/* Update function: usually copied from EVP_MD */
+		ExternC!(int function(EVP_MD_CTX* ctx, const(void)* data, size_t count)) update;
+	}
+
+	/* Type needs to be a bit field
+	 * Sub-type needs to be for variations on the method, as in_, can it do
+	 * arbitrary encryption.... */
+	struct evp_pkey_st
+	{
+		int type;
+		int save_type;
+		int references;
+		const(EVP_PKEY_ASN1_METHOD)* ameth;
+		ENGINE* engine;
+		union pkey_ {
+			char* ptr;
+			version(OPENSSL_NO_RSA) {} else {
+				RSA* rsa;	/* RSA */
+			}
+			version(OPENSSL_NO_DSA) {} else {
+				dsa_st* dsa;	/* DSA */
+			}
+			version(OPENSSL_NO_DH) {} else {
+				dh_st* dh;	/* DH */
+			}
+			version(OPENSSL_NO_EC) {} else {
+				ec_key_st* ec;	/* ECC */
+			}
+		}
+		pkey_ pkey;
+		int save_parameters;
+		STACK_OF!(X509_ATTRIBUTE) *attributes; /* [ 0 ] */
+	}
+
+	struct env_md_st
+	{
+		int type;
+		int pkey_type;
+		int md_size;
+		c_ulong flags;
+		ExternC!(int function(EVP_MD_CTX* ctx)) init_;
+		ExternC!(int function(EVP_MD_CTX* ctx,const(void)* data,size_t count)) update;
+		ExternC!(int function(EVP_MD_CTX* ctx,ubyte* md)) final_;
+		ExternC!(int function(EVP_MD_CTX* to,const(EVP_MD_CTX)* from)) copy;
+		ExternC!(int function(EVP_MD_CTX* ctx)) cleanup;
+
+		/* FIXME: prototype these some day */
+		ExternC!(int function(int type, const(ubyte)* m, uint m_length,
+			ubyte* sigret, uint* siglen, void* key)) sign;
+		ExternC!(int function(int type, const(ubyte)* m, uint m_length,
+			  const(ubyte)* sigbuf, uint siglen,
+			  void* key)) verify;
+		int[5] required_pkey_type; /*EVP_PKEY_xxx */
+		int block_size;
+		int ctx_size; /* how big does the ctx->md_data need to be */
+		/* control function */
+		ExternC!(int function(EVP_MD_CTX* ctx, int cmd, int p1, void* p2)) md_ctrl;
+	}
+
+	struct evp_cipher_st
+	{
+		int nid;
+		int block_size;
+		int key_len;		/* Default value for variable length ciphers */
+		int iv_len;
+		c_ulong flags;	/* Various flags */
+		ExternC!(int function(EVP_CIPHER_CTX* ctx, const(ubyte)* key,
+			const(ubyte)* iv, int enc)) init_;	/* init key */
+		ExternC!(int function(EVP_CIPHER_CTX* ctx, ubyte* out_,
+			 const(ubyte)* in_, size_t inl)) do_cipher;/* encrypt/decrypt data */
+		ExternC!(int function(EVP_CIPHER_CTX*)) cleanup; /* cleanup ctx */
+		int ctx_size;		/* how big ctx->cipher_data needs to be */
+		ExternC!(int function(EVP_CIPHER_CTX*, ASN1_TYPE*)) set_asn1_parameters; /* Populate a ASN1_TYPE with parameters */
+		ExternC!(int function(EVP_CIPHER_CTX*, ASN1_TYPE*)) get_asn1_parameters; /* Get parameters from a ASN1_TYPE */
+		ExternC!(int function(EVP_CIPHER_CTX*, int type, int arg, void* ptr)) ctrl; /* Miscellaneous operations */
+		void* app_data;		/* Application data */
+	}
+
+	alias EVP_MD = env_md_st;
+	alias EVP_MD_CTX = env_md_ctx_st;
+	alias EVP_CIPHER = evp_cipher_st;
+	alias EVP_CIPHER_CTX = evp_cipher_ctx_st;
+
+	alias EVP_PKEY = evp_pkey_st;
+}
 
 struct evp_pkey_asn1_method_st;
 alias evp_pkey_asn1_method_st EVP_PKEY_ASN1_METHOD;
@@ -106,8 +268,6 @@ alias evp_pkey_method_st EVP_PKEY_METHOD;
 struct evp_pkey_ctx_st;
 alias evp_pkey_ctx_st EVP_PKEY_CTX;
 
-struct EVP_KDF;
-struct EVP_KDF_CTX;
 
 import deimos.openssl.dh;
 /*struct dh_st;*/

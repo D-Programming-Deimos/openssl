@@ -76,66 +76,10 @@ alias EVP_PKEY_CMAC = NID_cmac;
 extern (C):
 nothrow:
 
-/* Type needs to be a bit field
- * Sub-type needs to be for variations on the method, as in_, can it do
- * arbitrary encryption.... */
-struct evp_pkey_st
-	{
-	int type;
-	int save_type;
-	int references;
-	const(EVP_PKEY_ASN1_METHOD)* ameth;
-	ENGINE* engine;
-	union pkey_ {
-		char* ptr;
-version(OPENSSL_NO_RSA) {} else {
-		RSA* rsa;	/* RSA */
-}
-version(OPENSSL_NO_DSA) {} else {
-		dsa_st* dsa;	/* DSA */
-}
-version(OPENSSL_NO_DH) {} else {
-		dh_st* dh;	/* DH */
-}
-version(OPENSSL_NO_EC) {} else {
-		ec_key_st* ec;	/* ECC */
-}
-		}
-	pkey_ pkey;
-	int save_parameters;
-	STACK_OF!(X509_ATTRIBUTE) *attributes; /* [ 0 ] */
-	} /* EVP_PKEY */;
-
 enum EVP_PKEY_MO_SIGN = 0x0001;
 enum EVP_PKEY_MO_VERIFY = 0x0002;
 enum EVP_PKEY_MO_ENCRYPT = 0x0004;
 enum EVP_PKEY_MO_DECRYPT = 0x0008;
-
-// #ifndef EVP_MD
-struct env_md_st
-	{
-	int type;
-	int pkey_type;
-	int md_size;
-	c_ulong flags;
-	ExternC!(int function(EVP_MD_CTX* ctx)) init_;
-	ExternC!(int function(EVP_MD_CTX* ctx,const(void)* data,size_t count)) update;
-	ExternC!(int function(EVP_MD_CTX* ctx,ubyte* md)) final_;
-	ExternC!(int function(EVP_MD_CTX* to,const(EVP_MD_CTX)* from)) copy;
-	ExternC!(int function(EVP_MD_CTX* ctx)) cleanup;
-
-	/* FIXME: prototype these some day */
-	ExternC!(int function(int type, const(ubyte)* m, uint m_length,
-		    ubyte* sigret, uint* siglen, void* key)) sign;
-	ExternC!(int function(int type, const(ubyte)* m, uint m_length,
-		      const(ubyte)* sigbuf, uint siglen,
-		      void* key)) verify;
-	int[5] required_pkey_type; /*EVP_PKEY_xxx */
-	int block_size;
-	int ctx_size; /* how big does the ctx->md_data need to be */
-	/* control function */
-	ExternC!(int function(EVP_MD_CTX* ctx, int cmd, int p1, void* p2)) md_ctrl;
-	} /* EVP_MD */;
 
 alias evp_sign_method = typeof(*(ExternC!(int function(int type,const(ubyte)* m,
 			    uint m_length,ubyte* sigret,
@@ -214,18 +158,6 @@ version (OPENSSL_NO_RSA) {
 
 // #endif /* !EVP_MD */
 
-struct env_md_ctx_st
-	{
-	const(EVP_MD)* digest;
-	ENGINE* engine; /* functional reference if 'digest' is ENGINE-provided */
-	c_ulong flags;
-	void* md_data;
-	/* Public key context for sign/verify */
-	EVP_PKEY_CTX* pctx;
-	/* Update function: usually copied from EVP_MD */
-	ExternC!(int function(EVP_MD_CTX* ctx,const(void)* data,size_t count)) update;
-	} /* EVP_MD_CTX */;
-
 /* values for EVP_MD_CTX flags */
 
 enum EVP_MD_CTX_FLAG_ONESHOT = 0x0001; /* digest update will be called
@@ -251,25 +183,6 @@ enum EVP_MD_CTX_FLAG_PAD_X931 = 0x10;	/* X9.31 mode */
 enum EVP_MD_CTX_FLAG_PAD_PSS = 0x20;	/* PSS mode */
 
 enum EVP_MD_CTX_FLAG_NO_INIT = 0x0100; /* Don't initialize md_data */
-
-struct evp_cipher_st
-	{
-	int nid;
-	int block_size;
-	int key_len;		/* Default value for variable length ciphers */
-	int iv_len;
-	c_ulong flags;	/* Various flags */
-	ExternC!(int function(EVP_CIPHER_CTX* ctx, const(ubyte)* key,
-		    const(ubyte)* iv, int enc)) init_;	/* init key */
-	ExternC!(int function(EVP_CIPHER_CTX* ctx, ubyte* out_,
-			 const(ubyte)* in_, size_t inl)) do_cipher;/* encrypt/decrypt data */
-	ExternC!(int function(EVP_CIPHER_CTX*)) cleanup; /* cleanup ctx */
-	int ctx_size;		/* how big ctx->cipher_data needs to be */
-	ExternC!(int function(EVP_CIPHER_CTX*, ASN1_TYPE*)) set_asn1_parameters; /* Populate a ASN1_TYPE with parameters */
-	ExternC!(int function(EVP_CIPHER_CTX*, ASN1_TYPE*)) get_asn1_parameters; /* Get parameters from a ASN1_TYPE */
-	ExternC!(int function(EVP_CIPHER_CTX*, int type, int arg, void* ptr)) ctrl; /* Miscellaneous operations */
-	void* app_data;		/* Application data */
-	} /* EVP_CIPHER */;
 
 /* Values for cipher flags */
 

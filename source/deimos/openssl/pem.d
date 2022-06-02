@@ -139,14 +139,19 @@ enum PEM_STRING_ECPRIVATEKEY = "EC PRIVATE KEY";
 enum PEM_STRING_PARAMETERS = "PARAMETERS";
 enum PEM_STRING_CMS = "CMS";
 
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
   /* Note that this structure is initialised by PEM_SealInit and cleaned up
-     by PEM_SealFinal (at least for now) */
-struct PEM_Encode_Seal_st {
-	EVP_ENCODE_CTX encode;
-	EVP_MD_CTX md;
-	EVP_CIPHER_CTX cipher;
+	 by PEM_SealFinal (at least for now) */
+	struct PEM_Encode_Seal_st {
+		EVP_ENCODE_CTX encode;
+		EVP_MD_CTX md;
+		EVP_CIPHER_CTX cipher;
 	}
-alias PEM_Encode_Seal_st PEM_ENCODE_SEAL_CTX;
+	alias PEM_Encode_Seal_st PEM_ENCODE_SEAL_CTX;
+}
+else
+	struct PEM_ENCODE_SEAL_CTX;
 
 /* enc_type is one off */
 enum PEM_TYPE_ENCRYPTED = 10;
