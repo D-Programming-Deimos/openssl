@@ -165,4 +165,30 @@ else
     _STACK* sk_dup(_STACK* st);
     void sk_sort(_STACK* st);
     int sk_is_sorted(const(_STACK)* st);
+
+    // Forward-compatible aliases, so one can use OpenSSL v1.1.0 API
+    // while keeping v1.0.x compatibility
+    alias OPENSSL_sk_num = sk_num;
+    alias OPENSSL_sk_value = sk_value;
+    alias OPENSSL_sk_set = sk_set;
+
+    alias OPENSSL_sk_new = sk_new;
+    alias OPENSSL_sk_new_null = sk_new_null;
+    alias OPENSSL_sk_free = sk_free;
+    alias OPENSSL_sk_pop_free = sk_pop_free;
+    alias OPENSSL_sk_insert = sk_insert;
+    alias OPENSSL_sk_delete = sk_delete;
+    alias OPENSSL_sk_delete_ptr = sk_delete_ptr;
+    alias OPENSSL_sk_find = sk_find;
+    alias OPENSSL_sk_find_ex = sk_find_ex;
+
+    alias OPENSSL_sk_push = sk_push;
+    alias OPENSSL_sk_unshift = sk_unshift;
+    alias OPENSSL_sk_shift = sk_shift;
+    alias OPENSSL_sk_pop = sk_pop;
+    alias OPENSSL_sk_zero = sk_zero;
+    alias OPENSSL_sk_set_cmp_func = sk_set_cmp_func;
+    alias OPENSSL_sk_dup = sk_dup;
+    alias OPENSSL_sk_sort = sk_sort;
+    alias OPENSSL_sk_is_sorted = sk_is_sorted;
 }
