@@ -2179,18 +2179,42 @@ c_long SSL_get_verify_result(const(SSL)* ssl);
 
 int SSL_set_ex_data(SSL* ssl,int idx,void* data);
 void* SSL_get_ex_data(const(SSL)* ssl,int idx);
-int SSL_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
-	CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	int SSL_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+	int SSL_SESSION_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+	int SSL_CTX_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto SSL_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL, l, p, newf, dupf, freef);
+	}
+
+	auto SSL_SESSION_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL_SESSION, l, p, newf, dupf, freef);
+	}
+
+	auto SSL_CTX_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL_CTX, l, p, newf, dupf, freef);
+	}
+}
 
 int SSL_SESSION_set_ex_data(SSL_SESSION* ss,int idx,void* data);
 void* SSL_SESSION_get_ex_data(const(SSL_SESSION)* ss,int idx);
-int SSL_SESSION_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
-	CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
 
 int SSL_CTX_set_ex_data(SSL_CTX* ssl,int idx,void* data);
 void* SSL_CTX_get_ex_data(const(SSL_CTX)* ssl,int idx);
-int SSL_CTX_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
-	CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
 
 int SSL_get_ex_data_X509_STORE_CTX_idx();
 

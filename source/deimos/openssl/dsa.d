@@ -218,8 +218,19 @@ int	DSA_sign(int type,const(ubyte)* dgst,int dlen,
 		ubyte* sig, uint* siglen, DSA* dsa);
 int	DSA_verify(int type,const(ubyte)* dgst,int dgst_len,
 		const(ubyte)* sigbuf, int siglen, DSA* dsa);
-int DSA_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
-	     CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	int DSA_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto DSA_get_ex_new_index(c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_DSA, l, p, newf, dupf, freef);
+	}
+}
 int DSA_set_ex_data(DSA* d, int idx, void* arg);
 void* DSA_get_ex_data(DSA* d, int idx);
 

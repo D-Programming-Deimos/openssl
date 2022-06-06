@@ -497,8 +497,19 @@ int ENGINE_set_pkey_asn1_meths(ENGINE* e, ENGINE_PKEY_ASN1_METHS_PTR f);
 int ENGINE_set_flags(ENGINE* e, int flags);
 int ENGINE_set_cmd_defns(ENGINE* e, const(ENGINE_CMD_DEFN)* defns);
 /* These functions allow control over any per-structure ENGINE data. */
-int ENGINE_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	int ENGINE_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
 		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto ENGINE_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_ENGINE, l, p, newf, dupf, freef);
+	}
+}
 int ENGINE_set_ex_data(ENGINE* e, int idx, void* arg);
 void* ENGINE_get_ex_data(const(ENGINE)* e, int idx);
 

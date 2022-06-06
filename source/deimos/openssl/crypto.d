@@ -156,20 +156,6 @@ enum SSLEAY_BUILT_ON = 3;
 enum SSLEAY_PLATFORM = 4;
 enum SSLEAY_DIR = 5;
 
-/* Already declared in types.h */
-/+#if 0
-alias crypto_ex_data_st CRYPTO_EX_DATA;
-/* Called when a new object is created */
-typedef int CRYPTO_EX_new(void* parent, void* ptr, CRYPTO_EX_DATA* ad,
-					int idx, c_long argl, void* argp);
-/* Called when an object is free()ed */
-typedef void CRYPTO_EX_free(void* parent, void* ptr, CRYPTO_EX_DATA* ad,
-					int idx, c_long argl, void* argp);
-/* Called when we need to dup an object */
-typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA* to, CRYPTO_EX_DATA* from, void* from_d,
-					int idx, c_long argl, void* argp);
-#endif+/
-
 /* A generic structure to pass assorted data in a expandable way */
 struct openssl_item_st {
 	int code;
@@ -412,6 +398,11 @@ int CRYPTO_ex_data_new_class();
 int CRYPTO_get_ex_new_index(int class_index, c_long argl, void* argp,
 		CRYPTO_EX_new* new_func, CRYPTO_EX_dup* dup_func,
 		CRYPTO_EX_free* free_func);
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	/* No longer use an index. */
+	int CRYPTO_free_ex_index(int class_index, int idx);
+}
 /* Initialise/duplicate/free CRYPTO_EX_DATA variables corresponding to a given
  * class (invokes whatever per-class callbacks are applicable) */
 int CRYPTO_new_ex_data(int class_index, void* obj, CRYPTO_EX_DATA* ad);
@@ -599,6 +590,7 @@ enum CRYPTO_F_CRYPTO_SET_EX_DATA = 102;
 enum CRYPTO_F_DEF_ADD_INDEX = 104;
 enum CRYPTO_F_DEF_GET_CLASS = 105;
 enum CRYPTO_F_FIPS_MODE_SET = 109;
+enum CRYPTO_F_GET_AND_LOCK  = 113;
 enum CRYPTO_F_INT_DUP_EX_DATA = 106;
 enum CRYPTO_F_INT_FREE_EX_DATA = 107;
 enum CRYPTO_F_INT_NEW_EX_DATA = 108;

@@ -419,10 +419,20 @@ X509_STORE_CTX_lookup_crls_fn X509_STORE_get_lookup_crls(X509_STORE* ctx);
 void X509_STORE_set_cleanup(X509_STORE* ctx, X509_STORE_CTX_cleanup_fn cleanup);
 X509_STORE_CTX_cleanup_fn X509_STORE_get_cleanup(X509_STORE* ctx);
 
-extern (D) auto X509_STORE_get_ex_new_index(T0, T1, T2, T3, T4)(auto ref T0 l, auto ref T1 p, auto ref T2 newf, auto ref T3 dupf, auto ref T4 freef)
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
 {
-    return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_X509_STORE, l, p, newf, dupf, freef);
+	int X509_STORE_get_ex_new_index(long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
 }
+else
+{
+	auto X509_STORE_get_ex_new_index () (long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_X509_STORE, l, p, newf, dupf, freef);
+	}
+}
+
 
 int X509_STORE_set_ex_data(X509_STORE* ctx, int idx, void* data);
 void* X509_STORE_get_ex_data(X509_STORE* ctx, int idx);
@@ -529,9 +539,18 @@ int X509_STORE_load_locations(
     const(char)* dir);
 int X509_STORE_set_default_paths(X509_STORE* ctx);
 
-extern (D) auto X509_STORE_CTX_get_ex_new_index(T0, T1, T2, T3, T4)(auto ref T0 l, auto ref T1 p, auto ref T2 newf, auto ref T3 dupf, auto ref T4 freef)
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
 {
-    return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_X509_STORE_CTX, l, p, newf, dupf, freef);
+	int X509_STORE_CTX_get_ex_new_index(long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto X509_STORE_CTX_get_ex_new_index () (long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_X509_STORE_CTX, l, p, newf, dupf, freef);
+	}
 }
 
 int X509_STORE_CTX_set_ex_data(X509_STORE_CTX* ctx, int idx, void* data);
@@ -681,4 +700,3 @@ stack_st_POLICYQUALINFO* X509_policy_node_get0_qualifiers(
     const(X509_POLICY_NODE)* node);
 const(X509_POLICY_NODE)* X509_policy_node_get0_parent(
     const(X509_POLICY_NODE)* node);
-
