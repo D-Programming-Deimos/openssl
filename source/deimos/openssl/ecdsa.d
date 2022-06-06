@@ -223,8 +223,19 @@ int 	  ECDSA_verify(int type, const(ubyte)* dgst, int dgstlen,
 		const(ubyte)* sig, int siglen, EC_KEY* eckey);
 
 /* the standard ex_data functions */
-int 	  ECDSA_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new
-		*new_func, CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	int ECDSA_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto ECDSA_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_ECDSA, l, p, newf, dupf, freef);
+	}
+}
 int 	  ECDSA_set_ex_data(EC_KEY* d, int idx, void* arg);
 void* ECDSA_get_ex_data(EC_KEY* d, int idx);
 

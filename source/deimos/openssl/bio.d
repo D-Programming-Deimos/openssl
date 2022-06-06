@@ -621,8 +621,19 @@ auto BIO_dgram_set_peer()(BIO* b,void* peer) { return cast(int) BIO_ctrl(b, BIO_
 /* void BIO_set_ex_free_func(BIO* bio,int idx,ExternC!(void function()) cb); */
 int BIO_set_ex_data(BIO* bio,int idx,void* data);
 void* BIO_get_ex_data(BIO* bio,int idx);
-int BIO_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
-	CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	int BIO_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto BIO_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_BIO, l, p, newf, dupf, freef);
+	}
+}
 c_ulong BIO_number_read(BIO* bio);
 c_ulong BIO_number_written(BIO* bio);
 

@@ -865,9 +865,18 @@ X509_CERT_AUX* d2i_X509_CERT_AUX(X509_CERT_AUX** a, const(ubyte*)* in_, c_long l
 int i2d_X509_CERT_AUX(X509_CERT_AUX* a, ubyte** out_);
 extern __gshared const ASN1_ITEM X509_CERT_AUX_it;
 
-extern (D) auto X509_get_ex_new_index(T0, T1, T2, T3, T4)(auto ref T0 l, auto ref T1 p, auto ref T2 newf, auto ref T3 dupf, auto ref T4 freef)
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
 {
-    return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_X509, l, p, newf, dupf, freef);
+	int X509_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	extern (D) auto X509_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_X509, l, p, newf, dupf, freef);
+	}
 }
 
 int X509_set_ex_data(X509* r, int idx, void* arg);

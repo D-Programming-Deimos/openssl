@@ -227,8 +227,19 @@ enum UI_CTRL_IS_REDOABLE = 2;
 /* Some methods may use extra data */
 auto UI_set_app_data()(UI* s,void* arg) { return UI_set_ex_data(s,0,arg); }
 auto UI_get_app_data()(UI* s) { return UI_get_ex_data(s,0); }
-int UI_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
-	CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+	int UI_get_ex_new_index(c_long argl, void* argp, CRYPTO_EX_new* new_func,
+		CRYPTO_EX_dup* dup_func, CRYPTO_EX_free* free_func);
+}
+else
+{
+	auto UI_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
+		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
+	{
+		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_UI, l, p, newf, dupf, freef);
+	}
+}
 int UI_set_ex_data(UI* r,int idx,void* arg);
 void* UI_get_ex_data(UI* r, int idx);
 
