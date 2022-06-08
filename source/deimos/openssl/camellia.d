@@ -80,7 +80,7 @@ alias uint[CAMELLIA_TABLE_WORD_LEN] KEY_TABLE_TYPE; /* to match with WORD */
 struct camellia_key_st
 	{
 	union u_ {
-		double d;	/* ensures 64-bit align */
+		double d = void;	/* ensures 64-bit align */
 		KEY_TABLE_TYPE rd_key;
 		}
 	u_ u;

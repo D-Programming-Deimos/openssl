@@ -509,7 +509,7 @@ version(OPENSSL_NO_ECDH) {} else {
 		/* used for certificate requests */
 		int cert_req;
 		int ctype_num;
-		char[SSL3_CT_NUMBER] ctype;
+		char[SSL3_CT_NUMBER] ctype = 0;
 		STACK_OF!(X509_NAME) *ca_names;
 
 		int use_rsa_tmp;
@@ -547,7 +547,7 @@ version(OPENSSL_NO_EC) {} else {
 	/* This is set to true if we believe that this is a version of Safari
 	 * running on OS X 10.6 or newer. We wish to know this because Safari
 	 * on 10.8 .. 10.8.3 has broken ECDHE-ECDSA support. */
-	char is_probably_safari;
+	char is_probably_safari = 0;
 } /* !OPENSSL_NO_EC */
 } /* !OPENSSL_NO_TLSEXT */
 	}

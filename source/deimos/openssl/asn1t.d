@@ -564,7 +564,7 @@ enum ASN1_TFLG_NDEF = (0x1<<11);
 /* This is the actual ASN1 item itself */
 
 struct ASN1_ITEM_st {
-char itype;			/* The item type, primitive, SEQUENCE, CHOICE or extern */
+ubyte itype;			/* The item type, primitive, SEQUENCE, CHOICE or extern */
 c_long utype;			/* underlying type */
 const(ASN1_TEMPLATE)* templates;	/* If SEQUENCE or CHOICE this contains the contents */
 c_long tcount;			/* Number of templates if SEQUENCE or CHOICE */
@@ -639,7 +639,7 @@ enum ASN1_ITYPE_NDEF_SEQUENCE = 0x6;
  */
 
 struct ASN1_TLC_st{
-	char valid;	/* Values below are valid */
+	ubyte valid;	/* Values below are valid */
 	int ret;	/* return value */
 	c_long plen;	/* length */
 	int ptag;	/* class value */
