@@ -56,7 +56,7 @@ and define the version in their dub file (e.g. `"versions" : [ "DeimosOpenSSL_3_
 
 A list of all available versions can be found in [deimos.openssl.opensslv](source/deimos/openssl/opensslv.d).
 
-Only minor versions are listen, patch versions are binary compatible with one another.
+Only minor versions are listed, patch versions are binary compatible with one another.
 We use "minor" and "patch" with the [intended SemVer meaning](https://semver.org/).
 For example, 1.1.1g and 1.1.1a are two different patch releases of the same minor.
 Since OpenSSL v3.0.0, correct SemVer versioning is used.
