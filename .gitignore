@@ -1,5 +1,5 @@
 # Generated version file
-/source/deimos/openssl/version_.d
+/source/deimos/openssl/version_.di
 
 # DUB artifacts
 /.dub/
