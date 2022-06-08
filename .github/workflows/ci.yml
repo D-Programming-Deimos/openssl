@@ -140,7 +140,6 @@ jobs:
         # We don't checkout in $GITHUB_WORKSPACE to avoid polluting the repository with artifacts,
         # e.g. the C openssl library or Vibe.d
         cd ${{ github.workspace }}/deimos-openssl/
-        dub test
         cd examples/sslecho/
         ${{ github.workspace }}/openssl/install/bin/openssl req -batch -newkey rsa:4096 -x509 -sha256 -days 3650 -subj "/C=GB/CN=localhost" -nodes -out cert.pem -keyout key.pem
         dub build

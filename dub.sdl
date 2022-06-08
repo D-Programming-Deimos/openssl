@@ -21,12 +21,3 @@ configuration "library-manual-version" {
 configuration "library-applink" {
 	targetType "sourceLibrary"
 }
-
-configuration "unittest" {
-	targetType "executable"
-	targetName "openssl-test-library"
-	dflags "-main"
-	excludedSourceFiles "source/deimos/openssl/applink.d"
-	preGenerateCommands `${DUB} scripts/generate_version.d` platform="posix"
-	versions `DeimosOpenSSLAutoDetect`
-}
