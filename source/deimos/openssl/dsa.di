@@ -225,7 +225,7 @@ static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
 }
 else
 {
-	auto DSA_get_ex_new_index(c_long l, void* p, CRYPTO_EX_new* newf,
+	auto DSA_get_ex_new_index()(c_long l, void* p, CRYPTO_EX_new* newf,
 		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
 	{
 		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_DSA, l, p, newf, dupf, freef);

@@ -100,6 +100,7 @@ static if (!is(typeof(OPENSSL_ECC_MAX_FIELD_BITS))) {
 /** Enum for the point conversion form as defined in X9.62 (ECDSA)
  * for the encoding of a elliptic curve point (x,y) */
 enum point_conversion_form_t {
+	init = 0, // Ensure initial values in D is zero
 	/** the point is encoded as z||x, where the octet z specifies
 	 * which solution of the quadratic equation y is  */
 	POINT_CONVERSION_COMPRESSED = 2,

@@ -341,7 +341,7 @@ auto SSL_set_tlsext_status_ocsp_resp()(SSL* ssl, void* arg, void* arglen) {
 	return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_OCSP_RESP,arglen, arg);
 }
 
-auto SSL_CTX_set_tlsext_servername_callback(SSL_CTX* ctx, ExternC!(void function()) cb) {
+auto SSL_CTX_set_tlsext_servername_callback()(SSL_CTX* ctx, ExternC!(void function()) cb) {
 	return SSL_CTX_callback_ctrl(ctx,SSL_CTRL_SET_TLSEXT_SERVERNAME_CB,cb);
 }
 
@@ -350,33 +350,33 @@ enum SSL_TLSEXT_ERR_ALERT_WARNING = 1;
 enum SSL_TLSEXT_ERR_ALERT_FATAL = 2;
 enum SSL_TLSEXT_ERR_NOACK = 3;
 
-auto SSL_CTX_set_tlsext_servername_arg(SSL_CTX* ctx, void* arg) {
+auto SSL_CTX_set_tlsext_servername_arg()(SSL_CTX* ctx, void* arg) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TLSEXT_SERVERNAME_ARG,0,arg);
 }
 
-auto SSL_CTX_get_tlsext_ticket_keys(SSL_CTX* ctx, c_long keylen, void* keys) {
+auto SSL_CTX_get_tlsext_ticket_keys()(SSL_CTX* ctx, c_long keylen, void* keys) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_TLSEXT_TICKET_KEYS,keylen,keys);
 }
-auto SSL_CTX_set_tlsext_ticket_keys(SSL_CTX* ctx, c_long keylen, void* keys) {
+auto SSL_CTX_set_tlsext_ticket_keys()(SSL_CTX* ctx, c_long keylen, void* keys) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TLSEXT_TICKET_KEYS,keylen,keys);
 }
 
-auto SSL_CTX_set_tlsext_status_cb(SSL_CTX* ctx, ExternC!(void function()) cb) {
+auto SSL_CTX_set_tlsext_status_cb()(SSL_CTX* ctx, ExternC!(void function()) cb) {
 	return SSL_CTX_callback_ctrl(ctx,SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB,cb);
 }
 
-auto SSL_CTX_set_tlsext_status_arg(SSL_CTX* ctx, void* arg) {
+auto SSL_CTX_set_tlsext_status_arg()(SSL_CTX* ctx, void* arg) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TLSEXT_STATUS_REQ_CB_ARG,0,arg);
 }
 
-auto SSL_set_tlsext_opaque_prf_input(SSL* s, void* src, c_long len) {
+auto SSL_set_tlsext_opaque_prf_input()(SSL* s, void* src, c_long len) {
 	return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT, len, src);
 }
 
-auto SSL_CTX_set_tlsext_opaque_prf_input_callback(SSL_CTX* ctx, ExternC!(void function()) cb) {
+auto SSL_CTX_set_tlsext_opaque_prf_input_callback()(SSL_CTX* ctx, ExternC!(void function()) cb) {
 	return SSL_CTX_callback_ctrl(ctx,SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB, cb);
 }
-auto SSL_CTX_set_tlsext_opaque_prf_input_callback_arg(SSL_CTX* ctx, void* arg) {
+auto SSL_CTX_set_tlsext_opaque_prf_input_callback_arg()(SSL_CTX* ctx, void* arg) {
 	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT_CB_ARG, 0, arg);
 }
 

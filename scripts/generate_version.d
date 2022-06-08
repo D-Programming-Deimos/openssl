@@ -13,7 +13,7 @@
  *
  * It is called directly as a `preGenerateCommand` (see dub.sdl).
  * To use it with another build system, pass the directory in which to write
- * the `version_.d` file as first and only argument. The directory
+ * the `version_.di` file as first and only argument. The directory
  * must exist, this script will not create it.
  */
 module generate_version;
@@ -42,14 +42,14 @@ void main(string[] args)
     {
         assert(args[1].isDir(),
                "OpenSSL version detection: Argument '" ~ args[1] ~ "' is not a directory");
-        target = args[1].buildPath("version_.d");
+        target = args[1].buildPath("version_.di");
     }
     else
     {
         assert(args.length == 1,
                "OpenSSL version detection expects only one argument, " ~
-               "a directory path where to write `version_.d`");
-        target = TARGET_DIR_PATH.buildPath("version_.d");
+               "a directory path where to write `version_.di`");
+        target = TARGET_DIR_PATH.buildPath("version_.di");
     }
 
     string opensslVersion;

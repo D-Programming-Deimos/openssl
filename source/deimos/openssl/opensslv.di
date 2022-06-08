@@ -122,7 +122,7 @@ enum OPENSSL_VERSION_PATCH   = OpenSSLVersion.patch;
 
 enum OPENSSL_VERSION_BUILD   = OpenSSLVersion.build;
 
-int OPENSSL_MAKE_VERSION(int major, int minor, int patch, int build)
+int OPENSSL_MAKE_VERSION()(int major, int minor, int patch, int build)
 {
     return (major << 28) | (minor << 20) | (patch << 12) | (build << 4) | 0xf;
 }
@@ -131,12 +131,12 @@ enum OPENSSL_VERSION_NUMBER =
     OPENSSL_MAKE_VERSION(OpenSSLVersion.major, OpenSSLVersion.minor,
                          OpenSSLVersion.patch, OpenSSLVersion.build);
 
-bool OPENSSL_VERSION_AT_LEAST(int major, int minor, int patch = 0, int build = 0)
+bool OPENSSL_VERSION_AT_LEAST()(int major, int minor, int patch = 0, int build = 0)
 {
     return OPENSSL_VERSION_NUMBER >= OPENSSL_MAKE_VERSION(major, minor, patch, build);
 }
 
-bool OPENSSL_VERSION_BEFORE(int major, int minor, int patch = 0, int build = 0)
+bool OPENSSL_VERSION_BEFORE()(int major, int minor, int patch = 0, int build = 0)
 {
     return OPENSSL_VERSION_NUMBER < OPENSSL_MAKE_VERSION(major, minor, patch, build);
 }

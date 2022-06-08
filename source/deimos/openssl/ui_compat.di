@@ -1,6 +1,8 @@
-/* crypto/camellia/camellia.h -*- mode:C; c-file-style: "eay" -*- */
+/* Written by Richard Levitte (richard@levitte.org) for the OpenSSL
+ * project 2001.
+ */
 /* ====================================================================
- * Copyright (c) 2006 The OpenSSL Project.  All rights reserved.
+ * Copyright (c) 2001 The OpenSSL Project.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,79 +49,27 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  *
+ * This product includes cryptographic software written by Eric Young
+ * (eay@cryptsoft.com).  This product includes software written by Tim
+ * Hudson (tjh@cryptsoft.com).
+ *
  */
 
-module deimos.openssl.camellia;
+module deimos.openssl.ui_compat;
 
 import deimos.openssl._d_util;
 
 public import deimos.openssl.opensslconf;
-
-version (OPENSSL_NO_CAMELLIA) {
-  static assert(false, "CAMELLIA is disabled.");
-}
-
-import core.stdc.config;
-
-enum CAMELLIA_ENCRYPT = 1;
-enum CAMELLIA_DECRYPT = 0;
-
-/* Because array size can't be a const in C, the following two are macros.
-   Both sizes are in bytes. */
+public import deimos.openssl.ui;
 
 extern (C):
 nothrow:
 
-/* This should be a hidden type, but EVP requires that the size be known */
+/* The following functions were previously part of the DES section,
+   and are provided here for backward compatibility reasons. */
 
-enum CAMELLIA_BLOCK_SIZE = 16;
-enum CAMELLIA_TABLE_BYTE_LEN = 272;
-enum CAMELLIA_TABLE_WORD_LEN = (CAMELLIA_TABLE_BYTE_LEN / 4);
+alias _ossl_old_des_read_pw_string des_read_pw_string;
+alias _ossl_old_des_read_pw des_read_pw;
 
-alias uint[CAMELLIA_TABLE_WORD_LEN] KEY_TABLE_TYPE; /* to match with WORD */
-
-struct camellia_key_st
-	{
-	union u_ {
-		double d;	/* ensures 64-bit align */
-		KEY_TABLE_TYPE rd_key;
-		}
-	u_ u;
-	int grand_rounds;
-	};
-alias camellia_key_st CAMELLIA_KEY;
-
-version(OPENSSL_FIPS) {
-int private_Camellia_set_key(const(ubyte)* userKey, const int bits,
-	CAMELLIA_KEY *key);
-}
-int Camellia_set_key(const(ubyte)* userKey, const int bits,
-	CAMELLIA_KEY* key);
-
-void Camellia_encrypt(const(ubyte)* in_, ubyte* out_,
-	const(CAMELLIA_KEY)* key);
-void Camellia_decrypt(const(ubyte)* in_, ubyte* out_,
-	const(CAMELLIA_KEY)* key);
-
-void Camellia_ecb_encrypt(const(ubyte)* in_, ubyte* out_,
-	const(CAMELLIA_KEY)* key, const int enc);
-void Camellia_cbc_encrypt(const(ubyte)* in_, ubyte* out_,
-	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte* ivec, const int enc);
-void Camellia_cfb128_encrypt(const(ubyte)* in_, ubyte* out_,
-	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte* ivec, int* num, const int enc);
-void Camellia_cfb1_encrypt(const(ubyte)* in_, ubyte* out_,
-	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte* ivec, int* num, const int enc);
-void Camellia_cfb8_encrypt(const(ubyte)* in_, ubyte* out_,
-	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte* ivec, int* num, const int enc);
-void Camellia_ofb128_encrypt(const(ubyte)* in_, ubyte* out_,
-	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte* ivec, int* num);
-void Camellia_ctr128_encrypt(const(ubyte)* in_, ubyte* out_,
-	size_t length, const(CAMELLIA_KEY)* key,
-	ubyte[CAMELLIA_BLOCK_SIZE] ivec,
-	ubyte[CAMELLIA_BLOCK_SIZE] ecount_buf,
-	uint* num);
+int _ossl_old_des_read_pw_string(char* buf,int length,const(char)* prompt,int verify);
+int _ossl_old_des_read_pw(char* buf,char* buff,int size,const(char)* prompt,int verify);
