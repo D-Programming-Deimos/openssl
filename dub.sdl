@@ -7,7 +7,7 @@ libs "ssl" "crypto" platform="posix"
 configuration "library-autodetect" {
 	targetType "sourceLibrary"
 	excludedSourceFiles "source/deimos/openssl/applink.d"
-	preGenerateCommands `${DUB} scripts/generate_version.d` platform="posix"
+	preGenerateCommands `$DC -run scripts/generate_version.d` platform="posix"
 	versions `DeimosOpenSSLAutoDetect`
 }
 
