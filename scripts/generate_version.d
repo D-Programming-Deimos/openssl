@@ -30,7 +30,7 @@ import std.string;
 import std.uni;
 
 // file full path is: $SOME_PATH/openssl/scripts/generate_version.d
-// We want: $SOME_PATH/openssl/deimos/openssl/
+// We want: $SOME_PATH/openssl/source/deimos/openssl/
 immutable TARGET_DIR_PATH = __FILE_FULL_PATH__
     .dirName.dirName.buildPath("source", "deimos", "openssl");
 
