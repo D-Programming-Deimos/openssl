@@ -1257,6 +1257,10 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
         int type, ENGINE* e, const(ubyte)* priv, size_t len);
     EVP_PKEY* EVP_PKEY_new_raw_public_key(
         int type, ENGINE* e, const(ubyte)* pub, size_t len);
+    int EVP_PKEY_get_raw_private_key(
+        const(EVP_PKEY)* pkey, ubyte* priv, size_t* len);
+    int EVP_PKEY_get_raw_public_key(
+        const(EVP_PKEY)* pkey, ubyte* pub, size_t* len);
 }
 
 void EVP_PKEY_CTX_set_data(EVP_PKEY_CTX* ctx, void* data);
