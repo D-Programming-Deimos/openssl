@@ -139,7 +139,7 @@ static if (OPENSSL_VERSION_AT_LEAST(3, 0, 0))
 }
 else
 {
-	auto EVP_PKEY_CTX_set_tls1_prf_md () (EVP_PKEY_CTX* ctx, const(EVP_MD)* md)
+	auto EVP_PKEY_CTX_set_tls1_prf_md () (EVP_PKEY_CTX* pctx, const(EVP_MD)* md)
 	{
 		return EVP_PKEY_CTX_ctrl(
 			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_TLS_MD, 0, md);
@@ -156,34 +156,34 @@ else
 		EVP_PKEY_CTX* pctx, const(ubyte)* seed, int seedlen)
 	{
 		return EVP_PKEY_CTX_ctrl(
-			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_TLS_SEED, seedlen, seed);
+			ctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_TLS_SEED, seedlen, seed);
 	}
 
-	auto EVP_PKEY_CTX_set_hkdf_md () (EVP_PKEY_CTX* ctx, const(EVP_MD)* md)
+	auto EVP_PKEY_CTX_set_hkdf_md () (EVP_PKEY_CTX* pctx, const(EVP_MD)* md)
 	{
 		return EVP_PKEY_CTX_ctrl(
-			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_MD, 0, md);
+			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_MD, 0, cast(void*) md);
 	}
 	auto EVP_PKEY_CTX_set1_hkdf_salt () (
-		EVP_PKEY_CTX* ctx, const(ubyte)* salt, int saltlen)
+		EVP_PKEY_CTX* pctx, const(ubyte)* salt, int saltlen)
 	{
 		return EVP_PKEY_CTX_ctrl(
-			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_SALT, saltlen, salt);
+			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_SALT, saltlen, cast(void*) salt);
 	}
 	auto EVP_PKEY_CTX_set1_hkdf_key () (
-		EVP_PKEY_CTX* ctx, const(ubyte)* key, int keylen)
+		EVP_PKEY_CTX* pctx, const(ubyte)* key, int keylen)
 	{
 		return EVP_PKEY_CTX_ctrl(
-			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_KEY, keylen, key);
+			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_KEY, keylen, cast(void*) key);
 	}
 	auto EVP_PKEY_CTX_add1_hkdf_info () (
-		EVP_PKEY_CTX* ctx, const(ubyte)* info, int infolen)
+		EVP_PKEY_CTX* pctx, const(ubyte)* info, int infolen)
 	{
 		return EVP_PKEY_CTX_ctrl(
-			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_INFO, infolen, info);
+			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_INFO, infolen, cast(void*) info);
 	}
 
-	auto EVP_PKEY_CTX_hkdf_mode () (EVP_PKEY_CTX* ctx, int mode)
+	auto EVP_PKEY_CTX_hkdf_mode () (EVP_PKEY_CTX* pctx, int mode)
 	{
 		return EVP_PKEY_CTX_ctrl(
 			pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_HKDF_MODE, mode, null);
@@ -192,42 +192,42 @@ else
 	static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
 	{
 		auto EVP_PKEY_CTX_set1_pbe_pass ()
-			(EVP_PKEY_CTX* ctx, const(char)* pass, int passlen)
+			(EVP_PKEY_CTX* pctx, const(char)* pass, int passlen)
 		{
 			return EVP_PKEY_CTX_ctrl(
 				pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_PASS, passlen, pass);
 		}
 
 		auto EVP_PKEY_CTX_set1_scrypt_salt ()
-			(EVP_PKEY_CTX* ctx, const(ubyte)* salt, int saltlen)
+			(EVP_PKEY_CTX* pctx, const(ubyte)* salt, int saltlen)
 		{
 			return EVP_PKEY_CTX_ctrl(
 				pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_SCRYPT_SALT, saltlen, salt);
 		}
 
 		auto EVP_PKEY_CTX_set_scrypt_N ()
-			(EVP_PKEY_CTX* ctx, ulong n)
+			(EVP_PKEY_CTX* pctx, ulong n)
 		{
 			return EVP_PKEY_CTX_ctrl_uint64(
 				pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_SCRYPT_N, n);
 		}
 
 		auto EVP_PKEY_CTX_set_scrypt_r ()
-			(EVP_PKEY_CTX* ctx, ulong n)
+			(EVP_PKEY_CTX* pctx, ulong n)
 		{
 			return EVP_PKEY_CTX_ctrl_uint64(
 				pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_SCRYPT_R, r);
 		}
 
 		auto EVP_PKEY_CTX_set_scrypt_p ()
-			(EVP_PKEY_CTX* ctx, ulong n)
+			(EVP_PKEY_CTX* pctx, ulong n)
 		{
 			return EVP_PKEY_CTX_ctrl_uint64(
 				pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_SCRYPT_P, p);
 		}
 
 		auto EVP_PKEY_CTX_set_scrypt_maxmem_bytes ()
-			(EVP_PKEY_CTX* ctx, ulong maxmem_bytes)
+			(EVP_PKEY_CTX* pctx, ulong maxmem_bytes)
 		{
 			return EVP_PKEY_CTX_ctrl_uint64(
 				pctx, -1, EVP_PKEY_OP_DERIVE, EVP_PKEY_CTRL_SCRYPT_MAXMEM_BYTES, maxmem_bytes);
