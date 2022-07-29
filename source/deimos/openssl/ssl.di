@@ -1556,11 +1556,23 @@ enum SSL_CB_HANDSHAKE_START = 0x10;
 enum SSL_CB_HANDSHAKE_DONE = 0x20;
 
 /* Is the SSL_connection established? */
-bool SSL_in_connect_init()(const(SSL)* a) { return SSL_in_init(a) && !SSL_is_server(a); }
-bool SSL_in_accept_init()(const(SSL)* a) { return SSL_in_init(a) && SSL_is_server(a); }
-int SSL_in_init(SSL *s);
-int SSL_in_before(SSL *s);
-int SSL_is_init_finished(SSL *s);
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0, 0))
+{
+    auto SSL_get_state()(SSL* a) { pragma(inline, true); return SSL_state(a); }
+    auto SSL_is_init_finished()(SSL* a) { pragma(inline, true); return (SSL_state(a) == SSL_ST_OK); }
+    auto SSL_in_init()(SSL* a) { pragma(inline, true); return (SSL_state(a)&SSL_ST_INIT); }
+    auto SSL_in_before()(SSL* a) { pragma(inline, true); return (SSL_state(a)&SSL_ST_BEFORE); }
+    auto SSL_in_connect_init()(SSL* a) { pragma(inline, true); return (SSL_state(a)&SSL_ST_CONNECT); }
+    auto SSL_in_accept_init()(SSL* a) { pragma(inline, true); return (SSL_state(a)&SSL_ST_ACCEPT); }
+}
+else
+{
+    bool SSL_in_connect_init()(const(SSL)* a) { return SSL_in_init(a) && !SSL_is_server(a); }
+    bool SSL_in_accept_init()(const(SSL)* a) { return SSL_in_init(a) && SSL_is_server(a); }
+    int SSL_in_init(SSL *s);
+    int SSL_in_before(const(SSL)* s);
+    int SSL_is_init_finished(const SSL *s);
+}
 
 /* The following 2 states are kept in ssl->rstate when reads fail,
  * you should not need these */
@@ -2204,6 +2216,12 @@ void SSL_set_info_callback(SSL* ssl,
 			   ExternC!(void function(const(SSL)* ssl,int type,int val)) cb);
 ExternC!(void function(const(SSL)* ssl,int type,int val)) SSL_get_info_callback(const(SSL)* ssl);
 OSSL_HANDSHAKE_STATE SSL_get_state(const SSL *ssl);
+
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0, 0))
+{
+    int SSL_state(const(SSL)* ssl);
+    void SSL_set_state(SSL* ssl, int state);
+}
 
 void SSL_set_verify_result(SSL* ssl,c_long v);
 c_long SSL_get_verify_result(const(SSL)* ssl);
