@@ -330,6 +330,11 @@ import deimos.openssl.x509v3;
 alias v3_ext_ctx X509V3_CTX;
 import deimos.openssl.conf;
 alias conf_st CONF;
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	struct ossl_init_settings_st;
+	alias ossl_init_settings_st OPENSSL_INIT_SETTINGS;
+}
 
 struct store_st;
 alias store_st STORE;

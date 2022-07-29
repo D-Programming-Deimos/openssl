@@ -912,8 +912,27 @@ alias EVP_seed_cfb = EVP_seed_cfb128;
 const(EVP_CIPHER)* EVP_seed_ofb();
 }
 
-void OPENSSL_add_all_algorithms_noconf();
-void OPENSSL_add_all_algorithms_conf();
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0))
+{
+    void OPENSSL_add_all_algorithms_noconf();
+    void OPENSSL_add_all_algorithms_conf();
+}
+else
+{
+    auto OPENSSL_add_all_algorithms_conf()()
+    {
+        pragma(inline, true);
+        return OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS
+            | OPENSSL_INIT_ADD_ALL_DIGESTS
+            | OPENSSL_INIT_LOAD_CONFIG, null);
+    }
+    auto OPENSSL_add_all_algorithms_noconf()()
+    {
+        pragma(inline, true);
+        return OPENSSL_init_crypto(OPENSSL_INIT_ADD_ALL_CIPHERS
+                        | OPENSSL_INIT_ADD_ALL_DIGESTS, null);
+    }
+}
 
 version (OPENSSL_LOAD_CONF) {
 alias OpenSSL_add_all_algorithms = OPENSSL_add_all_algorithms_conf;
