@@ -691,64 +691,64 @@ else
 	private alias SSLOptionType = c_ulong;
 
 	SSLOptionType SSL_CTX_set_options()(SSL_CTX* ctx, SSLOptionType op) {
-		return SSL_CTX_ctrl(ctx, SSL_CTRL_OPTIONS, op, null);
+		pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_OPTIONS, op, null);
 	}
 	SSLOptionType SSL_CTX_clear_options()(SSL_CTX* ctx, SSLOptionType op) {
-		return SSL_CTX_ctrl(ctx, SSL_CTRL_CLEAR_OPTIONS, op, null);
+		pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_CLEAR_OPTIONS, op, null);
 	}
 	SSLOptionType SSL_CTX_get_options()(SSL_CTX* ctx) {
-		return SSL_CTX_ctrl(ctx, SSL_CTRL_OPTIONS, 0, null);
+		pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_OPTIONS, 0, null);
 	}
 	SSLOptionType SSL_set_options()(SSL* ssl, SSLOptionType op) {
-		return SSL_ctrl(ssl, SSL_CTRL_OPTIONS, op, null);
+		pragma(inline, true); return SSL_ctrl(ssl, SSL_CTRL_OPTIONS, op, null);
 	}
 	SSLOptionType SSL_clear_options()(SSL* ssl, SSLOptionType op) {
-		return SSL_ctrl(ssl, SSL_CTRL_CLEAR_OPTIONS, op, null);
+		pragma(inline, true); return SSL_ctrl(ssl, SSL_CTRL_CLEAR_OPTIONS, op, null);
 	}
 	SSLOptionType SSL_get_options()(SSL* ssl) {
-		return SSL_ctrl(ssl, SSL_CTRL_OPTIONS, 0, null);
+		pragma(inline, true); return SSL_ctrl(ssl, SSL_CTRL_OPTIONS, 0, null);
 	}
 }
 
 auto SSL_CTX_set_mode()(SSL_CTX* ctx, SSLOptionType op) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,op,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,op,null);
 }
 auto SSL_CTX_clear_mode()(SSL_CTX* ctx, SSLOptionType op) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_MODE,op,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_MODE,op,null);
 }
 auto SSL_CTX_get_mode()(SSL_CTX* ctx) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,0,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,0,null);
 }
 auto SSL_clear_mode()(SSL* ssl, SSLOptionType op) {
-	return SSL_ctrl(ssl,SSL_CTRL_CLEAR_MODE,op,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_CLEAR_MODE,op,null);
 }
 auto SSL_set_mode()(SSL* ssl, SSLOptionType op) {
-	return SSL_ctrl(ssl,SSL_CTRL_MODE,op,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MODE,op,null);
 }
 auto SSL_get_mode()(SSL* ssl) {
-	return SSL_ctrl(ssl,SSL_CTRL_MODE,0,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MODE,0,null);
 }
 auto SSL_set_mtu()(SSL* ssl, SSLOptionType mtu) {
-	return SSL_ctrl(ssl,SSL_CTRL_MTU,mtu,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MTU,mtu,null);
 }
 
 auto SSL_get_secure_renegotiation_support()(SSL* ssl) {
-	return SSL_ctrl(ssl,SSL_CTRL_GET_RI_SUPPORT,0,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_RI_SUPPORT,0,null);
 }
 
 version(OPENSSL_NO_HEARTBEATS) {} else {
 	auto SSL_get_secure_renegotiation_support()(SSL* ssl) {
-        return SSL_ctrl(ssl,SSL_CTRL_TLS_EXT_SEND_HEARTBEAT,0,null);
+        pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_TLS_EXT_SEND_HEARTBEAT,0,null);
 	}
 }
 
 void SSL_CTX_set_msg_callback(SSL_CTX* ctx, ExternC!(void function(int write_p, int version_, int content_type, const(void)* buf, size_t len, SSL* ssl, void* arg)) cb);
 void SSL_set_msg_callback(SSL* ssl, ExternC!(void function(int write_p, int version_, int content_type, const(void)* buf, size_t len, SSL* ssl, void* arg)) cb);
 auto SSL_CTX_set_msg_callback_arg()(SSL_CTX* ctx, void* arg) {
-    return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MSG_CALLBACK_ARG, 0, arg);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MSG_CALLBACK_ARG, 0, arg);
 }
 auto SSL_CTX_set_msg_callback_arg()(SSL* ssl, void* arg) {
-    return SSL_CTX_ctrl(ssl, SSL_CTRL_SET_MSG_CALLBACK_ARG, 0, arg);
+    pragma(inline, true); return SSL_CTX_ctrl(ssl, SSL_CTRL_SET_MSG_CALLBACK_ARG, 0, arg);
 }
 
 version(OPENSSL_NO_SRP) {} else {
@@ -1062,40 +1062,40 @@ enum SSL_SESS_CACHE_NO_INTERNAL = (SSL_SESS_CACHE_NO_INTERNAL_LOOKUP|SSL_SESS_CA
 
 LHASH_OF!(SSL_SESSION) *SSL_CTX_sessions(SSL_CTX* ctx);
 auto SSL_CTX_sess_number()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_NUMBER,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_NUMBER,0,null);
 }
 auto SSL_CTX_sess_connect()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CONNECT,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CONNECT,0,null);
 }
 auto SSL_CTX_sess_connect_good()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CONNECT_GOOD,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CONNECT_GOOD,0,null);
 }
 auto SSL_CTX_sess_connect_renegotiate()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CONNECT_RENEGOTIATE,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CONNECT_RENEGOTIATE,0,null);
 }
 auto SSL_CTX_sess_accept()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_ACCEPT,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_ACCEPT,0,null);
 }
 auto SSL_CTX_sess_accept_renegotiate()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_ACCEPT_RENEGOTIATE,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_ACCEPT_RENEGOTIATE,0,null);
 }
 auto SSL_CTX_sess_accept_good()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_ACCEPT_GOOD,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_ACCEPT_GOOD,0,null);
 }
 auto SSL_CTX_sess_hits()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_HIT,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_HIT,0,null);
 }
 auto SSL_CTX_sess_cb_hits()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CB_HIT,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CB_HIT,0,null);
 }
 auto SSL_CTX_sess_misses()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_MISSES,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_MISSES,0,null);
 }
 auto SSL_CTX_sess_timeouts()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_TIMEOUTS,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_TIMEOUTS,0,null);
 }
 auto SSL_CTX_sess_cache_full()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CACHE_FULL,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SESS_CACHE_FULL,0,null);
 }
 
 void SSL_CTX_sess_set_new_cb(SSL_CTX* ctx, ExternC!(int function(ssl_st* ssl,SSL_SESSION* sess)) new_session_cb);
@@ -1595,16 +1595,16 @@ auto SSLeay_add_ssl_algorithms()() { return SSL_library_init(); }
 //#endif
 /* More backward compatibility */
 auto SSL_get_cipher()(const(SSL)* s) {
-    return SSL_CIPHER_get_name(SSL_get_current_cipher(s));
+    pragma(inline, true); return SSL_CIPHER_get_name(SSL_get_current_cipher(s));
 }
 auto SSL_get_cipher_bits()(const(SSL)* s, int np) {
-    return SSL_CIPHER_get_bits(SSL_get_current_cipher(s),np);
+    pragma(inline, true); return SSL_CIPHER_get_bits(SSL_get_current_cipher(s),np);
 }
 auto SSL_get_cipher_version()(const(SSL)* s) {
-    return SSL_CIPHER_get_version(SSL_get_current_cipher(s));
+    pragma(inline, true); return SSL_CIPHER_get_version(SSL_get_current_cipher(s));
 }
 auto SSL_get_cipher_name()(const(SSL)* s) {
-    return SSL_CIPHER_get_name(SSL_get_current_cipher(s));
+    pragma(inline, true); return SSL_CIPHER_get_name(SSL_get_current_cipher(s));
 }
 alias SSL_SESSION_get_time SSL_get_time;
 alias SSL_SESSION_set_time SSL_set_time;
@@ -1612,10 +1612,10 @@ alias SSL_SESSION_get_timeout SSL_get_timeout;
 alias SSL_SESSION_set_timeout SSL_set_timeout;
 
 auto d2i_SSL_SESSION_bio()(BIO* bp,SSL_SESSION** s_id) {
-    return ASN1_d2i_bio_of!SSL_SESSION(&SSL_SESSION_new,&d2i_SSL_SESSION,bp,s_id);
+    pragma(inline, true); return ASN1_d2i_bio_of!SSL_SESSION(&SSL_SESSION_new,&d2i_SSL_SESSION,bp,s_id);
 }
 auto i2d_SSL_SESSION_bio()(BIO* bp,SSL_SESSION** s_id) {
-    return ASN1_i2d_bio_of!SSL_SESSION(&i2d_SSL_SESSION,bp,s_id);
+    pragma(inline, true); return ASN1_i2d_bio_of!SSL_SESSION(&i2d_SSL_SESSION,bp,s_id);
 }
 
 mixin(DECLARE_PEM_rw!("SSL_SESSION", "SSL_SESSION")());
@@ -1764,65 +1764,65 @@ enum SSL_CTRL_GET_EXTRA_CHAIN_CERTS = 82;
 enum SSL_CTRL_CLEAR_EXTRA_CHAIN_CERTS = 83;
 
 auto DTLSv1_get_timeout()(SSL* ssl, void* arg) {
-    return SSL_ctrl(ssl,DTLS_CTRL_GET_TIMEOUT,0,arg);
+    pragma(inline, true); return SSL_ctrl(ssl,DTLS_CTRL_GET_TIMEOUT,0,arg);
 }
 auto DTLSv1_handle_timeout()(SSL* ssl) {
-    return SSL_ctrl(ssl,DTLS_CTRL_HANDLE_TIMEOUT,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,DTLS_CTRL_HANDLE_TIMEOUT,0,null);
 }
 auto DTLSv1_listen()(SSL* ssl, void* peer) {
-    return SSL_ctrl(ssl,DTLS_CTRL_LISTEN,0,peer);
+    pragma(inline, true); return SSL_ctrl(ssl,DTLS_CTRL_LISTEN,0,peer);
 }
 
 auto SSL_session_reused()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_GET_SESSION_REUSED,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_SESSION_REUSED,0,null);
 }
 auto SSL_session_reused()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_GET_SESSION_REUSED,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_SESSION_REUSED,0,null);
 }
 auto SSL_num_renegotiations()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_GET_NUM_RENEGOTIATIONS,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_NUM_RENEGOTIATIONS,0,null);
 }
 auto SSL_clear_num_renegotiations()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_CLEAR_NUM_RENEGOTIATIONS,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_CLEAR_NUM_RENEGOTIATIONS,0,null);
 }
 auto SSL_total_renegotiations()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_GET_TOTAL_RENEGOTIATIONS,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_TOTAL_RENEGOTIATIONS,0,null);
 }
 
 auto SSL_CTX_need_tmp_RSA()(SSL_CTX* ctx) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_NEED_TMP_RSA,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_NEED_TMP_RSA,0,null);
 }
 auto SSL_CTX_set_tmp_rsa()(SSL_CTX* ctx, void* rsa) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_RSA,0,rsa);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_RSA,0,rsa);
 }
 auto SSL_CTX_set_tmp_dh()(SSL_CTX* ctx, void* dh) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_DH,0,dh);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_DH,0,dh);
 }
 auto SSL_CTX_set_tmp_ecdh()(SSL_CTX* ctx, void* ecdh) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
 }
 
 auto SSL_need_tmp_RSA()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_NEED_TMP_RSA,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_NEED_TMP_RSA,0,null);
 }
 auto SSL_set_tmp_rsa()(SSL* ssl, void* rsa) {
-    return SSL_ctrl(ssl,SSL_CTRL_SET_TMP_RSA,0,rsa);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TMP_RSA,0,rsa);
 }
 auto SSL_set_tmp_dh()(SSL* ssl, void* dh) {
-    return SSL_ctrl(ssl,SSL_CTRL_SET_TMP_DH,0,dh);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TMP_DH,0,dh);
 }
 auto SSL_set_tmp_ecdh()(SSL* ssl, void* ecdh) {
-    return SSL_ctrl(ssl,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TMP_ECDH,0,ecdh);
 }
 
 auto SSL_CTX_add_extra_chain_cert()(SSL_CTX* ctx, void* x509) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,x509);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_EXTRA_CHAIN_CERT,0,x509);
 }
 auto SSL_CTX_get_extra_chain_certs()(SSL_CTX* ctx, void* x509) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_EXTRA_CHAIN_CERTS,0,px509);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_EXTRA_CHAIN_CERTS,0,px509);
 }
 auto SSL_CTX_clear_extra_chain_certs()(SSL_CTX* ctx, void* x509) {
-    return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_EXTRA_CHAIN_CERTS,0,null);
+    pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_EXTRA_CHAIN_CERTS,0,null);
 }
 
 static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
@@ -1831,16 +1831,16 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 	enum SSL_CTRL_SET_MAX_PROTO_VERSION = 124;
 
 	auto SSL_CTX_set_min_proto_version()(SSL_CTX* ctx, int version_) {
-		return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MIN_PROTO_VERSION, version_, null);
+		pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MIN_PROTO_VERSION, version_, null);
 	}
 	auto SSL_CTX_set_max_proto_version()(SSL_CTX* ctx, int version_) {
-		return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MAX_PROTO_VERSION, version_, null);
+		pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_SET_MAX_PROTO_VERSION, version_, null);
 	}
 	auto SSL_set_min_proto_version()(SSL* s, int version_) {
-		return SSL_ctrl(s, SSL_CTRL_SET_MIN_PROTO_VERSION, version_, null);
+		pragma(inline, true); return SSL_ctrl(s, SSL_CTRL_SET_MIN_PROTO_VERSION, version_, null);
 	}
 	auto SSL_set_max_proto_version()(SSL* s, int version_) {
-		return SSL_ctrl(s, SSL_CTRL_SET_MAX_PROTO_VERSION, version_, null);
+		pragma(inline, true); return SSL_ctrl(s, SSL_CTRL_SET_MAX_PROTO_VERSION, version_, null);
 	}
 
 	static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
@@ -1849,16 +1849,16 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 		enum SSL_CTRL_GET_MAX_PROTO_VERSION = 131;
 
 		auto SSL_CTX_get_min_proto_version()(SSL_CTX* ctx) {
-			return SSL_CTX_ctrl(ctx, SSL_CTRL_GET_MIN_PROTO_VERSION, 0, null);
+			pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_GET_MIN_PROTO_VERSION, 0, null);
 		}
 		auto SSL_CTX_get_max_proto_version()(SSL_CTX* ctx) {
-			return SSL_CTX_ctrl(ctx, SSL_CTRL_GET_MAX_PROTO_VERSION, 0, null);
+			pragma(inline, true); return SSL_CTX_ctrl(ctx, SSL_CTRL_GET_MAX_PROTO_VERSION, 0, null);
 		}
 		auto SSL_get_min_proto_version()(SSL* s) {
-			return SSL_ctrl(s, SSL_CTRL_GET_MIN_PROTO_VERSION, 0, null);
+			pragma(inline, true); return SSL_ctrl(s, SSL_CTRL_GET_MIN_PROTO_VERSION, 0, null);
 		}
 		auto SSL_get_max_proto_version()(SSL* s) {
-			return SSL_ctrl(s, SSL_CTRL_GET_MAX_PROTO_VERSION, 0, null);
+			pragma(inline, true); return SSL_ctrl(s, SSL_CTRL_GET_MAX_PROTO_VERSION, 0, null);
 		}
 	}
 }
@@ -2214,19 +2214,19 @@ else
 	auto SSL_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
 		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
 	{
-		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL, l, p, newf, dupf, freef);
+		pragma(inline, true); return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL, l, p, newf, dupf, freef);
 	}
 
 	auto SSL_SESSION_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
 		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
 	{
-		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL_SESSION, l, p, newf, dupf, freef);
+		pragma(inline, true); return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL_SESSION, l, p, newf, dupf, freef);
 	}
 
 	auto SSL_CTX_get_ex_new_index () (c_long l, void* p, CRYPTO_EX_new* newf,
 		CRYPTO_EX_dup* dupf, CRYPTO_EX_free* freef)
 	{
-		return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL_CTX, l, p, newf, dupf, freef);
+		pragma(inline, true); return CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL_CTX, l, p, newf, dupf, freef);
 	}
 }
 
@@ -2239,44 +2239,44 @@ void* SSL_CTX_get_ex_data(const(SSL_CTX)* ssl,int idx);
 int SSL_get_ex_data_X509_STORE_CTX_idx();
 
 auto SSL_CTX_sess_set_cache_size()(SSL_CTX* ctx, c_long t) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_SESS_CACHE_SIZE,t,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_SESS_CACHE_SIZE,t,null);
 }
 auto SSL_CTX_sess_get_cache_size()(SSL_CTX* ctx) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_SESS_CACHE_SIZE,0,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_SESS_CACHE_SIZE,0,null);
 }
 auto SSL_CTX_set_session_cache_mode()(SSL_CTX* ctx, c_long m) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_SESS_CACHE_MODE,m,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_SESS_CACHE_MODE,m,null);
 }
 auto SSL_CTX_get_session_cache_mode()(SSL_CTX* ctx) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_SESS_CACHE_MODE,0,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_SESS_CACHE_MODE,0,null);
 }
 
 alias SSL_CTX_get_read_ahead SSL_CTX_get_default_read_ahead;
 alias SSL_CTX_set_read_ahead SSL_CTX_set_default_read_ahead;
 auto SSL_CTX_get_read_ahead()(SSL_CTX* ctx) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_READ_AHEAD,0,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_READ_AHEAD,0,null);
 }
 auto SSL_CTX_set_read_ahead()(SSL_CTX* ctx, c_long m) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_READ_AHEAD,m,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_READ_AHEAD,m,null);
 }
 auto SSL_CTX_get_max_cert_list()(SSL_CTX* ctx) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_MAX_CERT_LIST,0,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_GET_MAX_CERT_LIST,0,null);
 }
 auto SSL_CTX_set_max_cert_list()(SSL_CTX* ctx, c_long m) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_CERT_LIST,m,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_CERT_LIST,m,null);
 }
 auto SSL_get_max_cert_list()(SSL* ssl) {
-	SSL_ctrl(ssl,SSL_CTRL_GET_MAX_CERT_LIST,0,null);
+	pragma(inline, true); SSL_ctrl(ssl,SSL_CTRL_GET_MAX_CERT_LIST,0,null);
 }
 auto SSL_set_max_cert_list()(SSL* ssl,c_long m) {
-	SSL_ctrl(ssl,SSL_CTRL_SET_MAX_CERT_LIST,m,null);
+	pragma(inline, true); SSL_ctrl(ssl,SSL_CTRL_SET_MAX_CERT_LIST,m,null);
 }
 
 auto SSL_CTX_set_max_send_fragment()(SSL_CTX* ctx, c_long m) {
-	return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,null);
 }
 auto SSL_set_max_send_fragment()(SSL* ssl,m) {
-	SSL_ctrl(ssl,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,null);
+	pragma(inline, true); SSL_ctrl(ssl,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,null);
 }
 
      /* NB: the keylength is only applicable when is_export is true */

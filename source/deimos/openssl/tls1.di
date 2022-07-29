@@ -305,7 +305,7 @@ int SSL_export_keying_material(SSL *s, ubyte* out_, size_t olen,
 
 /// https://www.openssl.org/docs/man1.1.1/man3/SSL_set_tlsext_host_name.html
 auto SSL_set_tlsext_host_name()(SSL* s, const(char)* name) {
-	return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_HOSTNAME,TLSEXT_NAMETYPE_host_name, cast(void*)name);
+	pragma(inline, true); return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_HOSTNAME,TLSEXT_NAMETYPE_host_name, cast(void*)name);
 }
 
 auto SSL_set_tlsext_debug_callback()(SSL* ssl, ExternC!(void function()) cb) {
@@ -313,35 +313,35 @@ auto SSL_set_tlsext_debug_callback()(SSL* ssl, ExternC!(void function()) cb) {
 }
 
 auto SSL_set_tlsext_debug_arg()(SSL* ssl, void* arg) {
-	return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_DEBUG_ARG,0, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_DEBUG_ARG,0, arg);
 }
 
 auto SSL_set_tlsext_status_type()(SSL* ssl, type) {
-	return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_TYPE,type, null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_TYPE,type, null);
 }
 
 auto SSL_get_tlsext_status_exts()(SSL* ssl, void* arg) {
-	return SSL_ctrl(ssl,SSL_CTRL_GET_TLSEXT_STATUS_REQ_EXTS,0, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_TLSEXT_STATUS_REQ_EXTS,0, arg);
 }
 
 auto SSL_set_tlsext_status_exts()(SSL* ssl, void* arg) {
-	return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_EXTS,0, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_EXTS,0, arg);
 }
 
 auto SSL_get_tlsext_status_ids()(SSL* ssl, void* arg) {
-	return SSL_ctrl(ssl,SSL_CTRL_GET_TLSEXT_STATUS_REQ_IDS,0, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_TLSEXT_STATUS_REQ_IDS,0, arg);
 }
 
 auto SSL_set_tlsext_status_ids()(SSL* ssl, void* arg) {
-	return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_IDS,0, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_IDS,0, arg);
 }
 
 auto SSL_get_tlsext_status_ocsp_resp()(SSL* ssl, void* arg) {
-	return SSL_ctrl(ssl,SSL_CTRL_GET_TLSEXT_STATUS_REQ_OCSP_RESP,0, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_TLSEXT_STATUS_REQ_OCSP_RESP,0, arg);
 }
 
 auto SSL_set_tlsext_status_ocsp_resp()(SSL* ssl, void* arg, void* arglen) {
-	return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_OCSP_RESP,arglen, arg);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TLSEXT_STATUS_REQ_OCSP_RESP,arglen, arg);
 }
 
 auto SSL_CTX_set_tlsext_servername_callback()(SSL_CTX* ctx, ExternC!(void function()) cb) {
@@ -373,7 +373,7 @@ auto SSL_CTX_set_tlsext_status_arg()(SSL_CTX* ctx, void* arg) {
 }
 
 auto SSL_set_tlsext_opaque_prf_input()(SSL* s, void* src, c_long len) {
-	return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT, len, src);
+	pragma(inline, true); return SSL_ctrl(s,SSL_CTRL_SET_TLSEXT_OPAQUE_PRF_INPUT, len, src);
 }
 
 auto SSL_CTX_set_tlsext_opaque_prf_input_callback()(SSL_CTX* ctx, ExternC!(void function()) cb) {
@@ -389,10 +389,10 @@ enum SSL_TLSEXT_HB_DONT_SEND_REQUESTS = 0x02;
 enum SSL_TLSEXT_HB_DONT_RECV_REQUESTS = 0x04;
 
 auto SSL_get_tlsext_heartbeat_pending()(SSL* ssl) {
-    return SSL_ctrl(ssl,SSL_CTRL_GET_TLS_EXT_HEARTBEAT_PENDING,0,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_GET_TLS_EXT_HEARTBEAT_PENDING,0,null);
 }
 auto SSL_set_tlsext_heartbeat_no_requests()(SSL* ssl, c_long arg) {
-    return SSL_ctrl(ssl,SSL_CTRL_SET_TLS_EXT_HEARTBEAT_NO_REQUESTS,arg,null);
+    pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_SET_TLS_EXT_HEARTBEAT_NO_REQUESTS,arg,null);
 }
 }
 
