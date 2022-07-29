@@ -59,6 +59,7 @@
 module deimos.openssl.buffer;
 
 import deimos.openssl._d_util;
+import deimos.openssl.opensslv;
 
 public import deimos.openssl.types;
 
@@ -69,6 +70,22 @@ import core.stdc.config;
 
 // Without this, the frontend is unaware of types defined in `static if`.
 private enum avoidDMDIssue16666 = __traits(allMembers, deimos.openssl.types);
+
+struct buf_mem_st
+{
+    size_t length;              /* current number of bytes */
+    char *data;
+    size_t max;                 /* size of buffer */
+    static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+    {
+        c_ulong flags;
+    }
+}
+
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+    enum BUF_MEM_FLAG_SECURE = 0x01;
+}
 
 BUF_MEM* BUF_MEM_new();
 void	BUF_MEM_free(BUF_MEM* a);
