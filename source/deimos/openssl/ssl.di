@@ -2099,6 +2099,10 @@ else
     const(SSL_METHOD)* TLS_method();		/* handshake SSLv3 or later, negotiate to highest possible security */
     const(SSL_METHOD)* TLS_server_method();		/* see above */
     const(SSL_METHOD)* TLS_client_method();		/* see above */
+
+    alias SSLv23_method           = TLS_method;
+    alias SSLv23_server_method    = TLS_server_method;
+    alias SSLv23_client_method    = TLS_client_method;
 }
 
 const(SSL_METHOD)* TLSv1_method();		/* TLSv1.0 */
