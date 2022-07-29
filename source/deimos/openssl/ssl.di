@@ -2056,6 +2056,12 @@ void SSL_set_hostflags(SSL* s, uint flags);
 int SSL_CTX_set1_param(SSL_CTX* ctx, X509_VERIFY_PARAM* vpm);
 int SSL_set1_param(SSL* ssl, X509_VERIFY_PARAM* vpm);
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 0, 2))
+{
+    X509_VERIFY_PARAM* SSL_CTX_get0_param(SSL_CTX* ctx);
+    X509_VERIFY_PARAM* SSL_get0_param(SSL* ssl);
+}
+
 version(OPENSSL_NO_SRP) {} else {
 int SSL_CTX_set_srp_username(SSL_CTX *ctx,char *name);
 int SSL_CTX_set_srp_password(SSL_CTX *ctx,char *password);
