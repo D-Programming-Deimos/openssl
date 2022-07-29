@@ -1909,6 +1909,11 @@ BIO* 	SSL_get_rbio(const(SSL)* s);
 BIO* 	SSL_get_wbio(const(SSL)* s);
 }
 int	SSL_set_cipher_list(SSL* s, const(char)* str);
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1, 0))
+{
+    int	SSL_CTX_set_ciphersuites(SSL_CTX* ctx, const(char)* str);
+    int	SSL_set_ciphersuites(SSL* s, const(char)* str);
+}
 void	SSL_set_read_ahead(SSL* s, int yes);
 int	SSL_get_verify_mode(const(SSL)* s);
 int	SSL_get_verify_depth(const(SSL)* s);
