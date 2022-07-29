@@ -564,7 +564,7 @@ auto BIO_set_ssl_renegotiate_timeout()(BIO* b,c_long seconds) {
 /* defined in evp.h */
 /* auto BIO_set_md()(BIO* b,md)	{ return BIO_ctrl(b,BIO_C_SET_MD,1,(char*)md); } */
 
-auto BIO_get_mem_data()(BIO* b,BUF_MEM** pp)	{ return BIO_ctrl(b,BIO_CTRL_INFO,0,pp); }
+auto BIO_get_mem_data()(BIO* b,ubyte** pp)	{ return BIO_ctrl(b,BIO_CTRL_INFO,0,pp); }
 auto BIO_set_mem_buf()(BIO* b,BUF_MEM* bm,c_long c)	{ return BIO_ctrl(b,BIO_C_SET_BUF_MEM,c,bm); }
 auto BIO_get_mem_ptr()(BIO* b,BUF_MEM** pp)	{ return BIO_ctrl(b,BIO_C_GET_BUF_MEM_PTR,0,pp); }
 auto BIO_set_mem_eof_return()(BIO* b,c_long v) 				{ return BIO_ctrl(b,BIO_C_SET_BUF_MEM_EOF_RETURN,v,null); }
