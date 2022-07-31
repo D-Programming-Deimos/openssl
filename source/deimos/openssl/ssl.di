@@ -169,6 +169,9 @@ public import deimos.openssl.x509;
 }
 public import deimos.openssl.crypto;
 public import deimos.openssl.buffer;
+
+// Without this, the frontend is unaware of types defined in `static if`.
+private enum avoidDMDIssue16666 = __traits(allMembers, deimos.openssl.crypto);
 }
 public import deimos.openssl.lhash; // Needed for DECLARE_LHASH_OF.
 public import deimos.openssl.pem;
