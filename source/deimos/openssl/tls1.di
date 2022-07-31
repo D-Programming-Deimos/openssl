@@ -160,20 +160,29 @@ nothrow:
 
 enum TLS1_ALLOW_EXPERIMENTAL_CIPHERSUITES = 0;
 
-static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
-    enum TLS1_3_VERSION = 0x0304;
+static if (OPENSSL_VERSION_BEFORE(3, 0, 0))
+{
+    static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
+        enum TLS1_3_VERSION = 0x0304;
 
-enum TLS1_2_VERSION = 0x0303;
-enum TLS1_2_VERSION_MAJOR = 0x03;
-enum TLS1_2_VERSION_MINOR = 0x03;
+    enum TLS1_2_VERSION = 0x0303;
+    enum TLS1_1_VERSION = 0x0302;
+    enum TLS1_VERSION = 0x0301;
+}
+else
+    public import deimos.openssl.prov_ssl;
 
-enum TLS1_1_VERSION = 0x0302;
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+    enum TLS_ANY_VERSION                 = 0x10000;
+
+enum TLS1_VERSION_MAJOR = 0x03;
+enum TLS1_VERSION_MINOR = 0x01;
+
 enum TLS1_1_VERSION_MAJOR = 0x03;
 enum TLS1_1_VERSION_MINOR = 0x02;
 
-enum TLS1_VERSION = 0x0301;
-enum TLS1_VERSION_MAJOR = 0x03;
-enum TLS1_VERSION_MINOR = 0x01;
+enum TLS1_2_VERSION_MAJOR = 0x03;
+enum TLS1_2_VERSION_MINOR = 0x03;
 
 auto TLS1_get_version()(const(SSL)* s) {
     return (s.version_ >> 8) == TLS1_VERSION_MAJOR ? s.version_ : 0;
