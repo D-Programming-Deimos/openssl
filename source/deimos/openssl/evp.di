@@ -965,8 +965,16 @@ int		EVP_PKEY_encrypt_old(ubyte* enc_key,
 			const(ubyte)* key,int key_len,
 			EVP_PKEY* pub_key);
 int		EVP_PKEY_type(int type);
-int		EVP_PKEY_id(const(EVP_PKEY)* pkey);
-int		EVP_PKEY_base_id(const(EVP_PKEY)* pkey);
+static if (OPENSSL_VERSION_BEFORE(3, 0, 0)) {
+	int		EVP_PKEY_id(const(EVP_PKEY)* pkey);
+	int		EVP_PKEY_base_id(const(EVP_PKEY)* pkey);
+} else {
+	int		EVP_PKEY_get_id(const(EVP_PKEY)* pkey);
+	alias 	EVP_PKEY_id = EVP_PKEY_get_id;
+	
+	int		EVP_PKEY_get_base_id(const(EVP_PKEY)* pkey);
+	alias 	EVP_PKEY_base_id = EVP_PKEY_get_base_id;
+}
 int		EVP_PKEY_bits(EVP_PKEY* pkey);
 int		EVP_PKEY_size(EVP_PKEY* pkey);
 int 		EVP_PKEY_set_type(EVP_PKEY* pkey,int type);
