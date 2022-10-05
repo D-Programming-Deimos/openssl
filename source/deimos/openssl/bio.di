@@ -477,58 +477,58 @@ auto BIO_set_app_data()(BIO* s, void* arg) { return BIO_set_ex_data(s,0,arg); }
 auto BIO_get_app_data()(BIO* s) { return BIO_get_ex_data(s,0); }
 
 /* BIO_s_connect() and BIO_s_socks4a_connect() */
-auto BIO_set_conn_hostname()(BIO* b, char* name) { return BIO_ctrl(b,BIO_C_SET_CONNECT,0,name); }
-auto BIO_set_conn_port()(BIO* b,char* port) { return BIO_ctrl(b,BIO_C_SET_CONNECT,1,port); }
-auto BIO_set_conn_ip()(BIO* b,char* ip) { return BIO_ctrl(b,BIO_C_SET_CONNECT,2,ip); }
-auto BIO_set_conn_int_port()(BIO* b,char* port) { return BIO_ctrl(b,BIO_C_SET_CONNECT,3,port); }
+auto BIO_set_conn_hostname()(BIO* b, char* name) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_CONNECT,0,name); }
+auto BIO_set_conn_port()(BIO* b,char* port) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_CONNECT,1,port); }
+auto BIO_set_conn_ip()(BIO* b,char* ip) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_CONNECT,2,ip); }
+auto BIO_set_conn_int_port()(BIO* b,char* port) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_CONNECT,3,port); }
 auto BIO_get_conn_hostname()(BIO* b) { return { return BIO_ptr_ctrl(b,BIO_C_GET_CONNECT,0); }; }
 auto BIO_get_conn_port()(BIO* b) { return { return BIO_ptr_ctrl(b,BIO_C_GET_CONNECT,1); }; }
 auto BIO_get_conn_ip()(BIO* b) { return { return BIO_ptr_ctrl(b,BIO_C_GET_CONNECT,2); }; }
 auto BIO_get_conn_int_port()(BIO* b) { return { return BIO_int_ctrl(b,BIO_C_GET_CONNECT,3,0); }; }
 
 
-auto BIO_set_nbio()(BIO* b, int n)	{ return BIO_ctrl(b,BIO_C_SET_NBIO,(n),null); }
+auto BIO_set_nbio()(BIO* b, int n)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_NBIO,(n),null); }
 
 /* BIO_s_accept_socket() */
-auto BIO_set_accept_port()(BIO* b,char* name) { return BIO_ctrl(b,BIO_C_SET_ACCEPT,0,name); }
+auto BIO_set_accept_port()(BIO* b,char* name) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_ACCEPT,0,name); }
 auto BIO_get_accept_port()(BIO* b)	{ return BIO_ptr_ctrl(b,BIO_C_GET_ACCEPT,0); }
-/* auto BIO_set_nbio()(BIO* b,n)	{ return BIO_ctrl(b,BIO_C_SET_NBIO,(n),null); } */
-auto BIO_set_nbio_accept()(BIO* b,int n) { return BIO_ctrl(b,BIO_C_SET_ACCEPT,1,(n)?"a".ptr:null); }
-auto BIO_set_accept_bios()(BIO* b,char* bio) { return BIO_ctrl(b,BIO_C_SET_ACCEPT,2,bio); }
+/* auto BIO_set_nbio()(BIO* b,n)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_NBIO,(n),null); } */
+auto BIO_set_nbio_accept()(BIO* b,int n) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_ACCEPT,1,(n)?"a".ptr:null); }
+auto BIO_set_accept_bios()(BIO* b,char* bio) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_ACCEPT,2,bio); }
 
 enum BIO_BIND_NORMAL = 0;
 enum BIO_BIND_REUSEADDR_IF_UNUSED = 1;
 enum BIO_BIND_REUSEADDR = 2;
-auto BIO_set_bind_mode()(BIO* b,c_long mode) { return BIO_ctrl(b,BIO_C_SET_BIND_MODE,mode,null); }
-auto BIO_get_bind_mode()(BIO* b, c_long dummy) { return BIO_ctrl(b,BIO_C_GET_BIND_MODE,0,null); }
+auto BIO_set_bind_mode()(BIO* b,c_long mode) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_BIND_MODE,mode,null); }
+auto BIO_get_bind_mode()(BIO* b, c_long dummy) { pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_BIND_MODE,0,null); }
 
 alias BIO_do_handshake BIO_do_connect;
 alias BIO_do_handshake BIO_do_accept;
-auto BIO_do_handshake()(BIO* b)	{ return BIO_ctrl(b,BIO_C_DO_STATE_MACHINE,0,null); }
+auto BIO_do_handshake()(BIO* b)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_DO_STATE_MACHINE,0,null); }
 
 /* BIO_s_proxy_client() */
-auto BIO_set_url()(BIO* b,char* url)	{ return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,0,url); }
-auto BIO_set_proxies()(BIO* b,char* p)	{ return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,1,p); }
+auto BIO_set_url()(BIO* b,char* url)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,0,url); }
+auto BIO_set_proxies()(BIO* b,char* p)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,1,p); }
 /* BIO_set_nbio()(BIO* b,n) */
-auto BIO_set_filter_bio()(BIO* b,char* s) { return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,2,s); }
+auto BIO_set_filter_bio()(BIO* b,char* s) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,2,s); }
 /* BIO* BIO_get_filter_bio(BIO* bio); */
 auto BIO_set_proxy_cb()(BIO* b,ExternC!(void* function()) cb) { return BIO_callback_ctrl(b,BIO_C_SET_PROXY_PARAM,3,cb); }
-auto BIO_set_proxy_header()(BIO* b,char* sk) { return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,4,sk); }
+auto BIO_set_proxy_header()(BIO* b,char* sk) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_PROXY_PARAM,4,sk); }
 auto BIO_set_no_connect_return()(BIO* b,bool t) { return BIO_int_ctrl(b,BIO_C_SET_PROXY_PARAM,5,t); }
 
-auto BIO_get_proxy_header()(BIO* b,char* skp) { return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,0,skp); }
-auto BIO_get_proxies()(BIO* b,char* pxy_p) { return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,1,(pxy_p)); }
-auto BIO_get_url()(BIO* b,char*url)	{ return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,2,(url)); }
-auto BIO_get_no_connect_return()(BIO* b)	{ return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,5,null); }
+auto BIO_get_proxy_header()(BIO* b,char* skp) { pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,0,skp); }
+auto BIO_get_proxies()(BIO* b,char* pxy_p) { pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,1,(pxy_p)); }
+auto BIO_get_url()(BIO* b,char*url)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,2,(url)); }
+auto BIO_get_no_connect_return()(BIO* b)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_PROXY_PARAM,5,null); }
 
 auto BIO_set_fd()(BIO* b,int fd, c_long c)	{ return BIO_int_ctrl(b,BIO_C_SET_FD,c,fd); }
-auto BIO_get_fd()(BIO* b,c_long c)		{ return BIO_ctrl(b,BIO_C_GET_FD,0,cast(void*)c); }
+auto BIO_get_fd()(BIO* b,c_long c)		{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_FD,0,cast(void*)c); }
 
-auto BIO_set_fp()(BIO* b,FILE* fp,c_long c)	{ return BIO_ctrl(b,BIO_C_SET_FILE_PTR,c,fp); }
-auto BIO_get_fp()(BIO* b,FILE** fpp)	{ return BIO_ctrl(b,BIO_C_GET_FILE_PTR,0,fpp); }
+auto BIO_set_fp()(BIO* b,FILE* fp,c_long c)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_FILE_PTR,c,fp); }
+auto BIO_get_fp()(BIO* b,FILE** fpp)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_FILE_PTR,0,fpp); }
 
-auto BIO_seek()(BIO* b,ofs)	{ return cast(int) BIO_ctrl(b,BIO_C_FILE_SEEK,ofs,null); }
-auto BIO_tell()(BIO* b)	{ return cast(int) BIO_ctrl(b,BIO_C_FILE_TELL,0,null); }
+auto BIO_seek()(BIO* b,ofs)	{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_C_FILE_SEEK,ofs,null); }
+auto BIO_tell()(BIO* b)	{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_C_FILE_TELL,0,null); }
 
 /* name is cast to lose const, but might be better to route through a function
    so we can do it safely */
@@ -538,83 +538,83 @@ auto BIO_tell()(BIO* b)	{ return cast(int) BIO_ctrl(b,BIO_C_FILE_TELL,0,null); }
 // */
 //int BIO_read_filename(BIO* b,const(char)* name);
 //#else
-auto BIO_read_filename()(BIO* b,const(char)* name) { return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_READ,name); }
+auto BIO_read_filename()(BIO* b,const(char)* name) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_READ,name); }
 //#endif
-auto BIO_write_filename()(BIO* b,const(char)* name) { return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_WRITE,name); }
-auto BIO_append_filename()(BIO* b,const(char)* name) { return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_APPEND,name); }
-auto BIO_rw_filename()(BIO* b,const(char)* name) { return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_READ|BIO_FP_WRITE,name); }
+auto BIO_write_filename()(BIO* b,const(char)* name) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_WRITE,name); }
+auto BIO_append_filename()(BIO* b,const(char)* name) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_APPEND,name); }
+auto BIO_rw_filename()(BIO* b,const(char)* name) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_FILENAME,BIO_CLOSE|BIO_FP_READ|BIO_FP_WRITE,name); }
 
 /* WARNING WARNING, this ups the reference count on the read bio of the
  * SSL structure.  This is because the ssl read BIO is now pointed to by
  * the next_bio field in the bio.  So when you free the BIO, make sure
  * you are doing a BIO_free_all() to catch the underlying BIO. */
-auto BIO_set_ssl()(BIO* b,SSL* ssl,c_long c) { return BIO_ctrl(b,BIO_C_SET_SSL,c,ssl); }
-auto BIO_get_ssl()(BIO* b,SSL** sslp)	{ return BIO_ctrl(b,BIO_C_GET_SSL,0,sslp); }
-auto BIO_set_ssl_mode()(BIO* b,c_long client)	{ return BIO_ctrl(b,BIO_C_SSL_MODE,client,null); }
+auto BIO_set_ssl()(BIO* b,SSL* ssl,c_long c) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_SSL,c,ssl); }
+auto BIO_get_ssl()(BIO* b,SSL** sslp)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_SSL,0,sslp); }
+auto BIO_set_ssl_mode()(BIO* b,c_long client)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SSL_MODE,client,null); }
 auto BIO_set_ssl_renegotiate_bytes()(BIO* b,c_long num) {
-	return BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_BYTES,num,null);
+	pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_BYTES,num,null);
 };
 auto BIO_get_num_renegotiates()(BIO* b) {
-	return BIO_ctrl(b,BIO_C_GET_SSL_NUM_RENEGOTIATES,0,null);
+	pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_SSL_NUM_RENEGOTIATES,0,null);
 };
 auto BIO_set_ssl_renegotiate_timeout()(BIO* b,c_long seconds) {
-	return BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_TIMEOUT,seconds,null);
+	pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_SSL_RENEGOTIATE_TIMEOUT,seconds,null);
 };
 
 /* defined in evp.h */
-/* auto BIO_set_md()(BIO* b,md)	{ return BIO_ctrl(b,BIO_C_SET_MD,1,(char*)md); } */
+/* auto BIO_set_md()(BIO* b,md)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_MD,1,(char*)md); } */
 
-auto BIO_get_mem_data()(BIO* b,BUF_MEM** pp)	{ return BIO_ctrl(b,BIO_CTRL_INFO,0,pp); }
-auto BIO_set_mem_buf()(BIO* b,BUF_MEM* bm,c_long c)	{ return BIO_ctrl(b,BIO_C_SET_BUF_MEM,c,bm); }
-auto BIO_get_mem_ptr()(BIO* b,BUF_MEM** pp)	{ return BIO_ctrl(b,BIO_C_GET_BUF_MEM_PTR,0,pp); }
-auto BIO_set_mem_eof_return()(BIO* b,c_long v) 				{ return BIO_ctrl(b,BIO_C_SET_BUF_MEM_EOF_RETURN,v,null); }
+auto BIO_get_mem_data()(BIO* b,ubyte** pp)	{ pragma(inline, true); return BIO_ctrl(b,BIO_CTRL_INFO,0,pp); }
+auto BIO_set_mem_buf()(BIO* b,BUF_MEM* bm,c_long c)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_BUF_MEM,c,bm); }
+auto BIO_get_mem_ptr()(BIO* b,BUF_MEM** pp)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_BUF_MEM_PTR,0,pp); }
+auto BIO_set_mem_eof_return()(BIO* b,c_long v) 				{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_BUF_MEM_EOF_RETURN,v,null); }
 
 /* For the BIO_f_buffer() type */
-auto BIO_get_buffer_num_lines()(BIO* b)	{ return BIO_ctrl(b,BIO_C_GET_BUFF_NUM_LINES,0,null); }
-auto BIO_set_buffer_size()(BIO* b,size)	{ return BIO_ctrl(b,BIO_C_SET_BUFF_SIZE,size,null); }
+auto BIO_get_buffer_num_lines()(BIO* b)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_GET_BUFF_NUM_LINES,0,null); }
+auto BIO_set_buffer_size()(BIO* b,size)	{ pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_BUFF_SIZE,size,null); }
 auto BIO_set_read_buffer_size()(BIO* b,size) { return BIO_int_ctrl(b,BIO_C_SET_BUFF_SIZE,size,0); }
 auto BIO_set_write_buffer_size()(BIO* b,size) { return BIO_int_ctrl(b,BIO_C_SET_BUFF_SIZE,size,1); }
-auto BIO_set_buffer_read_data()(BIO* b,buf,num) { return BIO_ctrl(b,BIO_C_SET_BUFF_READ_DATA,num,buf); }
+auto BIO_set_buffer_read_data()(BIO* b,buf,num) { pragma(inline, true); return BIO_ctrl(b,BIO_C_SET_BUFF_READ_DATA,num,buf); }
 
 /* Don't use the next one unless you know what you are doing :-) */
-auto BIO_dup_state()(BIO* b,void* ret)	{ return BIO_ctrl(b,BIO_CTRL_DUP,0,ret); }
+auto BIO_dup_state()(BIO* b,void* ret)	{ pragma(inline, true); return BIO_ctrl(b,BIO_CTRL_DUP,0,ret); }
 
-auto BIO_reset()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_RESET,0,null); }
-auto BIO_eof()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_EOF,0,null); }
-auto BIO_set_close()(BIO* b,int c) { return cast(int) BIO_ctrl(b,BIO_CTRL_SET_CLOSE,c,null); }
-auto BIO_get_close()(BIO* b)	{ return cast(int) BIO_ctrl(b,BIO_CTRL_GET_CLOSE,0,null); }
-auto BIO_pending()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_PENDING,0,null); }
-auto BIO_wpending()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_WPENDING,0,null); }
+auto BIO_reset()(BIO* b)		{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_RESET,0,null); }
+auto BIO_eof()(BIO* b)		{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_EOF,0,null); }
+auto BIO_set_close()(BIO* b,int c) { pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_SET_CLOSE,c,null); }
+auto BIO_get_close()(BIO* b)	{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_GET_CLOSE,0,null); }
+auto BIO_pending()(BIO* b)		{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_PENDING,0,null); }
+auto BIO_wpending()(BIO* b)		{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_WPENDING,0,null); }
 /* ...pending macros have inappropriate return type */
 size_t BIO_ctrl_pending(BIO* b);
 size_t BIO_ctrl_wpending(BIO* b);
-auto BIO_flush()(BIO* b)		{ return cast(int) BIO_ctrl(b,BIO_CTRL_FLUSH,0,null); }
-auto BIO_get_info_callback()(BIO* b,bio_info_cb** cbp) { return cast(int)BIO_ctrl(b,BIO_CTRL_GET_CALLBACK,0,cbp); }
+auto BIO_flush()(BIO* b)		{ pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_FLUSH,0,null); }
+auto BIO_get_info_callback()(BIO* b,bio_info_cb** cbp) { pragma(inline, true); return cast(int)BIO_ctrl(b,BIO_CTRL_GET_CALLBACK,0,cbp); }
 auto BIO_set_info_callback()(BIO* b,bio_info_cb* cb) { return cast(int) BIO_callback_ctrl(b,BIO_CTRL_SET_CALLBACK,cb); }
 
 /* For the BIO_f_buffer() type */
-auto BIO_buffer_get_num_lines()(BIO* b) { return BIO_ctrl(b,BIO_CTRL_GET,0,null); }
+auto BIO_buffer_get_num_lines()(BIO* b) { pragma(inline, true); return BIO_ctrl(b,BIO_CTRL_GET,0,null); }
 
 /* For BIO_s_bio() */
-auto BIO_set_write_buf_size()(BIO* b,size) { return cast(int) BIO_ctrl(b,BIO_C_SET_WRITE_BUF_SIZE,size,null); }
-auto BIO_get_write_buf_size()(BIO* b,size) { return cast(size_t) BIO_ctrl(b,BIO_C_GET_WRITE_BUF_SIZE,size,null); }
-auto BIO_make_bio_pair()(BIO* b1,b2)   { return cast(int) BIO_ctrl(b1,BIO_C_MAKE_BIO_PAIR,0,b2); }
-auto BIO_destroy_bio_pair()(BIO* b)    { return cast(int) BIO_ctrl(b,BIO_C_DESTROY_BIO_PAIR,0,null); }
-auto BIO_shutdown_wr()(BIO* b) { return cast(int) BIO_ctrl(b, BIO_C_SHUTDOWN_WR, 0, null); }
+auto BIO_set_write_buf_size()(BIO* b,size) { pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_C_SET_WRITE_BUF_SIZE,size,null); }
+auto BIO_get_write_buf_size()(BIO* b,size) { pragma(inline, true); return cast(size_t) BIO_ctrl(b,BIO_C_GET_WRITE_BUF_SIZE,size,null); }
+auto BIO_make_bio_pair()(BIO* b1,b2)   { pragma(inline, true); return cast(int) BIO_ctrl(b1,BIO_C_MAKE_BIO_PAIR,0,b2); }
+auto BIO_destroy_bio_pair()(BIO* b)    { pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_C_DESTROY_BIO_PAIR,0,null); }
+auto BIO_shutdown_wr()(BIO* b) { pragma(inline, true); return cast(int) BIO_ctrl(b, BIO_C_SHUTDOWN_WR, 0, null); }
 /* macros with inappropriate type -- but ...pending macros use int too: */
-auto BIO_get_write_guarantee()(BIO* b) { return cast(int) BIO_ctrl(b,BIO_C_GET_WRITE_GUARANTEE,0,null); }
-auto BIO_get_read_request()(BIO* b)    { return cast(int) BIO_ctrl(b,BIO_C_GET_READ_REQUEST,0,null); }
+auto BIO_get_write_guarantee()(BIO* b) { pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_C_GET_WRITE_GUARANTEE,0,null); }
+auto BIO_get_read_request()(BIO* b)    { pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_C_GET_READ_REQUEST,0,null); }
 size_t BIO_ctrl_get_write_guarantee(BIO* b);
 size_t BIO_ctrl_get_read_request(BIO* b);
 int BIO_ctrl_reset_read_request(BIO* b);
 
 /* ctrl macros for dgram */
-auto BIO_ctrl_dgram_connect()(BIO* b,void* peer) { return cast(int) BIO_ctrl(b,BIO_CTRL_DGRAM_CONNECT,0, peer); }
-auto BIO_ctrl_set_connected()(BIO* b, c_long state, peer) { return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_SET_CONNECTED, state, peer); }
-auto BIO_dgram_recv_timedout()(BIO* b) { return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_GET_RECV_TIMER_EXP, 0, null); }
-auto BIO_dgram_send_timedout()(BIO* b) { return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_GET_SEND_TIMER_EXP, 0, null); }
-auto BIO_dgram_get_peer()(BIO* b,void* peer) { return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_GET_PEER, 0, peer); }
-auto BIO_dgram_set_peer()(BIO* b,void* peer) { return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_SET_PEER, 0, peer); }
+auto BIO_ctrl_dgram_connect()(BIO* b,void* peer) { pragma(inline, true); return cast(int) BIO_ctrl(b,BIO_CTRL_DGRAM_CONNECT,0, peer); }
+auto BIO_ctrl_set_connected()(BIO* b, c_long state, peer) { pragma(inline, true); return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_SET_CONNECTED, state, peer); }
+auto BIO_dgram_recv_timedout()(BIO* b) { pragma(inline, true); return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_GET_RECV_TIMER_EXP, 0, null); }
+auto BIO_dgram_send_timedout()(BIO* b) { pragma(inline, true); return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_GET_SEND_TIMER_EXP, 0, null); }
+auto BIO_dgram_get_peer()(BIO* b,void* peer) { pragma(inline, true); return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_GET_PEER, 0, peer); }
+auto BIO_dgram_set_peer()(BIO* b,void* peer) { pragma(inline, true); return cast(int) BIO_ctrl(b, BIO_CTRL_DGRAM_SET_PEER, 0, peer); }
 
 /* These two aren't currently implemented */
 /* int BIO_get_ex_num(BIO* bio); */

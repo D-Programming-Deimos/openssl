@@ -67,6 +67,9 @@ alias ASN1_ITEM_st ASN1_ITEM;
 struct asn1_pctx_st;
 alias asn1_pctx_st ASN1_PCTX;
 
+import deimos.openssl.buffer;
+alias BUF_MEM = buf_mem_st;
+
 static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 {
 	struct BIGNUM;
@@ -76,7 +79,6 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 	struct BN_RECP_CTX;
 	struct BN_GENCB;
 
-	struct BUF_MEM;
 
 	struct EVP_CIPHER;
 	struct EVP_CIPHER_CTX;
@@ -92,7 +94,6 @@ static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
 	struct bn_mont_ctx_st;
 	struct bn_recp_ctx_st;
 	struct bn_gencb_st;
-	struct buf_mem_st;
 	struct env_md_ctx_st;
 	struct evp_pkey_st;
 	struct env_md_st;
@@ -156,15 +157,6 @@ else
 	alias BN_MONT_CTX = bn_mont_ctx_st;
 	alias BN_RECP_CTX = bn_recp_ctx_st;
 	alias BN_GENCB = bn_gencb_st;
-
-	struct buf_mem_st
-	{
-		size_t length;	/* current number of bytes */
-		char* data;
-		size_t max;	/* size of buffer */
-	}
-
-	alias BUF_MEM = buf_mem_st;
 
 
 	struct env_md_ctx_st
@@ -338,6 +330,11 @@ import deimos.openssl.x509v3;
 alias v3_ext_ctx X509V3_CTX;
 import deimos.openssl.conf;
 alias conf_st CONF;
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 0))
+{
+	struct ossl_init_settings_st;
+	alias ossl_init_settings_st OPENSSL_INIT_SETTINGS;
+}
 
 struct store_st;
 alias store_st STORE;

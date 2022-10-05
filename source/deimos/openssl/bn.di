@@ -764,17 +764,43 @@ BN_ULONG bn_div_words(BN_ULONG h, BN_ULONG l, BN_ULONG d);
 BN_ULONG bn_add_words(BN_ULONG* rp, const(BN_ULONG)* ap, const(BN_ULONG)* bp,int num);
 BN_ULONG bn_sub_words(BN_ULONG* rp, const(BN_ULONG)* ap, const(BN_ULONG)* bp,int num);
 
-/* Primes from RFC 2409 */
-BIGNUM* get_rfc2409_prime_768(BIGNUM* bn);
-BIGNUM* get_rfc2409_prime_1024(BIGNUM* bn);
+static if (OPENSSL_VERSION_BEFORE(1, 1, 0, 0))
+{
+    /* Primes from RFC 2409 */
+    BIGNUM* get_rfc2409_prime_768(BIGNUM* bn);
+    BIGNUM* get_rfc2409_prime_1024(BIGNUM* bn);
 
-/* Primes from RFC 3526 */
-BIGNUM* get_rfc3526_prime_1536(BIGNUM* bn);
-BIGNUM* get_rfc3526_prime_2048(BIGNUM* bn);
-BIGNUM* get_rfc3526_prime_3072(BIGNUM* bn);
-BIGNUM* get_rfc3526_prime_4096(BIGNUM* bn);
-BIGNUM* get_rfc3526_prime_6144(BIGNUM* bn);
-BIGNUM* get_rfc3526_prime_8192(BIGNUM* bn);
+    /* Primes from RFC 3526 */
+    BIGNUM* get_rfc3526_prime_1536(BIGNUM* bn);
+    BIGNUM* get_rfc3526_prime_2048(BIGNUM* bn);
+    BIGNUM* get_rfc3526_prime_3072(BIGNUM* bn);
+    BIGNUM* get_rfc3526_prime_4096(BIGNUM* bn);
+    BIGNUM* get_rfc3526_prime_6144(BIGNUM* bn);
+    BIGNUM* get_rfc3526_prime_8192(BIGNUM* bn);
+}
+else
+{
+    /* Primes from RFC 2409 */
+    BIGNUM* BN_get_rfc2409_prime_768(BIGNUM* bn);
+    BIGNUM* BN_get_rfc2409_prime_1024(BIGNUM* bn);
+
+    /* Primes from RFC 3526 */
+    BIGNUM* BN_get_rfc3526_prime_1536(BIGNUM* bn);
+    BIGNUM* BN_get_rfc3526_prime_2048(BIGNUM* bn);
+    BIGNUM* BN_get_rfc3526_prime_3072(BIGNUM* bn);
+    BIGNUM* BN_get_rfc3526_prime_4096(BIGNUM* bn);
+    BIGNUM* BN_get_rfc3526_prime_6144(BIGNUM* bn);
+    BIGNUM* BN_get_rfc3526_prime_8192(BIGNUM* bn);
+
+    alias get_rfc2409_prime_768  = BN_get_rfc2409_prime_768 ;
+    alias get_rfc2409_prime_1024 = BN_get_rfc2409_prime_1024;
+    alias get_rfc3526_prime_1536 = BN_get_rfc3526_prime_1536;
+    alias get_rfc3526_prime_2048 = BN_get_rfc3526_prime_2048;
+    alias get_rfc3526_prime_3072 = BN_get_rfc3526_prime_3072;
+    alias get_rfc3526_prime_4096 = BN_get_rfc3526_prime_4096;
+    alias get_rfc3526_prime_6144 = BN_get_rfc3526_prime_6144;
+    alias get_rfc3526_prime_8192 = BN_get_rfc3526_prime_8192;
+}
 
 int BN_bntest_rand(BIGNUM* rnd, int bits, int top,int bottom);
 

@@ -92,8 +92,13 @@ import core.sys.posix.sys.time;
 extern (C):
 nothrow:
 
-enum DTLS1_VERSION = 0xFEFF;
-enum DTLS1_BAD_VER = 0x0100;
+static if (OPENSSL_VERSION_BEFORE(3, 0, 0))
+{
+	enum DTLS1_VERSION = 0xFEFF;
+	enum DTLS1_BAD_VER = 0x0100;
+}
+else
+    public import deimos.openssl.prov_ssl;
 
 version (none) {
 /* this alert description is not specified anywhere... */
