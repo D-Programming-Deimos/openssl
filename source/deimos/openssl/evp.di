@@ -593,6 +593,17 @@ int	EVP_DigestFinal_ex(EVP_MD_CTX* ctx,ubyte* md,uint* s);
 int	EVP_Digest(const(void)* data, size_t count,
 		ubyte* md, uint* size, const(EVP_MD)* type, ENGINE* impl);
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
+{
+    int EVP_DigestSign(EVP_MD_CTX* ctx, ubyte* sigret,
+        size_t* siglen, const(ubyte)* tbs,
+        size_t tbslen);
+
+    int EVP_DigestVerify(EVP_MD_CTX* ctx, const(ubyte)* sigret,
+        size_t siglen, const(ubyte)* tbs,
+        size_t tbslen);
+}
+
 int     EVP_MD_CTX_copy(EVP_MD_CTX* out_,const(EVP_MD_CTX)* in_);
 int	EVP_DigestInit(EVP_MD_CTX* ctx, const(EVP_MD)* type);
 int	EVP_DigestFinal(EVP_MD_CTX* ctx,ubyte* md,uint* s);
