@@ -102,14 +102,14 @@ jobs:
       run: |
         # Versions are pinned to avoid upstream change breaking the CI
         # When updating the Vibe.d version used, make sure to update this as well.
-        dub fetch 'vibe-core@~>1.22'
-        dub fetch 'memutils@~>1.0'
-        dub fetch 'taggedalgebraic@~>0.11'
-        dub fetch 'botan-math@~>1.0'
-        dub fetch 'stdx-allocator@~>2.77'
-        dub fetch 'botan@~>1.12'
-        dub fetch 'eventcore@~>0.9'
-        dub fetch 'libasync@~>0.8'
+        dub fetch 'vibe-core@==1.22.6'
+        dub fetch 'memutils@==1.0.5'
+        dub fetch 'taggedalgebraic@==0.11.22'
+        dub fetch 'botan-math@==1.0.3'
+        dub fetch 'stdx-allocator@==2.77.5'
+        dub fetch 'botan@==1.12.19'
+        dub fetch 'eventcore@==0.9.22'
+        dub fetch 'libasync@==0.8.6'
 
     # Restore or install build openssl version
     - name: 'Restore openssl from cache'
