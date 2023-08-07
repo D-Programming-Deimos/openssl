@@ -68,20 +68,36 @@ else
 // Publicly aliased above
 private struct OpenSSLVersionTemplate (string textVersion)
 {
+    import std.ascii : isDigit;
+    import std.algorithm.iteration : splitter;
+    import std.algorithm.searching : canFind;
+    import std.conv : to;
+    import std.range : dropExactly;
+
     enum text = textVersion;
 
-    enum int major = (text[0] - '0');
+    enum uint major = textVersion.splitter('.')
+        .front.to!uint;
     static assert (major >= 0);
 
-    enum int minor = (text[2] - '0');
+    enum uint minor = textVersion.splitter('.')
+        .dropExactly(1)
+        .front.to!uint;
     static assert (minor >= 0);
 
-    enum int patch = (text[4] - '0');
+    // `std.algorithm.iteration : splitWhen` not usable at CT
+    // so we're using `canFind`.
+    private enum string patchText = textVersion.splitter('.')
+        .dropExactly(2).front;
+    private enum patchChar = patchText.canFind!(
+        (dchar c) => !c.isDigit());
+
+    enum uint patch = patchText[0 .. $ - patchChar].to!uint;
     static assert (patch >= 0);
 
-    static if (text.length == "1.1.0h".length)
+    static if (patchChar)
     {
-        enum int build = (text[5] - '`');
+        enum int build = (patchText[$ - 1] - '`');
         static assert (build >= 0);
     }
     else
