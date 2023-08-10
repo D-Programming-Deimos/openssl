@@ -19,89 +19,100 @@ version (DeimosOpenSSL_1_0_0)
 {
     // https://www.openssl.org/news/changelog.html#openssl-100
     // OpenSSL 1.0.0t was released 2015-12-03
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.0.0t";
+    public enum OpenSSLVersion = parseOpenSSLVersion("1.0.0t");
 }
 else version (DeimosOpenSSL_1_0_1)
 {
     // https://www.openssl.org/news/changelog.html#openssl-101
     // OpenSSL 1.0.1u was released 2016-09-22
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.0.1u";
+    public enum OpenSSLVersion = parseOpenSSLVersion("1.0.1u");
 }
 else version (DeimosOpenSSL_1_0_2)
 {
     // https://www.openssl.org/news/changelog.html#openssl-102
     // OpenSSL 1.0.2t was released 2019-09-10
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.0.2t";
+    public enum OpenSSLVersion = parseOpenSSLVersion("1.0.2t");
 }
 else version (DeimosOpenSSL_1_1_0)
 {
     // https://www.openssl.org/news/changelog.html#openssl-110
     // OpenSSL 1.1.0l was released 2019-09-10
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.1.0l";
+    public enum OpenSSLVersion = parseOpenSSLVersion("1.1.0l");
 }
 else version (DeimosOpenSSL_1_1_1)
 {
     // https://www.openssl.org/news/changelog.html#openssl-111
     // OpenSSL 1.1.1m was released 2021-12-14
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.1.1m";
+    public enum OpenSSLVersion = parseOpenSSLVersion("1.1.1m");
 }
 else version (DeimosOpenSSL_3_0)
 {
     // https://www.openssl.org/news/changelog.html#openssl-30
     // OpenSSL 3.0.3 was released 2022-05-03
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"3.0.3";
+    public enum OpenSSLVersion = parseOpenSSLVersion("3.0.3");
 }
 else version (DeimosOpenSSLAutoDetect)
 {
     import deimos.openssl.version_;
 
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!OpenSSLTextVersion;
+    public enum OpenSSLVersion = parseOpenSSLVersion(OpenSSLTextVersion);
 }
 else
 {
     // It was decided in https://github.com/D-Programming-Deimos/openssl/pull/66
     // that we should fall back to the latest supported version of the bindings,
     // should the user provide neither explicit version nor `DeimosOpenSSLAutoDetect`
-    public alias OpenSSLVersion = OpenSSLVersionTemplate!"1.1.0h";
+    public enum OpenSSLVersion = parseOpenSSLVersion("1.1.0h");
 }
 
 // Publicly aliased above
-private struct OpenSSLVersionTemplate (string textVersion)
+private struct OpenSSLVersionStruct
 {
+    string text;
+    uint major, minor, patch;
+    int build;
+}
+
+private OpenSSLVersionStruct parseOpenSSLVersion()(string textVersion)
+{
+    OpenSSLVersionStruct v;
+
     import std.ascii : isDigit;
     import std.algorithm.iteration : splitter;
     import std.algorithm.searching : canFind;
     import std.conv : to;
     import std.range : dropExactly;
 
-    enum text = textVersion;
+    v.text = textVersion;
 
-    enum uint major = textVersion.splitter('.')
+    v.major = textVersion.splitter('.')
         .front.to!uint;
-    static assert (major >= 0);
+    assert (v.major >= 0);
 
-    enum uint minor = textVersion.splitter('.')
+    v.minor = textVersion.splitter('.')
         .dropExactly(1)
         .front.to!uint;
-    static assert (minor >= 0);
+    assert (v.minor >= 0);
 
     // `std.algorithm.iteration : splitWhen` not usable at CT
     // so we're using `canFind`.
-    private enum string patchText = textVersion.splitter('.')
+    string patchText = textVersion.splitter('.')
         .dropExactly(2).front;
-    private enum patchChar = patchText.canFind!(
+    auto patchChar = patchText.canFind!(
         (dchar c) => !c.isDigit());
 
-    enum uint patch = patchText[0 .. $ - patchChar].to!uint;
-    static assert (patch >= 0);
+    v.patch = patchText[0 .. $ - patchChar].to!uint;
+    assert (v.patch >= 0);
 
-    static if (patchChar)
+    if (patchChar)
     {
-        enum int build = (patchText[$ - 1] - '`');
-        static assert (build >= 0);
+        v.build = (patchText[$ - 1] - '`');
+        assert (v.build >= 0);
     }
     else
-        enum int build = 0;
+        v.build = 0;
+
+    return v;
 }
 
 /* Numeric release version identifier:
