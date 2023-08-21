@@ -85,6 +85,8 @@ private OpenSSLVersionStruct parseOpenSSLVersion()(string textVersion)
 
     v.text = textVersion;
 
+    textVersion = textVersion.splitter('-').front;
+
     v.major = textVersion.splitter('.')
         .front.to!uint;
     assert (v.major >= 0);
@@ -113,6 +115,14 @@ private OpenSSLVersionStruct parseOpenSSLVersion()(string textVersion)
         v.build = 0;
 
     return v;
+}
+
+version (DeimosOpenSSLTest)
+{
+    static assert(parseOpenSSLVersion("0.9.3") == OpenSSLVersionStruct("0.9.3", 0, 9, 3));
+    static assert(parseOpenSSLVersion("3.0.10") == OpenSSLVersionStruct("3.0.10", 3, 0, 10));
+    static assert(parseOpenSSLVersion("1.1.1v") == OpenSSLVersionStruct("1.1.1v", 1, 1, 1, 22));
+    static assert(parseOpenSSLVersion("1.1.1o-freebsd") == OpenSSLVersionStruct("1.1.1o-freebsd", 1, 1, 1, 15));
 }
 
 /* Numeric release version identifier:
