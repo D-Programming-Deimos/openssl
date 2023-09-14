@@ -75,44 +75,64 @@ private struct OpenSSLVersionStruct
 
 private OpenSSLVersionStruct parseOpenSSLVersion()(string textVersion)
 {
-    OpenSSLVersionStruct v;
+    // Note: we avoid using Phobos here to avoid DMD bugs,
+    // e.g. https://issues.dlang.org/show_bug.cgi?id=24146
 
-    import std.ascii : isDigit;
-    import std.algorithm.iteration : splitter;
-    import std.algorithm.searching : canFind;
-    import std.conv : to;
-    import std.range : dropExactly;
+    bool isDigit(char c) { return c >= '0' && c <= '9'; }
+
+    string[] split(string s, char delim)
+    {
+        string[] result;
+        size_t start;
+        for (size_t i = 0; i < s.length; i++)
+            if (s[i] == delim)
+            {
+                result ~= s[start .. i];
+                start = i + 1;
+            }
+        if (start != s.length)
+            result ~= s[start .. s.length];
+        return result;
+    }
+
+    uint parseUnsignedDecimal(string s)
+    {
+        assert(s.length);
+        uint result;
+        foreach (c; s)
+        {
+            assert(isDigit(c));
+            result = result * 10 + (c - '0');
+        }
+        return result;
+    }
+
+    OpenSSLVersionStruct v;
 
     v.text = textVersion;
 
-    textVersion = textVersion.splitter('-').front;
+    textVersion = split(textVersion, '-')[0];
+    auto parts = split(textVersion, '.');
 
-    v.major = textVersion.splitter('.')
-        .front.to!uint;
+    v.major = parseUnsignedDecimal(parts[0]);
     assert (v.major >= 0);
 
-    v.minor = textVersion.splitter('.')
-        .dropExactly(1)
-        .front.to!uint;
+    v.minor = parseUnsignedDecimal(parts[1]);
     assert (v.minor >= 0);
 
     // `std.algorithm.iteration : splitWhen` not usable at CT
     // so we're using `canFind`.
-    string patchText = textVersion.splitter('.')
-        .dropExactly(2).front;
-    auto patchChar = patchText.canFind!(
-        (dchar c) => !c.isDigit());
-
-    v.patch = patchText[0 .. $ - patchChar].to!uint;
-    assert (v.patch >= 0);
-
-    if (patchChar)
+    string patchText = parts[2];
+    if (!isDigit(patchText[$ - 1]))
     {
-        v.build = (patchText[$ - 1] - '`');
-        assert (v.build >= 0);
+        v.build = patchText[$ - 1] - '`';
+        patchText = patchText[0 .. $ - 1];
     }
     else
         v.build = 0;
+
+    v.patch = parseUnsignedDecimal(patchText);
+    assert (v.patch >= 0);
 
     return v;
 }
