@@ -54,7 +54,7 @@ When using Windows or wanting to avoid the script,
 `dub` users should depend on the subconfiguration `library-manual-version`,
 and define the version in their dub file (e.g. `"versions" : [ "DeimosOpenSSL_3_0" ]`).
 
-A list of all available versions can be found in [deimos.openssl.opensslv](source/deimos/openssl/opensslv.d).
+A list of all available versions can be found in [deimos.openssl.opensslv](source/deimos/openssl/opensslv.di).
 
 Only minor versions are listed, patch versions are binary compatible with one another.
 We use "minor" and "patch" with the [intended SemVer meaning](https://semver.org/).
