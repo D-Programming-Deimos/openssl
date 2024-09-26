@@ -714,25 +714,25 @@ else
 }
 
 auto SSL_CTX_set_mode()(SSL_CTX* ctx, SSLOptionType op) {
-	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,op,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,cast(c_long)op,null);
 }
 auto SSL_CTX_clear_mode()(SSL_CTX* ctx, SSLOptionType op) {
-	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_MODE,op,null);
+	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_CLEAR_MODE,cast(c_long)op,null);
 }
 auto SSL_CTX_get_mode()(SSL_CTX* ctx) {
 	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_MODE,0,null);
 }
 auto SSL_clear_mode()(SSL* ssl, SSLOptionType op) {
-	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_CLEAR_MODE,op,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_CLEAR_MODE,cast(c_long)op,null);
 }
 auto SSL_set_mode()(SSL* ssl, SSLOptionType op) {
-	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MODE,op,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MODE,cast(c_long)op,null);
 }
 auto SSL_get_mode()(SSL* ssl) {
 	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MODE,0,null);
 }
 auto SSL_set_mtu()(SSL* ssl, SSLOptionType mtu) {
-	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MTU,mtu,null);
+	pragma(inline, true); return SSL_ctrl(ssl,SSL_CTRL_MTU,cast(c_long)mtu,null);
 }
 
 auto SSL_get_secure_renegotiation_support()(SSL* ssl) {
@@ -2307,7 +2307,7 @@ auto SSL_set_max_cert_list()(SSL* ssl,c_long m) {
 auto SSL_CTX_set_max_send_fragment()(SSL_CTX* ctx, c_long m) {
 	pragma(inline, true); return SSL_CTX_ctrl(ctx,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,null);
 }
-auto SSL_set_max_send_fragment()(SSL* ssl,m) {
+auto SSL_set_max_send_fragment()(SSL* ssl, c_long m) {
 	pragma(inline, true); SSL_ctrl(ssl,SSL_CTRL_SET_MAX_SEND_FRAGMENT,m,null);
 }
 
