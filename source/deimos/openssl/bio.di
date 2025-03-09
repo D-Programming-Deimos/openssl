@@ -312,8 +312,10 @@ alias BIO_info_cb = bio_info_cb;
 struct bio_method_st {
 	int type;
 	const(char)* name;
-	ExternC!(int function(BIO*, const(char)*, int)) bwrite;
-	ExternC!(int function(BIO*, char*, int)) bread;
+	ExternC!(int function(BIO*, const(char)*, size_t, size_t*)) bwrite;
+	ExternC!(int function(BIO*, const(char)*, int)) bwrite_legacy;
+	ExternC!(int function(BIO*, char*, size_t, size_t*)) bread;
+	ExternC!(int function(BIO*, char*, int)) bread_legacy;
 	ExternC!(int function(BIO*, const(char)*)) bputs;
 	ExternC!(int function(BIO*, char*, int)) bgets;
 	ExternC!(c_long function(BIO*, int, c_long, void*)) ctrl;
@@ -323,11 +325,14 @@ struct bio_method_st {
 	}
 alias bio_method_st BIO_METHOD;
 
+
 struct bio_st
 	{
 	BIO_METHOD* method;
 	/* bio, mode, argp, argi, argl, ret */
-	ExternC!(c_long function(bio_st*,int,const(char)*,int, c_long,long)) callback;
+	ExternC!(c_long function(bio_st*,int,const(char)*,int, c_long,c_long)) callback;
+	ExternC!(c_long function(bio_st*,int,const(char)*,size_t len, int argi,
+                                   c_long argl, int ret, size_t *processed)) callback_ex;
 	char* cb_arg; /* first argument for the callback */
 
 	int init_;
@@ -339,10 +344,11 @@ struct bio_st
 	bio_st* next_bio;	/* used by filter BIOs */
 	bio_st* prev_bio;	/* used by filter BIOs */
 	int references;
-	c_ulong num_read;
-	c_ulong num_write;
+	ulong num_read;
+	ulong num_write;
 
 	CRYPTO_EX_DATA ex_data;
+	void* lock;
 	};
 
 /+mixin DECLARE_STACK_OF!(BIO);+/
