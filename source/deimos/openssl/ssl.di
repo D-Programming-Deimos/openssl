@@ -1200,6 +1200,30 @@ auto SSL_want_x509_lookup()(const(SSL)* s) { return (SSL_want(s) == SSL_X509_LOO
 enum SSL_MAC_FLAG_READ_MAC_STREAM = 1;
 enum SSL_MAC_FLAG_WRITE_MAC_STREAM = 2;
 
+static if (OPENSSL_VERSION_AT_LEAST(1, 1, 1))
+{
+    /*
+     * A callback for logging out TLS key material. This callback should log out
+     * |line| followed by a newline.
+     */
+    alias SSL_CTX_keylog_cb_func = ExternC!(void function(
+         const SSL *ssl, const char *line));
+
+    /*
+     * SSL_CTX_set_keylog_callback configures a callback to log key material. This
+     * is intended for debugging use with tools like Wireshark. The cb function
+     * should log line followed by a newline.
+     */
+    void SSL_CTX_set_keylog_callback(SSL_CTX *ctx, SSL_CTX_keylog_cb_func cb);
+
+    /*
+     * SSL_CTX_get_keylog_callback returns the callback configured by
+     * SSL_CTX_set_keylog_callback.
+     */
+    SSL_CTX_keylog_cb_func SSL_CTX_get_keylog_callback(const SSL_CTX *ctx);
+}
+
+
 version(OPENSSL_NO_SSL_INTERN) {} else {
 
 struct ssl_st
